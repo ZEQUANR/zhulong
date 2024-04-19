@@ -1,0 +1,15 @@
+## IDE
+.idea
+.vscode
+
+## golang
+vendor
+logs
+go.sum
+hummingbird
+
+## MacOS
+.DS_Store
+
+## binary
+test
