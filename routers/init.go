@@ -1,11 +1,20 @@
 package routers
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/ZEQUANR/zhulong/controller"
+	"github.com/gin-gonic/gin"
+)
 
-func Init(r *gin.Engine) {
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+func Init(router *gin.Engine) {
+
+	v1 := router.Group("/api/v1")
+	{
+		user := v1.Group("/user")
+		{
+			user.POST("/login", controller.UserLogin)
+			user.POST("/register", controller.UserRegister)
+			user.POST("/info", controller.UserInfo)
+			user.POST("/logout", controller.UserLogin)
+		}
+	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "github.com/ZEQUANR/zhulong/driver"
 	"github.com/ZEQUANR/zhulong/routers"
 	"github.com/gin-gonic/gin"
 )
