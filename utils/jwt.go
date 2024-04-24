@@ -11,12 +11,11 @@ import (
 // Load key from somewhere, for example an environment variable
 const secret = "Jerry"
 
-func GenerateToken(userID uint, unit int) (string, error) {
+func GenerateToken(userID uint) (string, error) {
 	const tokenExpireDuration = time.Hour * 24
 	claims := jwt.MapClaims{
 		"authorized": true,
 		"user_id":    userID,
-		"unit":       unit,
 		"exp":        time.Now().Add(tokenExpireDuration).Unix(),
 	}
 
