@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -34,7 +33,7 @@ func ParseAToken(tokenString string, field string) (interface{}, error) {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {

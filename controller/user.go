@@ -1,9 +1,11 @@
 package controller
 
 import (
-	"log/slog"
+	"fmt"
 	"net/http"
+	"strings"
 
+	"github.com/ZEQUANR/zhulong/logger"
 	"github.com/ZEQUANR/zhulong/services"
 	"github.com/ZEQUANR/zhulong/utils"
 	"github.com/gin-gonic/gin"
@@ -16,34 +18,19 @@ func UserLogin(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&data); err != nil {
-		slog.Error(err.Error())
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid Parameter",
-		})
-
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, err)
 		return
 	}
 
-	user, userErr := services.QueryUserById(data.Account, utils.Md5Encode(data.Password))
-	if userErr != nil {
-		slog.Error(userErr.Error())
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": userErr.Error(),
-		})
-
+	user, err := services.QueryUserAccountPassword(data.Account, utils.Md5Encode(data.Password))
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDatabase, err)
 		return
 	}
 
-	token, tokenErr := utils.GenerateToken(uint(user.ID))
-	if tokenErr != nil {
-		slog.Error(tokenErr.Error())
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": tokenErr.Error(),
-		})
-
+	token, err := utils.GenerateToken(uint(user.ID))
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, err)
 		return
 	}
 
@@ -53,8 +40,31 @@ func UserLogin(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
+	bearerToken := c.GetHeader("Authorization")
+	if len(strings.Split(bearerToken, " ")) != 2 {
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, fmt.Errorf("Failed querying user"))
+		return
+	}
+
+	token := strings.Split(bearerToken, " ")[1]
+	id, err := utils.ParseAToken(token, "user_id")
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, err)
+		return
+	}
+
+	user, err := services.QueryUserById(int(id.(float64)))
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"user_id": user.ID,
+			"account": user.Account,
+			"role":    user.Role,
+		},
 	})
 }
 

@@ -11,11 +11,12 @@ import (
 
 var client = driver.MysqlClient
 
-func QueryUserById(account string, password string) (*ent.User, error) {
+func QueryUserAccountPassword(account string, password string) (*ent.User, error) {
 	ctx := context.Background()
+
 	u, err := client.User.
 		Query().
-		Select("id").
+		Select().
 		Where(user.Account(account), user.Password(password)).
 		Only(ctx)
 	if err != nil {
@@ -25,8 +26,9 @@ func QueryUserById(account string, password string) (*ent.User, error) {
 	return u, nil
 }
 
-func QueryUserInformation(id int) (*ent.User, error) {
+func QueryUserById(id int) (*ent.User, error) {
 	ctx := context.Background()
+
 	u, err := client.User.
 		Query().
 		Select().
