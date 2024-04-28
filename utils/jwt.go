@@ -2,8 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -26,19 +28,31 @@ func GenerateToken(userID uint) (string, error) {
 func ParseAToken(tokenString string, field string) (interface{}, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
 		return []byte(secret), nil
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		return claims[field], nil
 	} else {
-		return nil, fmt.Errorf("Unexpected signature field: %s", field)
+		return nil, fmt.Errorf("unexpected signature field: %s", field)
 	}
+}
+
+func ExtractToken(c *gin.Context) (string, error) {
+	token := c.Query("token")
+	if token != "" {
+		return token, nil
+	}
+	bearerToken := c.Request.Header.Get("Authorization")
+	if len(strings.Split(bearerToken, " ")) == 2 {
+		return strings.Split(bearerToken, " ")[1], nil
+	}
+	return "", nil
 }

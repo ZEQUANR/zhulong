@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/ZEQUANR/zhulong/logger"
 	"github.com/ZEQUANR/zhulong/services"
@@ -22,7 +20,7 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	user, err := services.QueryUserAccountPassword(data.Account, utils.Md5Encode(data.Password))
+	user, err := services.QueryUserByAccountPassword(data.Account, utils.Md5Encode(data.Password))
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDatabase, err)
 		return
@@ -40,13 +38,12 @@ func UserLogin(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
-	bearerToken := c.GetHeader("Authorization")
-	if len(strings.Split(bearerToken, " ")) != 2 {
-		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, fmt.Errorf("Failed querying user"))
+	token, err := utils.ExtractToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, err)
 		return
 	}
 
-	token := strings.Split(bearerToken, " ")[1]
 	id, err := utils.ParseAToken(token, "user_id")
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, err)
@@ -69,6 +66,16 @@ func UserInfo(c *gin.Context) {
 }
 
 func UserRegister(c *gin.Context) {
+	var data struct {
+		Account  string `json:"account" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	if err := c.BindJSON(&data); err != nil {
+		logger.CreateLog(c, logger.ErrorGroupWarning, logger.ErrorWhoClient, logger.ErrorTypeParameter, logger.ErrorBodyDataFormat, err)
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"message": "pong",
 	})

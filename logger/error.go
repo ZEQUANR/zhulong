@@ -9,11 +9,12 @@ type ErrorGroup string
 type ErrorWho string
 
 const (
-	ErrorGroupWarning ErrorGroup = "warning"
-	ErrorGroupError   ErrorGroup = "error"
+	ErrorGroupWarning ErrorGroup = "warning" // 警告
+	ErrorGroupError   ErrorGroup = "error"   // 错误
 
-	ErrorWhoServer ErrorWho = "server"
-	ErrorWhoClient ErrorWho = "client"
+	ErrorWhoServer   ErrorWho = "server"   // 服务端
+	ErrorWhoClient   ErrorWho = "client"   // 客户端
+	ErrorWhoDatabase ErrorWho = "database" // 数据库
 )
 
 type ErrorType struct {

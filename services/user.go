@@ -11,7 +11,7 @@ import (
 
 var client = driver.MysqlClient
 
-func QueryUserAccountPassword(account string, password string) (*ent.User, error) {
+func QueryUserByAccountPassword(account string, password string) (*ent.User, error) {
 	ctx := context.Background()
 
 	u, err := client.User.
