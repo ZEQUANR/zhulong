@@ -1,10 +1,14 @@
 package logger
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
 
-func CreateLog(c *gin.Context, group ErrorGroup, who ErrorWho, errorType ErrorType, body ErrorBody, err error) {
-	e := newError(group, who, errorType, body, err.Error())
+	"github.com/gin-gonic/gin"
+)
+
+func CreateLog(c *gin.Context, who ErrorWho, errorCause ErrorAction, effect ErrorBody, err error) {
+	e := fmt.Errorf(fmt.Sprintf("%s|%s|%s|[%s]", who, errorCause, effect, err.Error()))
 
 	// middlewares.LogError(c, middlewares.LoggerTypeNormal, e)
-	c.JSON(errorType.Code, gin.H{"message": e.Error()})
+	c.JSON(200, gin.H{"message": e.Error()})
 }

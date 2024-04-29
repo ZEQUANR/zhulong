@@ -39,20 +39,20 @@ func ParseAToken(tokenString string, field string) (interface{}, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		return claims[field], nil
+		if claims[field] != nil {
+			return claims[field], nil
+		} else {
+			return nil, fmt.Errorf("unexpected signature field: %s", field)
+		}
 	} else {
 		return nil, fmt.Errorf("unexpected signature field: %s", field)
 	}
 }
 
 func ExtractToken(c *gin.Context) (string, error) {
-	token := c.Query("token")
-	if token != "" {
-		return token, nil
-	}
 	bearerToken := c.Request.Header.Get("Authorization")
 	if len(strings.Split(bearerToken, " ")) == 2 {
 		return strings.Split(bearerToken, " ")[1], nil
 	}
-	return "", nil
+	return "", fmt.Errorf("the Authorization field cannot be found from the request header")
 }

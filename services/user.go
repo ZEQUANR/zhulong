@@ -20,7 +20,7 @@ func QueryUserByAccountPassword(account string, password string) (*ent.User, err
 		Where(user.Account(account), user.Password(password)).
 		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("Failed querying user: %w", err)
+		return nil, fmt.Errorf("func: QueryUserByAccountPassword %w", err)
 	}
 
 	return u, nil
@@ -35,7 +35,7 @@ func QueryUserById(id int) (*ent.User, error) {
 		Where(user.ID(id)).
 		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("Failed querying user: %w", err)
+		return nil, fmt.Errorf("func: QueryUserById %w", err)
 	}
 
 	return u, nil
