@@ -57,11 +57,16 @@ func UserInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"data": gin.H{
-			"user_id": user.ID,
-			"account": user.Account,
-			"role":    user.Role,
-		},
+		"user_id": user.ID,
+		"account": user.Account,
+		"role":    user.Role,
+	})
+}
+
+func UserEditor(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "pong",
 	})
 }
 

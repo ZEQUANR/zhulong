@@ -13,6 +13,7 @@ func Init(router *gin.Engine) {
 		{
 			user.POST("/login", controller.UserLogin)
 			user.POST("/info", controller.UserInfo)
+			user.POST("/editor", controller.UserEditor)
 			user.POST("/register", controller.UserRegister)
 			user.POST("/logout", controller.UserLogout)
 			user.POST("/redact")
