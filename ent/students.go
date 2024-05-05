@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // Students is the model entity for the Students schema.
@@ -27,8 +28,32 @@ type Students struct {
 	// Class holds the value of the "class" field.
 	Class string `json:"class,omitempty"`
 	// Identity holds the value of the "identity" field.
-	Identity     string `json:"identity,omitempty"`
-	selectValues sql.SelectValues
+	Identity string `json:"identity,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the StudentsQuery when eager-loading is set.
+	Edges         StudentsEdges `json:"edges"`
+	user_students *int
+	selectValues  sql.SelectValues
+}
+
+// StudentsEdges holds the relations/edges for other nodes in the graph.
+type StudentsEdges struct {
+	// Users holds the value of the users edge.
+	Users *User `json:"users,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e StudentsEdges) UsersOrErr() (*User, error) {
+	if e.Users != nil {
+		return e.Users, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -40,6 +65,8 @@ func (*Students) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case students.FieldName, students.FieldCollege, students.FieldPhone, students.FieldSubject, students.FieldClass, students.FieldIdentity:
 			values[i] = new(sql.NullString)
+		case students.ForeignKeys[0]: // user_students
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -97,6 +124,13 @@ func (s *Students) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.Identity = value.String
 			}
+		case students.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_students", value)
+			} else if value.Valid {
+				s.user_students = new(int)
+				*s.user_students = int(value.Int64)
+			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
 		}
@@ -108,6 +142,11 @@ func (s *Students) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (s *Students) Value(name string) (ent.Value, error) {
 	return s.selectValues.Get(name)
+}
+
+// QueryUsers queries the "users" edge of the Students entity.
+func (s *Students) QueryUsers() *UserQuery {
+	return NewStudentsClient(s.config).QueryUsers(s)
 }
 
 // Update returns a builder for updating this Students.

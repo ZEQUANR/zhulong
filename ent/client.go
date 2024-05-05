@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
@@ -334,6 +335,22 @@ func (c *AdministratorsClient) GetX(ctx context.Context, id int) *Administrators
 	return obj
 }
 
+// QueryUsers queries the users edge of a Administrators.
+func (c *AdministratorsClient) QueryUsers(a *Administrators) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(administrators.Table, administrators.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, administrators.UsersTable, administrators.UsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AdministratorsClient) Hooks() []Hook {
 	return c.hooks.Administrators
@@ -465,6 +482,22 @@ func (c *StudentsClient) GetX(ctx context.Context, id int) *Students {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryUsers queries the users edge of a Students.
+func (c *StudentsClient) QueryUsers(s *Students) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(students.Table, students.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, students.UsersTable, students.UsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -600,6 +633,22 @@ func (c *TeachersClient) GetX(ctx context.Context, id int) *Teachers {
 	return obj
 }
 
+// QueryUsers queries the users edge of a Teachers.
+func (c *TeachersClient) QueryUsers(t *Teachers) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(teachers.Table, teachers.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, teachers.UsersTable, teachers.UsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TeachersClient) Hooks() []Hook {
 	return c.hooks.Teachers
@@ -731,6 +780,54 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryAdministrators queries the administrators edge of a User.
+func (c *UserClient) QueryAdministrators(u *User) *AdministratorsQuery {
+	query := (&AdministratorsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(administrators.Table, administrators.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.AdministratorsTable, user.AdministratorsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStudents queries the students edge of a User.
+func (c *UserClient) QueryStudents(u *User) *StudentsQuery {
+	query := (&StudentsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(students.Table, students.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.StudentsTable, user.StudentsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTeachers queries the teachers edge of a User.
+func (c *UserClient) QueryTeachers(u *User) *TeachersQuery {
+	query := (&TeachersClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(teachers.Table, teachers.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.TeachersTable, user.TeachersColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

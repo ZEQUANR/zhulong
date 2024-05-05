@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // AdministratorsCreate is the builder for creating a Administrators entity.
@@ -41,6 +42,17 @@ func (ac *AdministratorsCreate) SetPhone(s string) *AdministratorsCreate {
 func (ac *AdministratorsCreate) SetIdentity(s string) *AdministratorsCreate {
 	ac.mutation.SetIdentity(s)
 	return ac
+}
+
+// SetUsersID sets the "users" edge to the User entity by ID.
+func (ac *AdministratorsCreate) SetUsersID(id int) *AdministratorsCreate {
+	ac.mutation.SetUsersID(id)
+	return ac
+}
+
+// SetUsers sets the "users" edge to the User entity.
+func (ac *AdministratorsCreate) SetUsers(u *User) *AdministratorsCreate {
+	return ac.SetUsersID(u.ID)
 }
 
 // Mutation returns the AdministratorsMutation object of the builder.
@@ -89,6 +101,9 @@ func (ac *AdministratorsCreate) check() error {
 	if _, ok := ac.mutation.Identity(); !ok {
 		return &ValidationError{Name: "identity", err: errors.New(`ent: missing required field "Administrators.identity"`)}
 	}
+	if _, ok := ac.mutation.UsersID(); !ok {
+		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Administrators.users"`)}
+	}
 	return nil
 }
 
@@ -130,6 +145,23 @@ func (ac *AdministratorsCreate) createSpec() (*Administrators, *sqlgraph.CreateS
 	if value, ok := ac.mutation.Identity(); ok {
 		_spec.SetField(administrators.FieldIdentity, field.TypeString, value)
 		_node.Identity = value
+	}
+	if nodes := ac.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   administrators.UsersTable,
+			Columns: []string{administrators.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_administrators = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

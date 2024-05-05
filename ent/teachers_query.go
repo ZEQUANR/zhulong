@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // TeachersQuery is the builder for querying Teachers entities.
@@ -21,6 +22,8 @@ type TeachersQuery struct {
 	order      []teachers.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Teachers
+	withUsers  *UserQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -55,6 +58,28 @@ func (tq *TeachersQuery) Unique(unique bool) *TeachersQuery {
 func (tq *TeachersQuery) Order(o ...teachers.OrderOption) *TeachersQuery {
 	tq.order = append(tq.order, o...)
 	return tq
+}
+
+// QueryUsers chains the current query on the "users" edge.
+func (tq *TeachersQuery) QueryUsers() *UserQuery {
+	query := (&UserClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(teachers.Table, teachers.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, teachers.UsersTable, teachers.UsersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Teachers entity from the query.
@@ -249,10 +274,22 @@ func (tq *TeachersQuery) Clone() *TeachersQuery {
 		order:      append([]teachers.OrderOption{}, tq.order...),
 		inters:     append([]Interceptor{}, tq.inters...),
 		predicates: append([]predicate.Teachers{}, tq.predicates...),
+		withUsers:  tq.withUsers.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
 	}
+}
+
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TeachersQuery) WithUsers(opts ...func(*UserQuery)) *TeachersQuery {
+	query := (&UserClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withUsers = query
+	return tq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -331,15 +368,26 @@ func (tq *TeachersQuery) prepareQuery(ctx context.Context) error {
 
 func (tq *TeachersQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Teachers, error) {
 	var (
-		nodes = []*Teachers{}
-		_spec = tq.querySpec()
+		nodes       = []*Teachers{}
+		withFKs     = tq.withFKs
+		_spec       = tq.querySpec()
+		loadedTypes = [1]bool{
+			tq.withUsers != nil,
+		}
 	)
+	if tq.withUsers != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, teachers.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Teachers).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Teachers{config: tq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -351,7 +399,46 @@ func (tq *TeachersQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tea
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := tq.withUsers; query != nil {
+		if err := tq.loadUsers(ctx, query, nodes, nil,
+			func(n *Teachers, e *User) { n.Edges.Users = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (tq *TeachersQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Teachers, init func(*Teachers), assign func(*Teachers, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Teachers)
+	for i := range nodes {
+		if nodes[i].user_teachers == nil {
+			continue
+		}
+		fk := *nodes[i].user_teachers
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_teachers" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (tq *TeachersQuery) sqlCount(ctx context.Context) (int, error) {

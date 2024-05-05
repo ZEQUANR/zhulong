@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // AdministratorsUpdate is the builder for updating Administrators entities.
@@ -83,9 +84,26 @@ func (au *AdministratorsUpdate) SetNillableIdentity(s *string) *AdministratorsUp
 	return au
 }
 
+// SetUsersID sets the "users" edge to the User entity by ID.
+func (au *AdministratorsUpdate) SetUsersID(id int) *AdministratorsUpdate {
+	au.mutation.SetUsersID(id)
+	return au
+}
+
+// SetUsers sets the "users" edge to the User entity.
+func (au *AdministratorsUpdate) SetUsers(u *User) *AdministratorsUpdate {
+	return au.SetUsersID(u.ID)
+}
+
 // Mutation returns the AdministratorsMutation object of the builder.
 func (au *AdministratorsUpdate) Mutation() *AdministratorsMutation {
 	return au.mutation
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (au *AdministratorsUpdate) ClearUsers() *AdministratorsUpdate {
+	au.mutation.ClearUsers()
+	return au
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -115,7 +133,18 @@ func (au *AdministratorsUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (au *AdministratorsUpdate) check() error {
+	if _, ok := au.mutation.UsersID(); au.mutation.UsersCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Administrators.users"`)
+	}
+	return nil
+}
+
 func (au *AdministratorsUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := au.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(administrators.Table, administrators.Columns, sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt))
 	if ps := au.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -135,6 +164,35 @@ func (au *AdministratorsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := au.mutation.Identity(); ok {
 		_spec.SetField(administrators.FieldIdentity, field.TypeString, value)
+	}
+	if au.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   administrators.UsersTable,
+			Columns: []string{administrators.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   administrators.UsersTable,
+			Columns: []string{administrators.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -212,9 +270,26 @@ func (auo *AdministratorsUpdateOne) SetNillableIdentity(s *string) *Administrato
 	return auo
 }
 
+// SetUsersID sets the "users" edge to the User entity by ID.
+func (auo *AdministratorsUpdateOne) SetUsersID(id int) *AdministratorsUpdateOne {
+	auo.mutation.SetUsersID(id)
+	return auo
+}
+
+// SetUsers sets the "users" edge to the User entity.
+func (auo *AdministratorsUpdateOne) SetUsers(u *User) *AdministratorsUpdateOne {
+	return auo.SetUsersID(u.ID)
+}
+
 // Mutation returns the AdministratorsMutation object of the builder.
 func (auo *AdministratorsUpdateOne) Mutation() *AdministratorsMutation {
 	return auo.mutation
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (auo *AdministratorsUpdateOne) ClearUsers() *AdministratorsUpdateOne {
+	auo.mutation.ClearUsers()
+	return auo
 }
 
 // Where appends a list predicates to the AdministratorsUpdate builder.
@@ -257,7 +332,18 @@ func (auo *AdministratorsUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (auo *AdministratorsUpdateOne) check() error {
+	if _, ok := auo.mutation.UsersID(); auo.mutation.UsersCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Administrators.users"`)
+	}
+	return nil
+}
+
 func (auo *AdministratorsUpdateOne) sqlSave(ctx context.Context) (_node *Administrators, err error) {
+	if err := auo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(administrators.Table, administrators.Columns, sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt))
 	id, ok := auo.mutation.ID()
 	if !ok {
@@ -294,6 +380,35 @@ func (auo *AdministratorsUpdateOne) sqlSave(ctx context.Context) (_node *Adminis
 	}
 	if value, ok := auo.mutation.Identity(); ok {
 		_spec.SetField(administrators.FieldIdentity, field.TypeString, value)
+	}
+	if auo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   administrators.UsersTable,
+			Columns: []string{administrators.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   administrators.UsersTable,
+			Columns: []string{administrators.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Administrators{config: auo.config}
 	_spec.Assign = _node.assignValues

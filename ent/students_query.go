@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // StudentsQuery is the builder for querying Students entities.
@@ -21,6 +22,8 @@ type StudentsQuery struct {
 	order      []students.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Students
+	withUsers  *UserQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -55,6 +58,28 @@ func (sq *StudentsQuery) Unique(unique bool) *StudentsQuery {
 func (sq *StudentsQuery) Order(o ...students.OrderOption) *StudentsQuery {
 	sq.order = append(sq.order, o...)
 	return sq
+}
+
+// QueryUsers chains the current query on the "users" edge.
+func (sq *StudentsQuery) QueryUsers() *UserQuery {
+	query := (&UserClient{config: sq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := sq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := sq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(students.Table, students.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, students.UsersTable, students.UsersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Students entity from the query.
@@ -249,10 +274,22 @@ func (sq *StudentsQuery) Clone() *StudentsQuery {
 		order:      append([]students.OrderOption{}, sq.order...),
 		inters:     append([]Interceptor{}, sq.inters...),
 		predicates: append([]predicate.Students{}, sq.predicates...),
+		withUsers:  sq.withUsers.Clone(),
 		// clone intermediate query.
 		sql:  sq.sql.Clone(),
 		path: sq.path,
 	}
+}
+
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *StudentsQuery) WithUsers(opts ...func(*UserQuery)) *StudentsQuery {
+	query := (&UserClient{config: sq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	sq.withUsers = query
+	return sq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -331,15 +368,26 @@ func (sq *StudentsQuery) prepareQuery(ctx context.Context) error {
 
 func (sq *StudentsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Students, error) {
 	var (
-		nodes = []*Students{}
-		_spec = sq.querySpec()
+		nodes       = []*Students{}
+		withFKs     = sq.withFKs
+		_spec       = sq.querySpec()
+		loadedTypes = [1]bool{
+			sq.withUsers != nil,
+		}
 	)
+	if sq.withUsers != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, students.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Students).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Students{config: sq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -351,7 +399,46 @@ func (sq *StudentsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Stu
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := sq.withUsers; query != nil {
+		if err := sq.loadUsers(ctx, query, nodes, nil,
+			func(n *Students, e *User) { n.Edges.Users = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (sq *StudentsQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Students, init func(*Students), assign func(*Students, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Students)
+	for i := range nodes {
+		if nodes[i].user_students == nil {
+			continue
+		}
+		fk := *nodes[i].user_students
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_students" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (sq *StudentsQuery) sqlCount(ctx context.Context) (int, error) {

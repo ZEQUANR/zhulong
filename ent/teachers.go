@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // Teachers is the model entity for the Teachers schema.
@@ -23,8 +24,32 @@ type Teachers struct {
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
 	// Identity holds the value of the "identity" field.
-	Identity     string `json:"identity,omitempty"`
-	selectValues sql.SelectValues
+	Identity string `json:"identity,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the TeachersQuery when eager-loading is set.
+	Edges         TeachersEdges `json:"edges"`
+	user_teachers *int
+	selectValues  sql.SelectValues
+}
+
+// TeachersEdges holds the relations/edges for other nodes in the graph.
+type TeachersEdges struct {
+	// Users holds the value of the users edge.
+	Users *User `json:"users,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TeachersEdges) UsersOrErr() (*User, error) {
+	if e.Users != nil {
+		return e.Users, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -36,6 +61,8 @@ func (*Teachers) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case teachers.FieldName, teachers.FieldCollege, teachers.FieldPhone, teachers.FieldIdentity:
 			values[i] = new(sql.NullString)
+		case teachers.ForeignKeys[0]: // user_teachers
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -81,6 +108,13 @@ func (t *Teachers) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Identity = value.String
 			}
+		case teachers.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_teachers", value)
+			} else if value.Valid {
+				t.user_teachers = new(int)
+				*t.user_teachers = int(value.Int64)
+			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
 		}
@@ -92,6 +126,11 @@ func (t *Teachers) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (t *Teachers) Value(name string) (ent.Value, error) {
 	return t.selectValues.Get(name)
+}
+
+// QueryUsers queries the "users" edge of the Teachers entity.
+func (t *Teachers) QueryUsers() *UserQuery {
+	return NewTeachersClient(t.config).QueryUsers(t)
 }
 
 // Update returns a builder for updating this Teachers.

@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // Administrators is the model entity for the Administrators schema.
@@ -23,8 +24,32 @@ type Administrators struct {
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
 	// Identity holds the value of the "identity" field.
-	Identity     string `json:"identity,omitempty"`
-	selectValues sql.SelectValues
+	Identity string `json:"identity,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the AdministratorsQuery when eager-loading is set.
+	Edges               AdministratorsEdges `json:"edges"`
+	user_administrators *int
+	selectValues        sql.SelectValues
+}
+
+// AdministratorsEdges holds the relations/edges for other nodes in the graph.
+type AdministratorsEdges struct {
+	// Users holds the value of the users edge.
+	Users *User `json:"users,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AdministratorsEdges) UsersOrErr() (*User, error) {
+	if e.Users != nil {
+		return e.Users, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -36,6 +61,8 @@ func (*Administrators) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case administrators.FieldName, administrators.FieldCollege, administrators.FieldPhone, administrators.FieldIdentity:
 			values[i] = new(sql.NullString)
+		case administrators.ForeignKeys[0]: // user_administrators
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -81,6 +108,13 @@ func (a *Administrators) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.Identity = value.String
 			}
+		case administrators.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_administrators", value)
+			} else if value.Valid {
+				a.user_administrators = new(int)
+				*a.user_administrators = int(value.Int64)
+			}
 		default:
 			a.selectValues.Set(columns[i], values[i])
 		}
@@ -92,6 +126,11 @@ func (a *Administrators) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (a *Administrators) Value(name string) (ent.Value, error) {
 	return a.selectValues.Get(name)
+}
+
+// QueryUsers queries the "users" edge of the Administrators entity.
+func (a *Administrators) QueryUsers() *UserQuery {
+	return NewAdministratorsClient(a.config).QueryUsers(a)
 }
 
 // Update returns a builder for updating this Administrators.

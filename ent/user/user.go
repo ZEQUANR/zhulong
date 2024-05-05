@@ -4,6 +4,7 @@ package user
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -17,8 +18,35 @@ const (
 	FieldPassword = "password"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
+	// EdgeAdministrators holds the string denoting the administrators edge name in mutations.
+	EdgeAdministrators = "administrators"
+	// EdgeStudents holds the string denoting the students edge name in mutations.
+	EdgeStudents = "students"
+	// EdgeTeachers holds the string denoting the teachers edge name in mutations.
+	EdgeTeachers = "teachers"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// AdministratorsTable is the table that holds the administrators relation/edge.
+	AdministratorsTable = "administrators"
+	// AdministratorsInverseTable is the table name for the Administrators entity.
+	// It exists in this package in order to avoid circular dependency with the "administrators" package.
+	AdministratorsInverseTable = "administrators"
+	// AdministratorsColumn is the table column denoting the administrators relation/edge.
+	AdministratorsColumn = "user_administrators"
+	// StudentsTable is the table that holds the students relation/edge.
+	StudentsTable = "students"
+	// StudentsInverseTable is the table name for the Students entity.
+	// It exists in this package in order to avoid circular dependency with the "students" package.
+	StudentsInverseTable = "students"
+	// StudentsColumn is the table column denoting the students relation/edge.
+	StudentsColumn = "user_students"
+	// TeachersTable is the table that holds the teachers relation/edge.
+	TeachersTable = "teachers"
+	// TeachersInverseTable is the table name for the Teachers entity.
+	// It exists in this package in order to avoid circular dependency with the "teachers" package.
+	TeachersInverseTable = "teachers"
+	// TeachersColumn is the table column denoting the teachers relation/edge.
+	TeachersColumn = "user_teachers"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -60,4 +88,46 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // ByRole orders the results by the role field.
 func ByRole(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRole, opts...).ToFunc()
+}
+
+// ByAdministratorsField orders the results by administrators field.
+func ByAdministratorsField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAdministratorsStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByStudentsField orders the results by students field.
+func ByStudentsField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStudentsStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByTeachersField orders the results by teachers field.
+func ByTeachersField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTeachersStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newAdministratorsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AdministratorsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, AdministratorsTable, AdministratorsColumn),
+	)
+}
+func newStudentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StudentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, StudentsTable, StudentsColumn),
+	)
+}
+func newTeachersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TeachersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, TeachersTable, TeachersColumn),
+	)
 }

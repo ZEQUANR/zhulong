@@ -4,6 +4,7 @@ package user
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 )
 
@@ -235,6 +236,75 @@ func RoleLT(v int) predicate.User {
 // RoleLTE applies the LTE predicate on the "role" field.
 func RoleLTE(v int) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldRole, v))
+}
+
+// HasAdministrators applies the HasEdge predicate on the "administrators" edge.
+func HasAdministrators() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, AdministratorsTable, AdministratorsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAdministratorsWith applies the HasEdge predicate on the "administrators" edge with a given conditions (other predicates).
+func HasAdministratorsWith(preds ...predicate.Administrators) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAdministratorsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasStudents applies the HasEdge predicate on the "students" edge.
+func HasStudents() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, StudentsTable, StudentsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasStudentsWith applies the HasEdge predicate on the "students" edge with a given conditions (other predicates).
+func HasStudentsWith(preds ...predicate.Students) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newStudentsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTeachers applies the HasEdge predicate on the "teachers" edge.
+func HasTeachers() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, TeachersTable, TeachersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTeachersWith applies the HasEdge predicate on the "teachers" edge with a given conditions (other predicates).
+func HasTeachersWith(preds ...predicate.Teachers) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newTeachersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

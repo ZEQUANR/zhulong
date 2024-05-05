@@ -43,6 +43,8 @@ type AdministratorsMutation struct {
 	phone         *string
 	identity      *string
 	clearedFields map[string]struct{}
+	users         *int
+	clearedusers  bool
 	done          bool
 	oldValue      func(context.Context) (*Administrators, error)
 	predicates    []predicate.Administrators
@@ -290,6 +292,45 @@ func (m *AdministratorsMutation) ResetIdentity() {
 	m.identity = nil
 }
 
+// SetUsersID sets the "users" edge to the User entity by id.
+func (m *AdministratorsMutation) SetUsersID(id int) {
+	m.users = &id
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (m *AdministratorsMutation) ClearUsers() {
+	m.clearedusers = true
+}
+
+// UsersCleared reports if the "users" edge to the User entity was cleared.
+func (m *AdministratorsMutation) UsersCleared() bool {
+	return m.clearedusers
+}
+
+// UsersID returns the "users" edge ID in the mutation.
+func (m *AdministratorsMutation) UsersID() (id int, exists bool) {
+	if m.users != nil {
+		return *m.users, true
+	}
+	return
+}
+
+// UsersIDs returns the "users" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UsersID instead. It exists only for internal usage by the builders.
+func (m *AdministratorsMutation) UsersIDs() (ids []int) {
+	if id := m.users; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUsers resets all changes to the "users" edge.
+func (m *AdministratorsMutation) ResetUsers() {
+	m.users = nil
+	m.clearedusers = false
+}
+
 // Where appends a list predicates to the AdministratorsMutation builder.
 func (m *AdministratorsMutation) Where(ps ...predicate.Administrators) {
 	m.predicates = append(m.predicates, ps...)
@@ -474,19 +515,28 @@ func (m *AdministratorsMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AdministratorsMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.users != nil {
+		edges = append(edges, administrators.EdgeUsers)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *AdministratorsMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case administrators.EdgeUsers:
+		if id := m.users; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AdministratorsMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -498,25 +548,42 @@ func (m *AdministratorsMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AdministratorsMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedusers {
+		edges = append(edges, administrators.EdgeUsers)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *AdministratorsMutation) EdgeCleared(name string) bool {
+	switch name {
+	case administrators.EdgeUsers:
+		return m.clearedusers
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *AdministratorsMutation) ClearEdge(name string) error {
+	switch name {
+	case administrators.EdgeUsers:
+		m.ClearUsers()
+		return nil
+	}
 	return fmt.Errorf("unknown Administrators unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *AdministratorsMutation) ResetEdge(name string) error {
+	switch name {
+	case administrators.EdgeUsers:
+		m.ResetUsers()
+		return nil
+	}
 	return fmt.Errorf("unknown Administrators edge %s", name)
 }
 
@@ -533,6 +600,8 @@ type StudentsMutation struct {
 	class         *string
 	identity      *string
 	clearedFields map[string]struct{}
+	users         *int
+	clearedusers  bool
 	done          bool
 	oldValue      func(context.Context) (*Students, error)
 	predicates    []predicate.Students
@@ -852,6 +921,45 @@ func (m *StudentsMutation) ResetIdentity() {
 	m.identity = nil
 }
 
+// SetUsersID sets the "users" edge to the User entity by id.
+func (m *StudentsMutation) SetUsersID(id int) {
+	m.users = &id
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (m *StudentsMutation) ClearUsers() {
+	m.clearedusers = true
+}
+
+// UsersCleared reports if the "users" edge to the User entity was cleared.
+func (m *StudentsMutation) UsersCleared() bool {
+	return m.clearedusers
+}
+
+// UsersID returns the "users" edge ID in the mutation.
+func (m *StudentsMutation) UsersID() (id int, exists bool) {
+	if m.users != nil {
+		return *m.users, true
+	}
+	return
+}
+
+// UsersIDs returns the "users" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UsersID instead. It exists only for internal usage by the builders.
+func (m *StudentsMutation) UsersIDs() (ids []int) {
+	if id := m.users; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUsers resets all changes to the "users" edge.
+func (m *StudentsMutation) ResetUsers() {
+	m.users = nil
+	m.clearedusers = false
+}
+
 // Where appends a list predicates to the StudentsMutation builder.
 func (m *StudentsMutation) Where(ps ...predicate.Students) {
 	m.predicates = append(m.predicates, ps...)
@@ -1070,19 +1178,28 @@ func (m *StudentsMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *StudentsMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.users != nil {
+		edges = append(edges, students.EdgeUsers)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *StudentsMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case students.EdgeUsers:
+		if id := m.users; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *StudentsMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -1094,25 +1211,42 @@ func (m *StudentsMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *StudentsMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedusers {
+		edges = append(edges, students.EdgeUsers)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *StudentsMutation) EdgeCleared(name string) bool {
+	switch name {
+	case students.EdgeUsers:
+		return m.clearedusers
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *StudentsMutation) ClearEdge(name string) error {
+	switch name {
+	case students.EdgeUsers:
+		m.ClearUsers()
+		return nil
+	}
 	return fmt.Errorf("unknown Students unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *StudentsMutation) ResetEdge(name string) error {
+	switch name {
+	case students.EdgeUsers:
+		m.ResetUsers()
+		return nil
+	}
 	return fmt.Errorf("unknown Students edge %s", name)
 }
 
@@ -1127,6 +1261,8 @@ type TeachersMutation struct {
 	phone         *string
 	identity      *string
 	clearedFields map[string]struct{}
+	users         *int
+	clearedusers  bool
 	done          bool
 	oldValue      func(context.Context) (*Teachers, error)
 	predicates    []predicate.Teachers
@@ -1374,6 +1510,45 @@ func (m *TeachersMutation) ResetIdentity() {
 	m.identity = nil
 }
 
+// SetUsersID sets the "users" edge to the User entity by id.
+func (m *TeachersMutation) SetUsersID(id int) {
+	m.users = &id
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (m *TeachersMutation) ClearUsers() {
+	m.clearedusers = true
+}
+
+// UsersCleared reports if the "users" edge to the User entity was cleared.
+func (m *TeachersMutation) UsersCleared() bool {
+	return m.clearedusers
+}
+
+// UsersID returns the "users" edge ID in the mutation.
+func (m *TeachersMutation) UsersID() (id int, exists bool) {
+	if m.users != nil {
+		return *m.users, true
+	}
+	return
+}
+
+// UsersIDs returns the "users" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UsersID instead. It exists only for internal usage by the builders.
+func (m *TeachersMutation) UsersIDs() (ids []int) {
+	if id := m.users; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUsers resets all changes to the "users" edge.
+func (m *TeachersMutation) ResetUsers() {
+	m.users = nil
+	m.clearedusers = false
+}
+
 // Where appends a list predicates to the TeachersMutation builder.
 func (m *TeachersMutation) Where(ps ...predicate.Teachers) {
 	m.predicates = append(m.predicates, ps...)
@@ -1558,19 +1733,28 @@ func (m *TeachersMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TeachersMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.users != nil {
+		edges = append(edges, teachers.EdgeUsers)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *TeachersMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case teachers.EdgeUsers:
+		if id := m.users; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TeachersMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -1582,42 +1766,65 @@ func (m *TeachersMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TeachersMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedusers {
+		edges = append(edges, teachers.EdgeUsers)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *TeachersMutation) EdgeCleared(name string) bool {
+	switch name {
+	case teachers.EdgeUsers:
+		return m.clearedusers
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *TeachersMutation) ClearEdge(name string) error {
+	switch name {
+	case teachers.EdgeUsers:
+		m.ClearUsers()
+		return nil
+	}
 	return fmt.Errorf("unknown Teachers unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *TeachersMutation) ResetEdge(name string) error {
+	switch name {
+	case teachers.EdgeUsers:
+		m.ResetUsers()
+		return nil
+	}
 	return fmt.Errorf("unknown Teachers edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	account       *string
-	password      *string
-	role          *int
-	addrole       *int
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op                    Op
+	typ                   string
+	id                    *int
+	account               *string
+	password              *string
+	role                  *int
+	addrole               *int
+	clearedFields         map[string]struct{}
+	administrators        *int
+	clearedadministrators bool
+	students              *int
+	clearedstudents       bool
+	teachers              *int
+	clearedteachers       bool
+	done                  bool
+	oldValue              func(context.Context) (*User, error)
+	predicates            []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -1846,6 +2053,123 @@ func (m *UserMutation) ResetRole() {
 	m.addrole = nil
 }
 
+// SetAdministratorsID sets the "administrators" edge to the Administrators entity by id.
+func (m *UserMutation) SetAdministratorsID(id int) {
+	m.administrators = &id
+}
+
+// ClearAdministrators clears the "administrators" edge to the Administrators entity.
+func (m *UserMutation) ClearAdministrators() {
+	m.clearedadministrators = true
+}
+
+// AdministratorsCleared reports if the "administrators" edge to the Administrators entity was cleared.
+func (m *UserMutation) AdministratorsCleared() bool {
+	return m.clearedadministrators
+}
+
+// AdministratorsID returns the "administrators" edge ID in the mutation.
+func (m *UserMutation) AdministratorsID() (id int, exists bool) {
+	if m.administrators != nil {
+		return *m.administrators, true
+	}
+	return
+}
+
+// AdministratorsIDs returns the "administrators" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AdministratorsID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) AdministratorsIDs() (ids []int) {
+	if id := m.administrators; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAdministrators resets all changes to the "administrators" edge.
+func (m *UserMutation) ResetAdministrators() {
+	m.administrators = nil
+	m.clearedadministrators = false
+}
+
+// SetStudentsID sets the "students" edge to the Students entity by id.
+func (m *UserMutation) SetStudentsID(id int) {
+	m.students = &id
+}
+
+// ClearStudents clears the "students" edge to the Students entity.
+func (m *UserMutation) ClearStudents() {
+	m.clearedstudents = true
+}
+
+// StudentsCleared reports if the "students" edge to the Students entity was cleared.
+func (m *UserMutation) StudentsCleared() bool {
+	return m.clearedstudents
+}
+
+// StudentsID returns the "students" edge ID in the mutation.
+func (m *UserMutation) StudentsID() (id int, exists bool) {
+	if m.students != nil {
+		return *m.students, true
+	}
+	return
+}
+
+// StudentsIDs returns the "students" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// StudentsID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) StudentsIDs() (ids []int) {
+	if id := m.students; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetStudents resets all changes to the "students" edge.
+func (m *UserMutation) ResetStudents() {
+	m.students = nil
+	m.clearedstudents = false
+}
+
+// SetTeachersID sets the "teachers" edge to the Teachers entity by id.
+func (m *UserMutation) SetTeachersID(id int) {
+	m.teachers = &id
+}
+
+// ClearTeachers clears the "teachers" edge to the Teachers entity.
+func (m *UserMutation) ClearTeachers() {
+	m.clearedteachers = true
+}
+
+// TeachersCleared reports if the "teachers" edge to the Teachers entity was cleared.
+func (m *UserMutation) TeachersCleared() bool {
+	return m.clearedteachers
+}
+
+// TeachersID returns the "teachers" edge ID in the mutation.
+func (m *UserMutation) TeachersID() (id int, exists bool) {
+	if m.teachers != nil {
+		return *m.teachers, true
+	}
+	return
+}
+
+// TeachersIDs returns the "teachers" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TeachersID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) TeachersIDs() (ids []int) {
+	if id := m.teachers; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTeachers resets all changes to the "teachers" edge.
+func (m *UserMutation) ResetTeachers() {
+	m.teachers = nil
+	m.clearedteachers = false
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -2028,19 +2352,42 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
+	if m.administrators != nil {
+		edges = append(edges, user.EdgeAdministrators)
+	}
+	if m.students != nil {
+		edges = append(edges, user.EdgeStudents)
+	}
+	if m.teachers != nil {
+		edges = append(edges, user.EdgeTeachers)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *UserMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case user.EdgeAdministrators:
+		if id := m.administrators; id != nil {
+			return []ent.Value{*id}
+		}
+	case user.EdgeStudents:
+		if id := m.students; id != nil {
+			return []ent.Value{*id}
+		}
+	case user.EdgeTeachers:
+		if id := m.teachers; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -2052,24 +2399,63 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
+	if m.clearedadministrators {
+		edges = append(edges, user.EdgeAdministrators)
+	}
+	if m.clearedstudents {
+		edges = append(edges, user.EdgeStudents)
+	}
+	if m.clearedteachers {
+		edges = append(edges, user.EdgeTeachers)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *UserMutation) EdgeCleared(name string) bool {
+	switch name {
+	case user.EdgeAdministrators:
+		return m.clearedadministrators
+	case user.EdgeStudents:
+		return m.clearedstudents
+	case user.EdgeTeachers:
+		return m.clearedteachers
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *UserMutation) ClearEdge(name string) error {
+	switch name {
+	case user.EdgeAdministrators:
+		m.ClearAdministrators()
+		return nil
+	case user.EdgeStudents:
+		m.ClearStudents()
+		return nil
+	case user.EdgeTeachers:
+		m.ClearTeachers()
+		return nil
+	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
+	switch name {
+	case user.EdgeAdministrators:
+		m.ResetAdministrators()
+		return nil
+	case user.EdgeStudents:
+		m.ResetStudents()
+		return nil
+	case user.EdgeTeachers:
+		m.ResetTeachers()
+		return nil
+	}
 	return fmt.Errorf("unknown User edge %s", name)
 }

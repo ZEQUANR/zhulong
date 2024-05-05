@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // StudentsCreate is the builder for creating a Students entity.
@@ -53,6 +54,17 @@ func (sc *StudentsCreate) SetClass(s string) *StudentsCreate {
 func (sc *StudentsCreate) SetIdentity(s string) *StudentsCreate {
 	sc.mutation.SetIdentity(s)
 	return sc
+}
+
+// SetUsersID sets the "users" edge to the User entity by ID.
+func (sc *StudentsCreate) SetUsersID(id int) *StudentsCreate {
+	sc.mutation.SetUsersID(id)
+	return sc
+}
+
+// SetUsers sets the "users" edge to the User entity.
+func (sc *StudentsCreate) SetUsers(u *User) *StudentsCreate {
+	return sc.SetUsersID(u.ID)
 }
 
 // Mutation returns the StudentsMutation object of the builder.
@@ -107,6 +119,9 @@ func (sc *StudentsCreate) check() error {
 	if _, ok := sc.mutation.Identity(); !ok {
 		return &ValidationError{Name: "identity", err: errors.New(`ent: missing required field "Students.identity"`)}
 	}
+	if _, ok := sc.mutation.UsersID(); !ok {
+		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Students.users"`)}
+	}
 	return nil
 }
 
@@ -156,6 +171,23 @@ func (sc *StudentsCreate) createSpec() (*Students, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.Identity(); ok {
 		_spec.SetField(students.FieldIdentity, field.TypeString, value)
 		_node.Identity = value
+	}
+	if nodes := sc.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   students.UsersTable,
+			Columns: []string{students.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_students = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

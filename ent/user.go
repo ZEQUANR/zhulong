@@ -8,6 +8,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/teachers"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
@@ -21,8 +24,57 @@ type User struct {
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
 	// Role holds the value of the "role" field.
-	Role         int `json:"role,omitempty"`
+	Role int `json:"role,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Administrators holds the value of the administrators edge.
+	Administrators *Administrators `json:"administrators,omitempty"`
+	// Students holds the value of the students edge.
+	Students *Students `json:"students,omitempty"`
+	// Teachers holds the value of the teachers edge.
+	Teachers *Teachers `json:"teachers,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [3]bool
+}
+
+// AdministratorsOrErr returns the Administrators value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) AdministratorsOrErr() (*Administrators, error) {
+	if e.Administrators != nil {
+		return e.Administrators, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: administrators.Label}
+	}
+	return nil, &NotLoadedError{edge: "administrators"}
+}
+
+// StudentsOrErr returns the Students value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) StudentsOrErr() (*Students, error) {
+	if e.Students != nil {
+		return e.Students, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: students.Label}
+	}
+	return nil, &NotLoadedError{edge: "students"}
+}
+
+// TeachersOrErr returns the Teachers value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) TeachersOrErr() (*Teachers, error) {
+	if e.Teachers != nil {
+		return e.Teachers, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: teachers.Label}
+	}
+	return nil, &NotLoadedError{edge: "teachers"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -84,6 +136,21 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QueryAdministrators queries the "administrators" edge of the User entity.
+func (u *User) QueryAdministrators() *AdministratorsQuery {
+	return NewUserClient(u.config).QueryAdministrators(u)
+}
+
+// QueryStudents queries the "students" edge of the User entity.
+func (u *User) QueryStudents() *StudentsQuery {
+	return NewUserClient(u.config).QueryStudents(u)
+}
+
+// QueryTeachers queries the "teachers" edge of the User entity.
+func (u *User) QueryTeachers() *TeachersQuery {
+	return NewUserClient(u.config).QueryTeachers(u)
 }
 
 // Update returns a builder for updating this User.

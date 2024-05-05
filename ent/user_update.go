@@ -10,7 +10,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ZEQUANR/zhulong/ent/administrators"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/teachers"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
@@ -76,9 +79,84 @@ func (uu *UserUpdate) AddRole(i int) *UserUpdate {
 	return uu
 }
 
+// SetAdministratorsID sets the "administrators" edge to the Administrators entity by ID.
+func (uu *UserUpdate) SetAdministratorsID(id int) *UserUpdate {
+	uu.mutation.SetAdministratorsID(id)
+	return uu
+}
+
+// SetNillableAdministratorsID sets the "administrators" edge to the Administrators entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableAdministratorsID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetAdministratorsID(*id)
+	}
+	return uu
+}
+
+// SetAdministrators sets the "administrators" edge to the Administrators entity.
+func (uu *UserUpdate) SetAdministrators(a *Administrators) *UserUpdate {
+	return uu.SetAdministratorsID(a.ID)
+}
+
+// SetStudentsID sets the "students" edge to the Students entity by ID.
+func (uu *UserUpdate) SetStudentsID(id int) *UserUpdate {
+	uu.mutation.SetStudentsID(id)
+	return uu
+}
+
+// SetNillableStudentsID sets the "students" edge to the Students entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableStudentsID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetStudentsID(*id)
+	}
+	return uu
+}
+
+// SetStudents sets the "students" edge to the Students entity.
+func (uu *UserUpdate) SetStudents(s *Students) *UserUpdate {
+	return uu.SetStudentsID(s.ID)
+}
+
+// SetTeachersID sets the "teachers" edge to the Teachers entity by ID.
+func (uu *UserUpdate) SetTeachersID(id int) *UserUpdate {
+	uu.mutation.SetTeachersID(id)
+	return uu
+}
+
+// SetNillableTeachersID sets the "teachers" edge to the Teachers entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableTeachersID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetTeachersID(*id)
+	}
+	return uu
+}
+
+// SetTeachers sets the "teachers" edge to the Teachers entity.
+func (uu *UserUpdate) SetTeachers(t *Teachers) *UserUpdate {
+	return uu.SetTeachersID(t.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearAdministrators clears the "administrators" edge to the Administrators entity.
+func (uu *UserUpdate) ClearAdministrators() *UserUpdate {
+	uu.mutation.ClearAdministrators()
+	return uu
+}
+
+// ClearStudents clears the "students" edge to the Students entity.
+func (uu *UserUpdate) ClearStudents() *UserUpdate {
+	uu.mutation.ClearStudents()
+	return uu
+}
+
+// ClearTeachers clears the "teachers" edge to the Teachers entity.
+func (uu *UserUpdate) ClearTeachers() *UserUpdate {
+	uu.mutation.ClearTeachers()
+	return uu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -128,6 +206,93 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.AddedRole(); ok {
 		_spec.AddField(user.FieldRole, field.TypeInt, value)
+	}
+	if uu.mutation.AdministratorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AdministratorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.StudentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.StudentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.TeachersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.TeachersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -198,9 +363,84 @@ func (uuo *UserUpdateOne) AddRole(i int) *UserUpdateOne {
 	return uuo
 }
 
+// SetAdministratorsID sets the "administrators" edge to the Administrators entity by ID.
+func (uuo *UserUpdateOne) SetAdministratorsID(id int) *UserUpdateOne {
+	uuo.mutation.SetAdministratorsID(id)
+	return uuo
+}
+
+// SetNillableAdministratorsID sets the "administrators" edge to the Administrators entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAdministratorsID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetAdministratorsID(*id)
+	}
+	return uuo
+}
+
+// SetAdministrators sets the "administrators" edge to the Administrators entity.
+func (uuo *UserUpdateOne) SetAdministrators(a *Administrators) *UserUpdateOne {
+	return uuo.SetAdministratorsID(a.ID)
+}
+
+// SetStudentsID sets the "students" edge to the Students entity by ID.
+func (uuo *UserUpdateOne) SetStudentsID(id int) *UserUpdateOne {
+	uuo.mutation.SetStudentsID(id)
+	return uuo
+}
+
+// SetNillableStudentsID sets the "students" edge to the Students entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableStudentsID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetStudentsID(*id)
+	}
+	return uuo
+}
+
+// SetStudents sets the "students" edge to the Students entity.
+func (uuo *UserUpdateOne) SetStudents(s *Students) *UserUpdateOne {
+	return uuo.SetStudentsID(s.ID)
+}
+
+// SetTeachersID sets the "teachers" edge to the Teachers entity by ID.
+func (uuo *UserUpdateOne) SetTeachersID(id int) *UserUpdateOne {
+	uuo.mutation.SetTeachersID(id)
+	return uuo
+}
+
+// SetNillableTeachersID sets the "teachers" edge to the Teachers entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTeachersID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetTeachersID(*id)
+	}
+	return uuo
+}
+
+// SetTeachers sets the "teachers" edge to the Teachers entity.
+func (uuo *UserUpdateOne) SetTeachers(t *Teachers) *UserUpdateOne {
+	return uuo.SetTeachersID(t.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearAdministrators clears the "administrators" edge to the Administrators entity.
+func (uuo *UserUpdateOne) ClearAdministrators() *UserUpdateOne {
+	uuo.mutation.ClearAdministrators()
+	return uuo
+}
+
+// ClearStudents clears the "students" edge to the Students entity.
+func (uuo *UserUpdateOne) ClearStudents() *UserUpdateOne {
+	uuo.mutation.ClearStudents()
+	return uuo
+}
+
+// ClearTeachers clears the "teachers" edge to the Teachers entity.
+func (uuo *UserUpdateOne) ClearTeachers() *UserUpdateOne {
+	uuo.mutation.ClearTeachers()
+	return uuo
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -280,6 +520,93 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.AddedRole(); ok {
 		_spec.AddField(user.FieldRole, field.TypeInt, value)
+	}
+	if uuo.mutation.AdministratorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AdministratorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.StudentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.StudentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.TeachersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.TeachersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

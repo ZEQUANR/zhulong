@@ -15,12 +15,21 @@ var (
 		{Name: "college", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString},
 		{Name: "identity", Type: field.TypeString},
+		{Name: "user_administrators", Type: field.TypeInt, Unique: true},
 	}
 	// AdministratorsTable holds the schema information for the "administrators" table.
 	AdministratorsTable = &schema.Table{
 		Name:       "administrators",
 		Columns:    AdministratorsColumns,
 		PrimaryKey: []*schema.Column{AdministratorsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "administrators_users_administrators",
+				Columns:    []*schema.Column{AdministratorsColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// StudentsColumns holds the columns for the "students" table.
 	StudentsColumns = []*schema.Column{
@@ -31,12 +40,21 @@ var (
 		{Name: "subject", Type: field.TypeString},
 		{Name: "class", Type: field.TypeString},
 		{Name: "identity", Type: field.TypeString},
+		{Name: "user_students", Type: field.TypeInt, Unique: true},
 	}
 	// StudentsTable holds the schema information for the "students" table.
 	StudentsTable = &schema.Table{
 		Name:       "students",
 		Columns:    StudentsColumns,
 		PrimaryKey: []*schema.Column{StudentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "students_users_students",
+				Columns:    []*schema.Column{StudentsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// TeachersColumns holds the columns for the "teachers" table.
 	TeachersColumns = []*schema.Column{
@@ -45,12 +63,21 @@ var (
 		{Name: "college", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString},
 		{Name: "identity", Type: field.TypeString},
+		{Name: "user_teachers", Type: field.TypeInt, Unique: true},
 	}
 	// TeachersTable holds the schema information for the "teachers" table.
 	TeachersTable = &schema.Table{
 		Name:       "teachers",
 		Columns:    TeachersColumns,
 		PrimaryKey: []*schema.Column{TeachersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "teachers_users_teachers",
+				Columns:    []*schema.Column{TeachersColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -75,4 +102,7 @@ var (
 )
 
 func init() {
+	AdministratorsTable.ForeignKeys[0].RefTable = UsersTable
+	StudentsTable.ForeignKeys[0].RefTable = UsersTable
+	TeachersTable.ForeignKeys[0].RefTable = UsersTable
 }

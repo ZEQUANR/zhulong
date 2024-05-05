@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // AdministratorsQuery is the builder for querying Administrators entities.
@@ -21,6 +22,8 @@ type AdministratorsQuery struct {
 	order      []administrators.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Administrators
+	withUsers  *UserQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -55,6 +58,28 @@ func (aq *AdministratorsQuery) Unique(unique bool) *AdministratorsQuery {
 func (aq *AdministratorsQuery) Order(o ...administrators.OrderOption) *AdministratorsQuery {
 	aq.order = append(aq.order, o...)
 	return aq
+}
+
+// QueryUsers chains the current query on the "users" edge.
+func (aq *AdministratorsQuery) QueryUsers() *UserQuery {
+	query := (&UserClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(administrators.Table, administrators.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, administrators.UsersTable, administrators.UsersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Administrators entity from the query.
@@ -249,10 +274,22 @@ func (aq *AdministratorsQuery) Clone() *AdministratorsQuery {
 		order:      append([]administrators.OrderOption{}, aq.order...),
 		inters:     append([]Interceptor{}, aq.inters...),
 		predicates: append([]predicate.Administrators{}, aq.predicates...),
+		withUsers:  aq.withUsers.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
 	}
+}
+
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AdministratorsQuery) WithUsers(opts ...func(*UserQuery)) *AdministratorsQuery {
+	query := (&UserClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withUsers = query
+	return aq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -331,15 +368,26 @@ func (aq *AdministratorsQuery) prepareQuery(ctx context.Context) error {
 
 func (aq *AdministratorsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Administrators, error) {
 	var (
-		nodes = []*Administrators{}
-		_spec = aq.querySpec()
+		nodes       = []*Administrators{}
+		withFKs     = aq.withFKs
+		_spec       = aq.querySpec()
+		loadedTypes = [1]bool{
+			aq.withUsers != nil,
+		}
 	)
+	if aq.withUsers != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, administrators.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Administrators).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Administrators{config: aq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -351,7 +399,46 @@ func (aq *AdministratorsQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := aq.withUsers; query != nil {
+		if err := aq.loadUsers(ctx, query, nodes, nil,
+			func(n *Administrators, e *User) { n.Edges.Users = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (aq *AdministratorsQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Administrators, init func(*Administrators), assign func(*Administrators, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Administrators)
+	for i := range nodes {
+		if nodes[i].user_administrators == nil {
+			continue
+		}
+		fk := *nodes[i].user_administrators
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_administrators" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (aq *AdministratorsQuery) sqlCount(ctx context.Context) (int, error) {

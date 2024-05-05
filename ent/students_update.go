@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // StudentsUpdate is the builder for updating Students entities.
@@ -111,9 +112,26 @@ func (su *StudentsUpdate) SetNillableIdentity(s *string) *StudentsUpdate {
 	return su
 }
 
+// SetUsersID sets the "users" edge to the User entity by ID.
+func (su *StudentsUpdate) SetUsersID(id int) *StudentsUpdate {
+	su.mutation.SetUsersID(id)
+	return su
+}
+
+// SetUsers sets the "users" edge to the User entity.
+func (su *StudentsUpdate) SetUsers(u *User) *StudentsUpdate {
+	return su.SetUsersID(u.ID)
+}
+
 // Mutation returns the StudentsMutation object of the builder.
 func (su *StudentsUpdate) Mutation() *StudentsMutation {
 	return su.mutation
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (su *StudentsUpdate) ClearUsers() *StudentsUpdate {
+	su.mutation.ClearUsers()
+	return su
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -143,7 +161,18 @@ func (su *StudentsUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (su *StudentsUpdate) check() error {
+	if _, ok := su.mutation.UsersID(); su.mutation.UsersCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Students.users"`)
+	}
+	return nil
+}
+
 func (su *StudentsUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := su.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(students.Table, students.Columns, sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt))
 	if ps := su.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -169,6 +198,35 @@ func (su *StudentsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.Identity(); ok {
 		_spec.SetField(students.FieldIdentity, field.TypeString, value)
+	}
+	if su.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   students.UsersTable,
+			Columns: []string{students.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   students.UsersTable,
+			Columns: []string{students.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -274,9 +332,26 @@ func (suo *StudentsUpdateOne) SetNillableIdentity(s *string) *StudentsUpdateOne 
 	return suo
 }
 
+// SetUsersID sets the "users" edge to the User entity by ID.
+func (suo *StudentsUpdateOne) SetUsersID(id int) *StudentsUpdateOne {
+	suo.mutation.SetUsersID(id)
+	return suo
+}
+
+// SetUsers sets the "users" edge to the User entity.
+func (suo *StudentsUpdateOne) SetUsers(u *User) *StudentsUpdateOne {
+	return suo.SetUsersID(u.ID)
+}
+
 // Mutation returns the StudentsMutation object of the builder.
 func (suo *StudentsUpdateOne) Mutation() *StudentsMutation {
 	return suo.mutation
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (suo *StudentsUpdateOne) ClearUsers() *StudentsUpdateOne {
+	suo.mutation.ClearUsers()
+	return suo
 }
 
 // Where appends a list predicates to the StudentsUpdate builder.
@@ -319,7 +394,18 @@ func (suo *StudentsUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (suo *StudentsUpdateOne) check() error {
+	if _, ok := suo.mutation.UsersID(); suo.mutation.UsersCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Students.users"`)
+	}
+	return nil
+}
+
 func (suo *StudentsUpdateOne) sqlSave(ctx context.Context) (_node *Students, err error) {
+	if err := suo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(students.Table, students.Columns, sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt))
 	id, ok := suo.mutation.ID()
 	if !ok {
@@ -362,6 +448,35 @@ func (suo *StudentsUpdateOne) sqlSave(ctx context.Context) (_node *Students, err
 	}
 	if value, ok := suo.mutation.Identity(); ok {
 		_spec.SetField(students.FieldIdentity, field.TypeString, value)
+	}
+	if suo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   students.UsersTable,
+			Columns: []string{students.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   students.UsersTable,
+			Columns: []string{students.UsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Students{config: suo.config}
 	_spec.Assign = _node.assignValues

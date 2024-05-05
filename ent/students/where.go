@@ -4,6 +4,7 @@ package students
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 )
 
@@ -470,6 +471,29 @@ func IdentityEqualFold(v string) predicate.Students {
 // IdentityContainsFold applies the ContainsFold predicate on the "identity" field.
 func IdentityContainsFold(v string) predicate.Students {
 	return predicate.Students(sql.FieldContainsFold(FieldIdentity, v))
+}
+
+// HasUsers applies the HasEdge predicate on the "users" edge.
+func HasUsers() predicate.Students {
+	return predicate.Students(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, UsersTable, UsersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUsersWith applies the HasEdge predicate on the "users" edge with a given conditions (other predicates).
+func HasUsersWith(preds ...predicate.User) predicate.Students {
+	return predicate.Students(func(s *sql.Selector) {
+		step := newUsersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.
