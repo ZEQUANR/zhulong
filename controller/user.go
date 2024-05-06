@@ -56,18 +56,155 @@ func UserInfo(c *gin.Context) {
 		return
 	}
 
+	if user.Role == 0 {
+		info, err := services.QueryAdministratorsById(int(id.(float64)))
+		if err != nil {
+			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"user_id":  user.ID,
+			"account":  user.Account,
+			"role":     user.Role,
+			"name":     info.Name,
+			"identity": info.Identity,
+			"college":  info.College,
+			"phone":    info.Phone,
+		})
+
+		return
+	}
+
+	if user.Role == 1 {
+		info, err := services.QueryTeachersById(int(id.(float64)))
+		if err != nil {
+			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"user_id":  user.ID,
+			"account":  user.Account,
+			"role":     user.Role,
+			"name":     info.Name,
+			"college":  info.College,
+			"phone":    info.Phone,
+			"identity": info.Identity,
+		})
+
+		return
+	}
+
+	if user.Role == 2 {
+		info, err := services.QueryStudentsById(int(id.(float64)))
+		if err != nil {
+			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"user_id":  user.ID,
+			"account":  user.Account,
+			"role":     user.Role,
+			"name":     info.Name,
+			"college":  info.College,
+			"phone":    info.Phone,
+			"subject":  info.Subject,
+			"class":    info.Class,
+			"identity": info.Identity,
+		})
+
+		return
+	}
+}
+
+func UserEditor(c *gin.Context) {
+	token, err := utils.ExtractToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
+		return
+	}
+
+	id, err := utils.ParseAToken(token, "user_id")
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(int(id.(float64)))
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"user_id": user.ID,
 		"account": user.Account,
 		"role":    user.Role,
 	})
-}
 
-func UserEditor(c *gin.Context) {
+	// if user.Role == 0 {
+	// 	info, err := services.QueryAdministratorsById(int(id.(float64)))
+	// 	if err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+	// 		return
+	// 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"user_id":  user.ID,
+	// 		"account":  user.Account,
+	// 		"role":     user.Role,
+	// 		"name":     info.Name,
+	// 		"identity": info.Identity,
+	// 		"college":  info.College,
+	// 		"phone":    info.Phone,
+	// 	})
+
+	// 	return
+	// }
+
+	// if user.Role == 1 {
+	// 	info, err := services.QueryTeachersById(int(id.(float64)))
+	// 	if err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+	// 		return
+	// 	}
+
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"user_id":  user.ID,
+	// 		"account":  user.Account,
+	// 		"role":     user.Role,
+	// 		"name":     info.Name,
+	// 		"college":  info.College,
+	// 		"phone":    info.Phone,
+	// 		"identity": info.Identity,
+	// 	})
+
+	// 	return
+	// }
+
+	// if user.Role == 2 {
+	// 	info, err := services.QueryStudentsById(int(id.(float64)))
+	// 	if err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+	// 		return
+	// 	}
+
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"user_id":  user.ID,
+	// 		"account":  user.Account,
+	// 		"role":     user.Role,
+	// 		"name":     info.Name,
+	// 		"college":  info.College,
+	// 		"phone":    info.Phone,
+	// 		"subject":  info.Subject,
+	// 		"class":    info.Class,
+	// 		"identity": info.Identity,
+	// 	})
+
+	// 	return
+	// }
 }
 
 func UserRegister(c *gin.Context) {

@@ -29,7 +29,7 @@ func QueryUserByAccountPassword(account string, password string) (*ent.User, err
 func QueryUserById(id int) (*ent.User, error) {
 	ctx := context.Background()
 
-	u, err := client.User.
+	user, err := client.User.
 		Query().
 		Select().
 		Where(user.ID(id)).
@@ -38,5 +38,71 @@ func QueryUserById(id int) (*ent.User, error) {
 		return nil, fmt.Errorf("func: QueryUserById %w", err)
 	}
 
-	return u, nil
+	return user, nil
+}
+
+func QueryStudentsById(id int) (*ent.Students, error) {
+	ctx := context.Background()
+
+	user, err := client.User.
+		Query().
+		Select().
+		Where(user.ID(id)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryStudentsById %w", err)
+	}
+
+	info, err := user.
+		QueryStudents().
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryStudentsById %w", err)
+	}
+
+	return info, nil
+}
+
+func QueryTeachersById(id int) (*ent.Teachers, error) {
+	ctx := context.Background()
+
+	user, err := client.User.
+		Query().
+		Select().
+		Where(user.ID(id)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryTeachersById %w", err)
+	}
+
+	info, err := user.
+		QueryTeachers().
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryTeachersById %w", err)
+	}
+
+	return info, nil
+}
+
+func QueryAdministratorsById(id int) (*ent.Administrators, error) {
+	ctx := context.Background()
+
+	user, err := client.User.
+		Query().
+		Select().
+		Where(user.ID(id)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryAdministratorsById %w", err)
+	}
+
+	info, err := user.
+		QueryAdministrators().
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryAdministratorsById %w", err)
+	}
+
+	return info, nil
 }
