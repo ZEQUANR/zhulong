@@ -39,9 +39,11 @@ type UserEdges struct {
 	Students *Students `json:"students,omitempty"`
 	// Teachers holds the value of the teachers edge.
 	Teachers *Teachers `json:"teachers,omitempty"`
+	// Files holds the value of the files edge.
+	Files []*Thesis `json:"files,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // AdministratorsOrErr returns the Administrators value or an error if the edge
@@ -75,6 +77,15 @@ func (e UserEdges) TeachersOrErr() (*Teachers, error) {
 		return nil, &NotFoundError{label: teachers.Label}
 	}
 	return nil, &NotLoadedError{edge: "teachers"}
+}
+
+// FilesOrErr returns the Files value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FilesOrErr() ([]*Thesis, error) {
+	if e.loadedTypes[3] {
+		return e.Files, nil
+	}
+	return nil, &NotLoadedError{edge: "files"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -151,6 +162,11 @@ func (u *User) QueryStudents() *StudentsQuery {
 // QueryTeachers queries the "teachers" edge of the User entity.
 func (u *User) QueryTeachers() *TeachersQuery {
 	return NewUserClient(u.config).QueryTeachers(u)
+}
+
+// QueryFiles queries the "files" edge of the User entity.
+func (u *User) QueryFiles() *ThesisQuery {
+	return NewUserClient(u.config).QueryFiles(u)
 }
 
 // Update returns a builder for updating this User.

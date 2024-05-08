@@ -15,6 +15,7 @@ import (
 	"github.com/ZEQUANR/zhulong/ent/administrators"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
@@ -79,6 +80,7 @@ func checkColumn(table, column string) error {
 			administrators.Table: administrators.ValidColumn,
 			students.Table:       students.ValidColumn,
 			teachers.Table:       teachers.ValidColumn,
+			thesis.Table:         thesis.ValidColumn,
 			user.Table:           user.ValidColumn,
 		})
 	})

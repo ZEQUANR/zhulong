@@ -2,8 +2,21 @@
 
 package ent
 
+import (
+	"time"
+
+	"github.com/ZEQUANR/zhulong/ent/schema"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	thesisFields := schema.Thesis{}.Fields()
+	_ = thesisFields
+	// thesisDescTime is the schema descriptor for time field.
+	thesisDescTime := thesisFields[1].Descriptor()
+	// thesis.DefaultTime holds the default value on creation for the time field.
+	thesis.DefaultTime = thesisDescTime.Default.(func() time.Time)
 }

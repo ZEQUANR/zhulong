@@ -45,6 +45,18 @@ func (f TeachersFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TeachersMutation", m)
 }
 
+// The ThesisFunc type is an adapter to allow the use of ordinary
+// function as Thesis mutator.
+type ThesisFunc func(context.Context, *ent.ThesisMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ThesisFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ThesisMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ThesisMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

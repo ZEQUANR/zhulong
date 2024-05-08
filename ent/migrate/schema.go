@@ -79,6 +79,30 @@ var (
 			},
 		},
 	}
+	// ThesesColumns holds the columns for the "theses" table.
+	ThesesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "time", Type: field.TypeTime},
+		{Name: "url", Type: field.TypeString, Unique: true},
+		{Name: "type", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeInt},
+		{Name: "user_files", Type: field.TypeInt, Nullable: true},
+	}
+	// ThesesTable holds the schema information for the "theses" table.
+	ThesesTable = &schema.Table{
+		Name:       "theses",
+		Columns:    ThesesColumns,
+		PrimaryKey: []*schema.Column{ThesesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "theses_users_files",
+				Columns:    []*schema.Column{ThesesColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -97,6 +121,7 @@ var (
 		AdministratorsTable,
 		StudentsTable,
 		TeachersTable,
+		ThesesTable,
 		UsersTable,
 	}
 )
@@ -105,4 +130,5 @@ func init() {
 	AdministratorsTable.ForeignKeys[0].RefTable = UsersTable
 	StudentsTable.ForeignKeys[0].RefTable = UsersTable
 	TeachersTable.ForeignKeys[0].RefTable = UsersTable
+	ThesesTable.ForeignKeys[0].RefTable = UsersTable
 }

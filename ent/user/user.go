@@ -24,6 +24,8 @@ const (
 	EdgeStudents = "students"
 	// EdgeTeachers holds the string denoting the teachers edge name in mutations.
 	EdgeTeachers = "teachers"
+	// EdgeFiles holds the string denoting the files edge name in mutations.
+	EdgeFiles = "files"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// AdministratorsTable is the table that holds the administrators relation/edge.
@@ -47,6 +49,13 @@ const (
 	TeachersInverseTable = "teachers"
 	// TeachersColumn is the table column denoting the teachers relation/edge.
 	TeachersColumn = "user_teachers"
+	// FilesTable is the table that holds the files relation/edge.
+	FilesTable = "theses"
+	// FilesInverseTable is the table name for the Thesis entity.
+	// It exists in this package in order to avoid circular dependency with the "thesis" package.
+	FilesInverseTable = "theses"
+	// FilesColumn is the table column denoting the files relation/edge.
+	FilesColumn = "user_files"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -110,6 +119,20 @@ func ByTeachersField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTeachersStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByFilesCount orders the results by files count.
+func ByFilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFilesStep(), opts...)
+	}
+}
+
+// ByFiles orders the results by files terms.
+func ByFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newAdministratorsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -129,5 +152,12 @@ func newTeachersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TeachersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, TeachersTable, TeachersColumn),
+	)
+}
+func newFilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, FilesTable, FilesColumn),
 	)
 }

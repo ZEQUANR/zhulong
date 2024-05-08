@@ -15,5 +15,8 @@ type Students func(*sql.Selector)
 // Teachers is the predicate function for teachers builders.
 type Teachers func(*sql.Selector)
 
+// Thesis is the predicate function for thesis builders.
+type Thesis func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

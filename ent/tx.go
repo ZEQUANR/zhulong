@@ -18,6 +18,8 @@ type Tx struct {
 	Students *StudentsClient
 	// Teachers is the client for interacting with the Teachers builders.
 	Teachers *TeachersClient
+	// Thesis is the client for interacting with the Thesis builders.
+	Thesis *ThesisClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -154,6 +156,7 @@ func (tx *Tx) init() {
 	tx.Administrators = NewAdministratorsClient(tx.config)
 	tx.Students = NewStudentsClient(tx.config)
 	tx.Teachers = NewTeachersClient(tx.config)
+	tx.Thesis = NewThesisClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

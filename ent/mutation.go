@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -14,6 +15,7 @@ import (
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
@@ -29,6 +31,7 @@ const (
 	TypeAdministrators = "Administrators"
 	TypeStudents       = "Students"
 	TypeTeachers       = "Teachers"
+	TypeThesis         = "Thesis"
 	TypeUser           = "User"
 )
 
@@ -1805,6 +1808,684 @@ func (m *TeachersMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Teachers edge %s", name)
 }
 
+// ThesisMutation represents an operation that mutates the Thesis nodes in the graph.
+type ThesisMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	name             *string
+	time             *time.Time
+	url              *string
+	_type            *int
+	add_type         *int
+	status           *int
+	addstatus        *int
+	clearedFields    map[string]struct{}
+	uploaders        *int
+	cleareduploaders bool
+	done             bool
+	oldValue         func(context.Context) (*Thesis, error)
+	predicates       []predicate.Thesis
+}
+
+var _ ent.Mutation = (*ThesisMutation)(nil)
+
+// thesisOption allows management of the mutation configuration using functional options.
+type thesisOption func(*ThesisMutation)
+
+// newThesisMutation creates new mutation for the Thesis entity.
+func newThesisMutation(c config, op Op, opts ...thesisOption) *ThesisMutation {
+	m := &ThesisMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeThesis,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withThesisID sets the ID field of the mutation.
+func withThesisID(id int) thesisOption {
+	return func(m *ThesisMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Thesis
+		)
+		m.oldValue = func(ctx context.Context) (*Thesis, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Thesis.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withThesis sets the old Thesis of the mutation.
+func withThesis(node *Thesis) thesisOption {
+	return func(m *ThesisMutation) {
+		m.oldValue = func(context.Context) (*Thesis, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ThesisMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ThesisMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ThesisMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ThesisMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Thesis.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *ThesisMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ThesisMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ThesisMutation) ResetName() {
+	m.name = nil
+}
+
+// SetTime sets the "time" field.
+func (m *ThesisMutation) SetTime(t time.Time) {
+	m.time = &t
+}
+
+// Time returns the value of the "time" field in the mutation.
+func (m *ThesisMutation) Time() (r time.Time, exists bool) {
+	v := m.time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTime returns the old "time" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTime: %w", err)
+	}
+	return oldValue.Time, nil
+}
+
+// ResetTime resets all changes to the "time" field.
+func (m *ThesisMutation) ResetTime() {
+	m.time = nil
+}
+
+// SetURL sets the "url" field.
+func (m *ThesisMutation) SetURL(s string) {
+	m.url = &s
+}
+
+// URL returns the value of the "url" field in the mutation.
+func (m *ThesisMutation) URL() (r string, exists bool) {
+	v := m.url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURL returns the old "url" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURL: %w", err)
+	}
+	return oldValue.URL, nil
+}
+
+// ResetURL resets all changes to the "url" field.
+func (m *ThesisMutation) ResetURL() {
+	m.url = nil
+}
+
+// SetType sets the "type" field.
+func (m *ThesisMutation) SetType(i int) {
+	m._type = &i
+	m.add_type = nil
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *ThesisMutation) GetType() (r int, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldType(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// AddType adds i to the "type" field.
+func (m *ThesisMutation) AddType(i int) {
+	if m.add_type != nil {
+		*m.add_type += i
+	} else {
+		m.add_type = &i
+	}
+}
+
+// AddedType returns the value that was added to the "type" field in this mutation.
+func (m *ThesisMutation) AddedType() (r int, exists bool) {
+	v := m.add_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *ThesisMutation) ResetType() {
+	m._type = nil
+	m.add_type = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *ThesisMutation) SetStatus(i int) {
+	m.status = &i
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ThesisMutation) Status() (r int, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldStatus(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds i to the "status" field.
+func (m *ThesisMutation) AddStatus(i int) {
+	if m.addstatus != nil {
+		*m.addstatus += i
+	} else {
+		m.addstatus = &i
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *ThesisMutation) AddedStatus() (r int, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ThesisMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetUploadersID sets the "uploaders" edge to the User entity by id.
+func (m *ThesisMutation) SetUploadersID(id int) {
+	m.uploaders = &id
+}
+
+// ClearUploaders clears the "uploaders" edge to the User entity.
+func (m *ThesisMutation) ClearUploaders() {
+	m.cleareduploaders = true
+}
+
+// UploadersCleared reports if the "uploaders" edge to the User entity was cleared.
+func (m *ThesisMutation) UploadersCleared() bool {
+	return m.cleareduploaders
+}
+
+// UploadersID returns the "uploaders" edge ID in the mutation.
+func (m *ThesisMutation) UploadersID() (id int, exists bool) {
+	if m.uploaders != nil {
+		return *m.uploaders, true
+	}
+	return
+}
+
+// UploadersIDs returns the "uploaders" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UploadersID instead. It exists only for internal usage by the builders.
+func (m *ThesisMutation) UploadersIDs() (ids []int) {
+	if id := m.uploaders; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUploaders resets all changes to the "uploaders" edge.
+func (m *ThesisMutation) ResetUploaders() {
+	m.uploaders = nil
+	m.cleareduploaders = false
+}
+
+// Where appends a list predicates to the ThesisMutation builder.
+func (m *ThesisMutation) Where(ps ...predicate.Thesis) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ThesisMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ThesisMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Thesis, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ThesisMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ThesisMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Thesis).
+func (m *ThesisMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ThesisMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.name != nil {
+		fields = append(fields, thesis.FieldName)
+	}
+	if m.time != nil {
+		fields = append(fields, thesis.FieldTime)
+	}
+	if m.url != nil {
+		fields = append(fields, thesis.FieldURL)
+	}
+	if m._type != nil {
+		fields = append(fields, thesis.FieldType)
+	}
+	if m.status != nil {
+		fields = append(fields, thesis.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ThesisMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case thesis.FieldName:
+		return m.Name()
+	case thesis.FieldTime:
+		return m.Time()
+	case thesis.FieldURL:
+		return m.URL()
+	case thesis.FieldType:
+		return m.GetType()
+	case thesis.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ThesisMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case thesis.FieldName:
+		return m.OldName(ctx)
+	case thesis.FieldTime:
+		return m.OldTime(ctx)
+	case thesis.FieldURL:
+		return m.OldURL(ctx)
+	case thesis.FieldType:
+		return m.OldType(ctx)
+	case thesis.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown Thesis field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ThesisMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case thesis.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case thesis.FieldTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTime(v)
+		return nil
+	case thesis.FieldURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURL(v)
+		return nil
+	case thesis.FieldType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case thesis.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Thesis field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ThesisMutation) AddedFields() []string {
+	var fields []string
+	if m.add_type != nil {
+		fields = append(fields, thesis.FieldType)
+	}
+	if m.addstatus != nil {
+		fields = append(fields, thesis.FieldStatus)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ThesisMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case thesis.FieldType:
+		return m.AddedType()
+	case thesis.FieldStatus:
+		return m.AddedStatus()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ThesisMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case thesis.FieldType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddType(v)
+		return nil
+	case thesis.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Thesis numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ThesisMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ThesisMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ThesisMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Thesis nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ThesisMutation) ResetField(name string) error {
+	switch name {
+	case thesis.FieldName:
+		m.ResetName()
+		return nil
+	case thesis.FieldTime:
+		m.ResetTime()
+		return nil
+	case thesis.FieldURL:
+		m.ResetURL()
+		return nil
+	case thesis.FieldType:
+		m.ResetType()
+		return nil
+	case thesis.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Thesis field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ThesisMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.uploaders != nil {
+		edges = append(edges, thesis.EdgeUploaders)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ThesisMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case thesis.EdgeUploaders:
+		if id := m.uploaders; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ThesisMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ThesisMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ThesisMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareduploaders {
+		edges = append(edges, thesis.EdgeUploaders)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ThesisMutation) EdgeCleared(name string) bool {
+	switch name {
+	case thesis.EdgeUploaders:
+		return m.cleareduploaders
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ThesisMutation) ClearEdge(name string) error {
+	switch name {
+	case thesis.EdgeUploaders:
+		m.ClearUploaders()
+		return nil
+	}
+	return fmt.Errorf("unknown Thesis unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ThesisMutation) ResetEdge(name string) error {
+	switch name {
+	case thesis.EdgeUploaders:
+		m.ResetUploaders()
+		return nil
+	}
+	return fmt.Errorf("unknown Thesis edge %s", name)
+}
+
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
@@ -1822,6 +2503,9 @@ type UserMutation struct {
 	clearedstudents       bool
 	teachers              *int
 	clearedteachers       bool
+	files                 map[int]struct{}
+	removedfiles          map[int]struct{}
+	clearedfiles          bool
 	done                  bool
 	oldValue              func(context.Context) (*User, error)
 	predicates            []predicate.User
@@ -2170,6 +2854,60 @@ func (m *UserMutation) ResetTeachers() {
 	m.clearedteachers = false
 }
 
+// AddFileIDs adds the "files" edge to the Thesis entity by ids.
+func (m *UserMutation) AddFileIDs(ids ...int) {
+	if m.files == nil {
+		m.files = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.files[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFiles clears the "files" edge to the Thesis entity.
+func (m *UserMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared reports if the "files" edge to the Thesis entity was cleared.
+func (m *UserMutation) FilesCleared() bool {
+	return m.clearedfiles
+}
+
+// RemoveFileIDs removes the "files" edge to the Thesis entity by IDs.
+func (m *UserMutation) RemoveFileIDs(ids ...int) {
+	if m.removedfiles == nil {
+		m.removedfiles = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.files, ids[i])
+		m.removedfiles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFiles returns the removed IDs of the "files" edge to the Thesis entity.
+func (m *UserMutation) RemovedFilesIDs() (ids []int) {
+	for id := range m.removedfiles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FilesIDs returns the "files" edge IDs in the mutation.
+func (m *UserMutation) FilesIDs() (ids []int) {
+	for id := range m.files {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFiles resets all changes to the "files" edge.
+func (m *UserMutation) ResetFiles() {
+	m.files = nil
+	m.clearedfiles = false
+	m.removedfiles = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -2352,7 +3090,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.administrators != nil {
 		edges = append(edges, user.EdgeAdministrators)
 	}
@@ -2361,6 +3099,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.teachers != nil {
 		edges = append(edges, user.EdgeTeachers)
+	}
+	if m.files != nil {
+		edges = append(edges, user.EdgeFiles)
 	}
 	return edges
 }
@@ -2381,25 +3122,42 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.teachers; id != nil {
 			return []ent.Value{*id}
 		}
+	case user.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.files))
+		for id := range m.files {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.removedfiles != nil {
+		edges = append(edges, user.EdgeFiles)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case user.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.removedfiles))
+		for id := range m.removedfiles {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedadministrators {
 		edges = append(edges, user.EdgeAdministrators)
 	}
@@ -2408,6 +3166,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedteachers {
 		edges = append(edges, user.EdgeTeachers)
+	}
+	if m.clearedfiles {
+		edges = append(edges, user.EdgeFiles)
 	}
 	return edges
 }
@@ -2422,6 +3183,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedstudents
 	case user.EdgeTeachers:
 		return m.clearedteachers
+	case user.EdgeFiles:
+		return m.clearedfiles
 	}
 	return false
 }
@@ -2455,6 +3218,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeTeachers:
 		m.ResetTeachers()
+		return nil
+	case user.EdgeFiles:
+		m.ResetFiles()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
