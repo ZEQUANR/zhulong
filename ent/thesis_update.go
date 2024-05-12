@@ -29,87 +29,118 @@ func (tu *ThesisUpdate) Where(ps ...predicate.Thesis) *ThesisUpdate {
 	return tu
 }
 
-// SetName sets the "name" field.
-func (tu *ThesisUpdate) SetName(s string) *ThesisUpdate {
-	tu.mutation.SetName(s)
+// SetFileName sets the "file_name" field.
+func (tu *ThesisUpdate) SetFileName(s string) *ThesisUpdate {
+	tu.mutation.SetFileName(s)
 	return tu
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tu *ThesisUpdate) SetNillableName(s *string) *ThesisUpdate {
+// SetNillableFileName sets the "file_name" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableFileName(s *string) *ThesisUpdate {
 	if s != nil {
-		tu.SetName(*s)
+		tu.SetFileName(*s)
 	}
 	return tu
 }
 
-// SetTime sets the "time" field.
-func (tu *ThesisUpdate) SetTime(t time.Time) *ThesisUpdate {
-	tu.mutation.SetTime(t)
+// ClearFileName clears the value of the "file_name" field.
+func (tu *ThesisUpdate) ClearFileName() *ThesisUpdate {
+	tu.mutation.ClearFileName()
 	return tu
 }
 
-// SetNillableTime sets the "time" field if the given value is not nil.
-func (tu *ThesisUpdate) SetNillableTime(t *time.Time) *ThesisUpdate {
+// SetFileURL sets the "file_url" field.
+func (tu *ThesisUpdate) SetFileURL(s string) *ThesisUpdate {
+	tu.mutation.SetFileURL(s)
+	return tu
+}
+
+// SetNillableFileURL sets the "file_url" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableFileURL(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetFileURL(*s)
+	}
+	return tu
+}
+
+// ClearFileURL clears the value of the "file_url" field.
+func (tu *ThesisUpdate) ClearFileURL() *ThesisUpdate {
+	tu.mutation.ClearFileURL()
+	return tu
+}
+
+// SetFileState sets the "file_state" field.
+func (tu *ThesisUpdate) SetFileState(i int) *ThesisUpdate {
+	tu.mutation.ResetFileState()
+	tu.mutation.SetFileState(i)
+	return tu
+}
+
+// SetNillableFileState sets the "file_state" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableFileState(i *int) *ThesisUpdate {
+	if i != nil {
+		tu.SetFileState(*i)
+	}
+	return tu
+}
+
+// AddFileState adds i to the "file_state" field.
+func (tu *ThesisUpdate) AddFileState(i int) *ThesisUpdate {
+	tu.mutation.AddFileState(i)
+	return tu
+}
+
+// ClearFileState clears the value of the "file_state" field.
+func (tu *ThesisUpdate) ClearFileState() *ThesisUpdate {
+	tu.mutation.ClearFileState()
+	return tu
+}
+
+// SetUploadTime sets the "upload_time" field.
+func (tu *ThesisUpdate) SetUploadTime(t time.Time) *ThesisUpdate {
+	tu.mutation.SetUploadTime(t)
+	return tu
+}
+
+// SetNillableUploadTime sets the "upload_time" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableUploadTime(t *time.Time) *ThesisUpdate {
 	if t != nil {
-		tu.SetTime(*t)
+		tu.SetUploadTime(*t)
 	}
 	return tu
 }
 
-// SetURL sets the "url" field.
-func (tu *ThesisUpdate) SetURL(s string) *ThesisUpdate {
-	tu.mutation.SetURL(s)
+// ClearUploadTime clears the value of the "upload_time" field.
+func (tu *ThesisUpdate) ClearUploadTime() *ThesisUpdate {
+	tu.mutation.ClearUploadTime()
 	return tu
 }
 
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (tu *ThesisUpdate) SetNillableURL(s *string) *ThesisUpdate {
+// SetCreateTime sets the "create_time" field.
+func (tu *ThesisUpdate) SetCreateTime(t time.Time) *ThesisUpdate {
+	tu.mutation.SetCreateTime(t)
+	return tu
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableCreateTime(t *time.Time) *ThesisUpdate {
+	if t != nil {
+		tu.SetCreateTime(*t)
+	}
+	return tu
+}
+
+// SetThesisTitle sets the "thesis_title" field.
+func (tu *ThesisUpdate) SetThesisTitle(s string) *ThesisUpdate {
+	tu.mutation.SetThesisTitle(s)
+	return tu
+}
+
+// SetNillableThesisTitle sets the "thesis_title" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableThesisTitle(s *string) *ThesisUpdate {
 	if s != nil {
-		tu.SetURL(*s)
+		tu.SetThesisTitle(*s)
 	}
-	return tu
-}
-
-// SetType sets the "type" field.
-func (tu *ThesisUpdate) SetType(i int) *ThesisUpdate {
-	tu.mutation.ResetType()
-	tu.mutation.SetType(i)
-	return tu
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (tu *ThesisUpdate) SetNillableType(i *int) *ThesisUpdate {
-	if i != nil {
-		tu.SetType(*i)
-	}
-	return tu
-}
-
-// AddType adds i to the "type" field.
-func (tu *ThesisUpdate) AddType(i int) *ThesisUpdate {
-	tu.mutation.AddType(i)
-	return tu
-}
-
-// SetStatus sets the "status" field.
-func (tu *ThesisUpdate) SetStatus(i int) *ThesisUpdate {
-	tu.mutation.ResetStatus()
-	tu.mutation.SetStatus(i)
-	return tu
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (tu *ThesisUpdate) SetNillableStatus(i *int) *ThesisUpdate {
-	if i != nil {
-		tu.SetStatus(*i)
-	}
-	return tu
-}
-
-// AddStatus adds i to the "status" field.
-func (tu *ThesisUpdate) AddStatus(i int) *ThesisUpdate {
-	tu.mutation.AddStatus(i)
 	return tu
 }
 
@@ -179,26 +210,38 @@ func (tu *ThesisUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := tu.mutation.Name(); ok {
-		_spec.SetField(thesis.FieldName, field.TypeString, value)
+	if value, ok := tu.mutation.FileName(); ok {
+		_spec.SetField(thesis.FieldFileName, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.Time(); ok {
-		_spec.SetField(thesis.FieldTime, field.TypeTime, value)
+	if tu.mutation.FileNameCleared() {
+		_spec.ClearField(thesis.FieldFileName, field.TypeString)
 	}
-	if value, ok := tu.mutation.URL(); ok {
-		_spec.SetField(thesis.FieldURL, field.TypeString, value)
+	if value, ok := tu.mutation.FileURL(); ok {
+		_spec.SetField(thesis.FieldFileURL, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.GetType(); ok {
-		_spec.SetField(thesis.FieldType, field.TypeInt, value)
+	if tu.mutation.FileURLCleared() {
+		_spec.ClearField(thesis.FieldFileURL, field.TypeString)
 	}
-	if value, ok := tu.mutation.AddedType(); ok {
-		_spec.AddField(thesis.FieldType, field.TypeInt, value)
+	if value, ok := tu.mutation.FileState(); ok {
+		_spec.SetField(thesis.FieldFileState, field.TypeInt, value)
 	}
-	if value, ok := tu.mutation.Status(); ok {
-		_spec.SetField(thesis.FieldStatus, field.TypeInt, value)
+	if value, ok := tu.mutation.AddedFileState(); ok {
+		_spec.AddField(thesis.FieldFileState, field.TypeInt, value)
 	}
-	if value, ok := tu.mutation.AddedStatus(); ok {
-		_spec.AddField(thesis.FieldStatus, field.TypeInt, value)
+	if tu.mutation.FileStateCleared() {
+		_spec.ClearField(thesis.FieldFileState, field.TypeInt)
+	}
+	if value, ok := tu.mutation.UploadTime(); ok {
+		_spec.SetField(thesis.FieldUploadTime, field.TypeTime, value)
+	}
+	if tu.mutation.UploadTimeCleared() {
+		_spec.ClearField(thesis.FieldUploadTime, field.TypeTime)
+	}
+	if value, ok := tu.mutation.CreateTime(); ok {
+		_spec.SetField(thesis.FieldCreateTime, field.TypeTime, value)
+	}
+	if value, ok := tu.mutation.ThesisTitle(); ok {
+		_spec.SetField(thesis.FieldThesisTitle, field.TypeString, value)
 	}
 	if tu.mutation.UploadersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -249,87 +292,118 @@ type ThesisUpdateOne struct {
 	mutation *ThesisMutation
 }
 
-// SetName sets the "name" field.
-func (tuo *ThesisUpdateOne) SetName(s string) *ThesisUpdateOne {
-	tuo.mutation.SetName(s)
+// SetFileName sets the "file_name" field.
+func (tuo *ThesisUpdateOne) SetFileName(s string) *ThesisUpdateOne {
+	tuo.mutation.SetFileName(s)
 	return tuo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tuo *ThesisUpdateOne) SetNillableName(s *string) *ThesisUpdateOne {
+// SetNillableFileName sets the "file_name" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableFileName(s *string) *ThesisUpdateOne {
 	if s != nil {
-		tuo.SetName(*s)
+		tuo.SetFileName(*s)
 	}
 	return tuo
 }
 
-// SetTime sets the "time" field.
-func (tuo *ThesisUpdateOne) SetTime(t time.Time) *ThesisUpdateOne {
-	tuo.mutation.SetTime(t)
+// ClearFileName clears the value of the "file_name" field.
+func (tuo *ThesisUpdateOne) ClearFileName() *ThesisUpdateOne {
+	tuo.mutation.ClearFileName()
 	return tuo
 }
 
-// SetNillableTime sets the "time" field if the given value is not nil.
-func (tuo *ThesisUpdateOne) SetNillableTime(t *time.Time) *ThesisUpdateOne {
+// SetFileURL sets the "file_url" field.
+func (tuo *ThesisUpdateOne) SetFileURL(s string) *ThesisUpdateOne {
+	tuo.mutation.SetFileURL(s)
+	return tuo
+}
+
+// SetNillableFileURL sets the "file_url" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableFileURL(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetFileURL(*s)
+	}
+	return tuo
+}
+
+// ClearFileURL clears the value of the "file_url" field.
+func (tuo *ThesisUpdateOne) ClearFileURL() *ThesisUpdateOne {
+	tuo.mutation.ClearFileURL()
+	return tuo
+}
+
+// SetFileState sets the "file_state" field.
+func (tuo *ThesisUpdateOne) SetFileState(i int) *ThesisUpdateOne {
+	tuo.mutation.ResetFileState()
+	tuo.mutation.SetFileState(i)
+	return tuo
+}
+
+// SetNillableFileState sets the "file_state" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableFileState(i *int) *ThesisUpdateOne {
+	if i != nil {
+		tuo.SetFileState(*i)
+	}
+	return tuo
+}
+
+// AddFileState adds i to the "file_state" field.
+func (tuo *ThesisUpdateOne) AddFileState(i int) *ThesisUpdateOne {
+	tuo.mutation.AddFileState(i)
+	return tuo
+}
+
+// ClearFileState clears the value of the "file_state" field.
+func (tuo *ThesisUpdateOne) ClearFileState() *ThesisUpdateOne {
+	tuo.mutation.ClearFileState()
+	return tuo
+}
+
+// SetUploadTime sets the "upload_time" field.
+func (tuo *ThesisUpdateOne) SetUploadTime(t time.Time) *ThesisUpdateOne {
+	tuo.mutation.SetUploadTime(t)
+	return tuo
+}
+
+// SetNillableUploadTime sets the "upload_time" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableUploadTime(t *time.Time) *ThesisUpdateOne {
 	if t != nil {
-		tuo.SetTime(*t)
+		tuo.SetUploadTime(*t)
 	}
 	return tuo
 }
 
-// SetURL sets the "url" field.
-func (tuo *ThesisUpdateOne) SetURL(s string) *ThesisUpdateOne {
-	tuo.mutation.SetURL(s)
+// ClearUploadTime clears the value of the "upload_time" field.
+func (tuo *ThesisUpdateOne) ClearUploadTime() *ThesisUpdateOne {
+	tuo.mutation.ClearUploadTime()
 	return tuo
 }
 
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (tuo *ThesisUpdateOne) SetNillableURL(s *string) *ThesisUpdateOne {
+// SetCreateTime sets the "create_time" field.
+func (tuo *ThesisUpdateOne) SetCreateTime(t time.Time) *ThesisUpdateOne {
+	tuo.mutation.SetCreateTime(t)
+	return tuo
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableCreateTime(t *time.Time) *ThesisUpdateOne {
+	if t != nil {
+		tuo.SetCreateTime(*t)
+	}
+	return tuo
+}
+
+// SetThesisTitle sets the "thesis_title" field.
+func (tuo *ThesisUpdateOne) SetThesisTitle(s string) *ThesisUpdateOne {
+	tuo.mutation.SetThesisTitle(s)
+	return tuo
+}
+
+// SetNillableThesisTitle sets the "thesis_title" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableThesisTitle(s *string) *ThesisUpdateOne {
 	if s != nil {
-		tuo.SetURL(*s)
+		tuo.SetThesisTitle(*s)
 	}
-	return tuo
-}
-
-// SetType sets the "type" field.
-func (tuo *ThesisUpdateOne) SetType(i int) *ThesisUpdateOne {
-	tuo.mutation.ResetType()
-	tuo.mutation.SetType(i)
-	return tuo
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (tuo *ThesisUpdateOne) SetNillableType(i *int) *ThesisUpdateOne {
-	if i != nil {
-		tuo.SetType(*i)
-	}
-	return tuo
-}
-
-// AddType adds i to the "type" field.
-func (tuo *ThesisUpdateOne) AddType(i int) *ThesisUpdateOne {
-	tuo.mutation.AddType(i)
-	return tuo
-}
-
-// SetStatus sets the "status" field.
-func (tuo *ThesisUpdateOne) SetStatus(i int) *ThesisUpdateOne {
-	tuo.mutation.ResetStatus()
-	tuo.mutation.SetStatus(i)
-	return tuo
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (tuo *ThesisUpdateOne) SetNillableStatus(i *int) *ThesisUpdateOne {
-	if i != nil {
-		tuo.SetStatus(*i)
-	}
-	return tuo
-}
-
-// AddStatus adds i to the "status" field.
-func (tuo *ThesisUpdateOne) AddStatus(i int) *ThesisUpdateOne {
-	tuo.mutation.AddStatus(i)
 	return tuo
 }
 
@@ -429,26 +503,38 @@ func (tuo *ThesisUpdateOne) sqlSave(ctx context.Context) (_node *Thesis, err err
 			}
 		}
 	}
-	if value, ok := tuo.mutation.Name(); ok {
-		_spec.SetField(thesis.FieldName, field.TypeString, value)
+	if value, ok := tuo.mutation.FileName(); ok {
+		_spec.SetField(thesis.FieldFileName, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.Time(); ok {
-		_spec.SetField(thesis.FieldTime, field.TypeTime, value)
+	if tuo.mutation.FileNameCleared() {
+		_spec.ClearField(thesis.FieldFileName, field.TypeString)
 	}
-	if value, ok := tuo.mutation.URL(); ok {
-		_spec.SetField(thesis.FieldURL, field.TypeString, value)
+	if value, ok := tuo.mutation.FileURL(); ok {
+		_spec.SetField(thesis.FieldFileURL, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.GetType(); ok {
-		_spec.SetField(thesis.FieldType, field.TypeInt, value)
+	if tuo.mutation.FileURLCleared() {
+		_spec.ClearField(thesis.FieldFileURL, field.TypeString)
 	}
-	if value, ok := tuo.mutation.AddedType(); ok {
-		_spec.AddField(thesis.FieldType, field.TypeInt, value)
+	if value, ok := tuo.mutation.FileState(); ok {
+		_spec.SetField(thesis.FieldFileState, field.TypeInt, value)
 	}
-	if value, ok := tuo.mutation.Status(); ok {
-		_spec.SetField(thesis.FieldStatus, field.TypeInt, value)
+	if value, ok := tuo.mutation.AddedFileState(); ok {
+		_spec.AddField(thesis.FieldFileState, field.TypeInt, value)
 	}
-	if value, ok := tuo.mutation.AddedStatus(); ok {
-		_spec.AddField(thesis.FieldStatus, field.TypeInt, value)
+	if tuo.mutation.FileStateCleared() {
+		_spec.ClearField(thesis.FieldFileState, field.TypeInt)
+	}
+	if value, ok := tuo.mutation.UploadTime(); ok {
+		_spec.SetField(thesis.FieldUploadTime, field.TypeTime, value)
+	}
+	if tuo.mutation.UploadTimeCleared() {
+		_spec.ClearField(thesis.FieldUploadTime, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.CreateTime(); ok {
+		_spec.SetField(thesis.FieldCreateTime, field.TypeTime, value)
+	}
+	if value, ok := tuo.mutation.ThesisTitle(); ok {
+		_spec.SetField(thesis.FieldThesisTitle, field.TypeString, value)
 	}
 	if tuo.mutation.UploadersCleared() {
 		edge := &sqlgraph.EdgeSpec{

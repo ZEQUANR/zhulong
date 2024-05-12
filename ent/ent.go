@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
@@ -78,6 +79,7 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			administrators.Table: administrators.ValidColumn,
+			reviews.Table:        reviews.ValidColumn,
 			students.Table:       students.ValidColumn,
 			teachers.Table:       teachers.ValidColumn,
 			thesis.Table:         thesis.ValidColumn,

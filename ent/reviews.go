@@ -9,12 +9,12 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/ZEQUANR/zhulong/ent/thesis"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
-// Thesis is the model entity for the Thesis schema.
-type Thesis struct {
+// Reviews is the model entity for the Reviews schema.
+type Reviews struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -22,23 +22,21 @@ type Thesis struct {
 	FileName string `json:"file_name,omitempty"`
 	// FileURL holds the value of the "file_url" field.
 	FileURL string `json:"file_url,omitempty"`
-	// FileState holds the value of the "file_state" field.
-	FileState int `json:"file_state,omitempty"`
 	// UploadTime holds the value of the "upload_time" field.
 	UploadTime time.Time `json:"upload_time,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
-	// ThesisTitle holds the value of the "thesis_title" field.
-	ThesisTitle string `json:"thesis_title,omitempty"`
+	// ReviewsTitle holds the value of the "reviews_title" field.
+	ReviewsTitle string `json:"reviews_title,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ThesisQuery when eager-loading is set.
-	Edges        ThesisEdges `json:"edges"`
-	user_thesis  *int
+	// The values are being populated by the ReviewsQuery when eager-loading is set.
+	Edges        ReviewsEdges `json:"edges"`
+	user_reviews *int
 	selectValues sql.SelectValues
 }
 
-// ThesisEdges holds the relations/edges for other nodes in the graph.
-type ThesisEdges struct {
+// ReviewsEdges holds the relations/edges for other nodes in the graph.
+type ReviewsEdges struct {
 	// Uploaders holds the value of the uploaders edge.
 	Uploaders *User `json:"uploaders,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -48,7 +46,7 @@ type ThesisEdges struct {
 
 // UploadersOrErr returns the Uploaders value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ThesisEdges) UploadersOrErr() (*User, error) {
+func (e ReviewsEdges) UploadersOrErr() (*User, error) {
 	if e.Uploaders != nil {
 		return e.Uploaders, nil
 	} else if e.loadedTypes[0] {
@@ -58,17 +56,17 @@ func (e ThesisEdges) UploadersOrErr() (*User, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Thesis) scanValues(columns []string) ([]any, error) {
+func (*Reviews) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case thesis.FieldID, thesis.FieldFileState:
+		case reviews.FieldID:
 			values[i] = new(sql.NullInt64)
-		case thesis.FieldFileName, thesis.FieldFileURL, thesis.FieldThesisTitle:
+		case reviews.FieldFileName, reviews.FieldFileURL, reviews.FieldReviewsTitle:
 			values[i] = new(sql.NullString)
-		case thesis.FieldUploadTime, thesis.FieldCreateTime:
+		case reviews.FieldUploadTime, reviews.FieldCreateTime:
 			values[i] = new(sql.NullTime)
-		case thesis.ForeignKeys[0]: // user_thesis
+		case reviews.ForeignKeys[0]: // user_reviews
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -78,123 +76,114 @@ func (*Thesis) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Thesis fields.
-func (t *Thesis) assignValues(columns []string, values []any) error {
+// to the Reviews fields.
+func (r *Reviews) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case thesis.FieldID:
+		case reviews.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			t.ID = int(value.Int64)
-		case thesis.FieldFileName:
+			r.ID = int(value.Int64)
+		case reviews.FieldFileName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field file_name", values[i])
 			} else if value.Valid {
-				t.FileName = value.String
+				r.FileName = value.String
 			}
-		case thesis.FieldFileURL:
+		case reviews.FieldFileURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field file_url", values[i])
 			} else if value.Valid {
-				t.FileURL = value.String
+				r.FileURL = value.String
 			}
-		case thesis.FieldFileState:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field file_state", values[i])
-			} else if value.Valid {
-				t.FileState = int(value.Int64)
-			}
-		case thesis.FieldUploadTime:
+		case reviews.FieldUploadTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field upload_time", values[i])
 			} else if value.Valid {
-				t.UploadTime = value.Time
+				r.UploadTime = value.Time
 			}
-		case thesis.FieldCreateTime:
+		case reviews.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				t.CreateTime = value.Time
+				r.CreateTime = value.Time
 			}
-		case thesis.FieldThesisTitle:
+		case reviews.FieldReviewsTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field thesis_title", values[i])
+				return fmt.Errorf("unexpected type %T for field reviews_title", values[i])
 			} else if value.Valid {
-				t.ThesisTitle = value.String
+				r.ReviewsTitle = value.String
 			}
-		case thesis.ForeignKeys[0]:
+		case reviews.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_thesis", value)
+				return fmt.Errorf("unexpected type %T for edge-field user_reviews", value)
 			} else if value.Valid {
-				t.user_thesis = new(int)
-				*t.user_thesis = int(value.Int64)
+				r.user_reviews = new(int)
+				*r.user_reviews = int(value.Int64)
 			}
 		default:
-			t.selectValues.Set(columns[i], values[i])
+			r.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Thesis.
+// Value returns the ent.Value that was dynamically selected and assigned to the Reviews.
 // This includes values selected through modifiers, order, etc.
-func (t *Thesis) Value(name string) (ent.Value, error) {
-	return t.selectValues.Get(name)
+func (r *Reviews) Value(name string) (ent.Value, error) {
+	return r.selectValues.Get(name)
 }
 
-// QueryUploaders queries the "uploaders" edge of the Thesis entity.
-func (t *Thesis) QueryUploaders() *UserQuery {
-	return NewThesisClient(t.config).QueryUploaders(t)
+// QueryUploaders queries the "uploaders" edge of the Reviews entity.
+func (r *Reviews) QueryUploaders() *UserQuery {
+	return NewReviewsClient(r.config).QueryUploaders(r)
 }
 
-// Update returns a builder for updating this Thesis.
-// Note that you need to call Thesis.Unwrap() before calling this method if this Thesis
+// Update returns a builder for updating this Reviews.
+// Note that you need to call Reviews.Unwrap() before calling this method if this Reviews
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (t *Thesis) Update() *ThesisUpdateOne {
-	return NewThesisClient(t.config).UpdateOne(t)
+func (r *Reviews) Update() *ReviewsUpdateOne {
+	return NewReviewsClient(r.config).UpdateOne(r)
 }
 
-// Unwrap unwraps the Thesis entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Reviews entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (t *Thesis) Unwrap() *Thesis {
-	_tx, ok := t.config.driver.(*txDriver)
+func (r *Reviews) Unwrap() *Reviews {
+	_tx, ok := r.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Thesis is not a transactional entity")
+		panic("ent: Reviews is not a transactional entity")
 	}
-	t.config.driver = _tx.drv
-	return t
+	r.config.driver = _tx.drv
+	return r
 }
 
 // String implements the fmt.Stringer.
-func (t *Thesis) String() string {
+func (r *Reviews) String() string {
 	var builder strings.Builder
-	builder.WriteString("Thesis(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
+	builder.WriteString("Reviews(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", r.ID))
 	builder.WriteString("file_name=")
-	builder.WriteString(t.FileName)
+	builder.WriteString(r.FileName)
 	builder.WriteString(", ")
 	builder.WriteString("file_url=")
-	builder.WriteString(t.FileURL)
-	builder.WriteString(", ")
-	builder.WriteString("file_state=")
-	builder.WriteString(fmt.Sprintf("%v", t.FileState))
+	builder.WriteString(r.FileURL)
 	builder.WriteString(", ")
 	builder.WriteString("upload_time=")
-	builder.WriteString(t.UploadTime.Format(time.ANSIC))
+	builder.WriteString(r.UploadTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("create_time=")
-	builder.WriteString(t.CreateTime.Format(time.ANSIC))
+	builder.WriteString(r.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("thesis_title=")
-	builder.WriteString(t.ThesisTitle)
+	builder.WriteString("reviews_title=")
+	builder.WriteString(r.ReviewsTitle)
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// Theses is a parsable slice of Thesis.
-type Theses []*Thesis
+// ReviewsSlice is a parsable slice of Reviews.
+type ReviewsSlice []*Reviews

@@ -21,41 +21,79 @@ type ThesisCreate struct {
 	hooks    []Hook
 }
 
-// SetName sets the "name" field.
-func (tc *ThesisCreate) SetName(s string) *ThesisCreate {
-	tc.mutation.SetName(s)
+// SetFileName sets the "file_name" field.
+func (tc *ThesisCreate) SetFileName(s string) *ThesisCreate {
+	tc.mutation.SetFileName(s)
 	return tc
 }
 
-// SetTime sets the "time" field.
-func (tc *ThesisCreate) SetTime(t time.Time) *ThesisCreate {
-	tc.mutation.SetTime(t)
-	return tc
-}
-
-// SetNillableTime sets the "time" field if the given value is not nil.
-func (tc *ThesisCreate) SetNillableTime(t *time.Time) *ThesisCreate {
-	if t != nil {
-		tc.SetTime(*t)
+// SetNillableFileName sets the "file_name" field if the given value is not nil.
+func (tc *ThesisCreate) SetNillableFileName(s *string) *ThesisCreate {
+	if s != nil {
+		tc.SetFileName(*s)
 	}
 	return tc
 }
 
-// SetURL sets the "url" field.
-func (tc *ThesisCreate) SetURL(s string) *ThesisCreate {
-	tc.mutation.SetURL(s)
+// SetFileURL sets the "file_url" field.
+func (tc *ThesisCreate) SetFileURL(s string) *ThesisCreate {
+	tc.mutation.SetFileURL(s)
 	return tc
 }
 
-// SetType sets the "type" field.
-func (tc *ThesisCreate) SetType(i int) *ThesisCreate {
-	tc.mutation.SetType(i)
+// SetNillableFileURL sets the "file_url" field if the given value is not nil.
+func (tc *ThesisCreate) SetNillableFileURL(s *string) *ThesisCreate {
+	if s != nil {
+		tc.SetFileURL(*s)
+	}
 	return tc
 }
 
-// SetStatus sets the "status" field.
-func (tc *ThesisCreate) SetStatus(i int) *ThesisCreate {
-	tc.mutation.SetStatus(i)
+// SetFileState sets the "file_state" field.
+func (tc *ThesisCreate) SetFileState(i int) *ThesisCreate {
+	tc.mutation.SetFileState(i)
+	return tc
+}
+
+// SetNillableFileState sets the "file_state" field if the given value is not nil.
+func (tc *ThesisCreate) SetNillableFileState(i *int) *ThesisCreate {
+	if i != nil {
+		tc.SetFileState(*i)
+	}
+	return tc
+}
+
+// SetUploadTime sets the "upload_time" field.
+func (tc *ThesisCreate) SetUploadTime(t time.Time) *ThesisCreate {
+	tc.mutation.SetUploadTime(t)
+	return tc
+}
+
+// SetNillableUploadTime sets the "upload_time" field if the given value is not nil.
+func (tc *ThesisCreate) SetNillableUploadTime(t *time.Time) *ThesisCreate {
+	if t != nil {
+		tc.SetUploadTime(*t)
+	}
+	return tc
+}
+
+// SetCreateTime sets the "create_time" field.
+func (tc *ThesisCreate) SetCreateTime(t time.Time) *ThesisCreate {
+	tc.mutation.SetCreateTime(t)
+	return tc
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (tc *ThesisCreate) SetNillableCreateTime(t *time.Time) *ThesisCreate {
+	if t != nil {
+		tc.SetCreateTime(*t)
+	}
+	return tc
+}
+
+// SetThesisTitle sets the "thesis_title" field.
+func (tc *ThesisCreate) SetThesisTitle(s string) *ThesisCreate {
+	tc.mutation.SetThesisTitle(s)
 	return tc
 }
 
@@ -113,28 +151,19 @@ func (tc *ThesisCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *ThesisCreate) defaults() {
-	if _, ok := tc.mutation.Time(); !ok {
-		v := thesis.DefaultTime()
-		tc.mutation.SetTime(v)
+	if _, ok := tc.mutation.CreateTime(); !ok {
+		v := thesis.DefaultCreateTime()
+		tc.mutation.SetCreateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *ThesisCreate) check() error {
-	if _, ok := tc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Thesis.name"`)}
+	if _, ok := tc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Thesis.create_time"`)}
 	}
-	if _, ok := tc.mutation.Time(); !ok {
-		return &ValidationError{Name: "time", err: errors.New(`ent: missing required field "Thesis.time"`)}
-	}
-	if _, ok := tc.mutation.URL(); !ok {
-		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "Thesis.url"`)}
-	}
-	if _, ok := tc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Thesis.type"`)}
-	}
-	if _, ok := tc.mutation.Status(); !ok {
-		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Thesis.status"`)}
+	if _, ok := tc.mutation.ThesisTitle(); !ok {
+		return &ValidationError{Name: "thesis_title", err: errors.New(`ent: missing required field "Thesis.thesis_title"`)}
 	}
 	return nil
 }
@@ -162,25 +191,29 @@ func (tc *ThesisCreate) createSpec() (*Thesis, *sqlgraph.CreateSpec) {
 		_node = &Thesis{config: tc.config}
 		_spec = sqlgraph.NewCreateSpec(thesis.Table, sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt))
 	)
-	if value, ok := tc.mutation.Name(); ok {
-		_spec.SetField(thesis.FieldName, field.TypeString, value)
-		_node.Name = value
+	if value, ok := tc.mutation.FileName(); ok {
+		_spec.SetField(thesis.FieldFileName, field.TypeString, value)
+		_node.FileName = value
 	}
-	if value, ok := tc.mutation.Time(); ok {
-		_spec.SetField(thesis.FieldTime, field.TypeTime, value)
-		_node.Time = value
+	if value, ok := tc.mutation.FileURL(); ok {
+		_spec.SetField(thesis.FieldFileURL, field.TypeString, value)
+		_node.FileURL = value
 	}
-	if value, ok := tc.mutation.URL(); ok {
-		_spec.SetField(thesis.FieldURL, field.TypeString, value)
-		_node.URL = value
+	if value, ok := tc.mutation.FileState(); ok {
+		_spec.SetField(thesis.FieldFileState, field.TypeInt, value)
+		_node.FileState = value
 	}
-	if value, ok := tc.mutation.GetType(); ok {
-		_spec.SetField(thesis.FieldType, field.TypeInt, value)
-		_node.Type = value
+	if value, ok := tc.mutation.UploadTime(); ok {
+		_spec.SetField(thesis.FieldUploadTime, field.TypeTime, value)
+		_node.UploadTime = value
 	}
-	if value, ok := tc.mutation.Status(); ok {
-		_spec.SetField(thesis.FieldStatus, field.TypeInt, value)
-		_node.Status = value
+	if value, ok := tc.mutation.CreateTime(); ok {
+		_spec.SetField(thesis.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := tc.mutation.ThesisTitle(); ok {
+		_spec.SetField(thesis.FieldThesisTitle, field.TypeString, value)
+		_node.ThesisTitle = value
 	}
 	if nodes := tc.mutation.UploadersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -196,7 +229,7 @@ func (tc *ThesisCreate) createSpec() (*Thesis, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_files = &nodes[0]
+		_node.user_thesis = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

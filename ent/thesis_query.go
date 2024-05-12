@@ -298,12 +298,12 @@ func (tq *ThesisQuery) WithUploaders(opts ...func(*UserQuery)) *ThesisQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		FileName string `json:"file_name,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Thesis.Query().
-//		GroupBy(thesis.FieldName).
+//		GroupBy(thesis.FieldFileName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (tq *ThesisQuery) GroupBy(field string, fields ...string) *ThesisGroupBy {
@@ -321,11 +321,11 @@ func (tq *ThesisQuery) GroupBy(field string, fields ...string) *ThesisGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		FileName string `json:"file_name,omitempty"`
 //	}
 //
 //	client.Thesis.Query().
-//		Select(thesis.FieldName).
+//		Select(thesis.FieldFileName).
 //		Scan(ctx, &v)
 func (tq *ThesisQuery) Select(fields ...string) *ThesisSelect {
 	tq.ctx.Fields = append(tq.ctx.Fields, fields...)
@@ -412,10 +412,10 @@ func (tq *ThesisQuery) loadUploaders(ctx context.Context, query *UserQuery, node
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Thesis)
 	for i := range nodes {
-		if nodes[i].user_files == nil {
+		if nodes[i].user_thesis == nil {
 			continue
 		}
-		fk := *nodes[i].user_files
+		fk := *nodes[i].user_thesis
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -432,7 +432,7 @@ func (tq *ThesisQuery) loadUploaders(ctx context.Context, query *UserQuery, node
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_files" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_thesis" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

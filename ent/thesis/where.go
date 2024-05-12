@@ -55,279 +55,389 @@ func IDLTE(id int) predicate.Thesis {
 	return predicate.Thesis(sql.FieldLTE(FieldID, id))
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldName, v))
+// FileName applies equality check predicate on the "file_name" field. It's identical to FileNameEQ.
+func FileName(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFileName, v))
 }
 
-// Time applies equality check predicate on the "time" field. It's identical to TimeEQ.
-func Time(v time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldTime, v))
+// FileURL applies equality check predicate on the "file_url" field. It's identical to FileURLEQ.
+func FileURL(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFileURL, v))
 }
 
-// URL applies equality check predicate on the "url" field. It's identical to URLEQ.
-func URL(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldURL, v))
+// FileState applies equality check predicate on the "file_state" field. It's identical to FileStateEQ.
+func FileState(v int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFileState, v))
 }
 
-// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldType, v))
+// UploadTime applies equality check predicate on the "upload_time" field. It's identical to UploadTimeEQ.
+func UploadTime(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldUploadTime, v))
 }
 
-// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
-func Status(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldStatus, v))
+// CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
+func CreateTime(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldCreateTime, v))
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldName, v))
+// ThesisTitle applies equality check predicate on the "thesis_title" field. It's identical to ThesisTitleEQ.
+func ThesisTitle(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldThesisTitle, v))
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNEQ(FieldName, v))
+// FileNameEQ applies the EQ predicate on the "file_name" field.
+func FileNameEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFileName, v))
 }
 
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldIn(FieldName, vs...))
+// FileNameNEQ applies the NEQ predicate on the "file_name" field.
+func FileNameNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldFileName, v))
 }
 
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNotIn(FieldName, vs...))
+// FileNameIn applies the In predicate on the "file_name" field.
+func FileNameIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldFileName, vs...))
 }
 
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGT(FieldName, v))
+// FileNameNotIn applies the NotIn predicate on the "file_name" field.
+func FileNameNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldFileName, vs...))
 }
 
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGTE(FieldName, v))
+// FileNameGT applies the GT predicate on the "file_name" field.
+func FileNameGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldFileName, v))
 }
 
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLT(FieldName, v))
+// FileNameGTE applies the GTE predicate on the "file_name" field.
+func FileNameGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldFileName, v))
 }
 
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLTE(FieldName, v))
+// FileNameLT applies the LT predicate on the "file_name" field.
+func FileNameLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldFileName, v))
 }
 
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldContains(FieldName, v))
+// FileNameLTE applies the LTE predicate on the "file_name" field.
+func FileNameLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldFileName, v))
 }
 
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldHasPrefix(FieldName, v))
+// FileNameContains applies the Contains predicate on the "file_name" field.
+func FileNameContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldFileName, v))
 }
 
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldHasSuffix(FieldName, v))
+// FileNameHasPrefix applies the HasPrefix predicate on the "file_name" field.
+func FileNameHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldFileName, v))
 }
 
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEqualFold(FieldName, v))
+// FileNameHasSuffix applies the HasSuffix predicate on the "file_name" field.
+func FileNameHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldFileName, v))
 }
 
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldContainsFold(FieldName, v))
+// FileNameIsNil applies the IsNil predicate on the "file_name" field.
+func FileNameIsNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldIsNull(FieldFileName))
 }
 
-// TimeEQ applies the EQ predicate on the "time" field.
-func TimeEQ(v time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldTime, v))
+// FileNameNotNil applies the NotNil predicate on the "file_name" field.
+func FileNameNotNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotNull(FieldFileName))
 }
 
-// TimeNEQ applies the NEQ predicate on the "time" field.
-func TimeNEQ(v time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNEQ(FieldTime, v))
+// FileNameEqualFold applies the EqualFold predicate on the "file_name" field.
+func FileNameEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldFileName, v))
 }
 
-// TimeIn applies the In predicate on the "time" field.
-func TimeIn(vs ...time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldIn(FieldTime, vs...))
+// FileNameContainsFold applies the ContainsFold predicate on the "file_name" field.
+func FileNameContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldFileName, v))
 }
 
-// TimeNotIn applies the NotIn predicate on the "time" field.
-func TimeNotIn(vs ...time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNotIn(FieldTime, vs...))
+// FileURLEQ applies the EQ predicate on the "file_url" field.
+func FileURLEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFileURL, v))
 }
 
-// TimeGT applies the GT predicate on the "time" field.
-func TimeGT(v time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGT(FieldTime, v))
+// FileURLNEQ applies the NEQ predicate on the "file_url" field.
+func FileURLNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldFileURL, v))
 }
 
-// TimeGTE applies the GTE predicate on the "time" field.
-func TimeGTE(v time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGTE(FieldTime, v))
+// FileURLIn applies the In predicate on the "file_url" field.
+func FileURLIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldFileURL, vs...))
 }
 
-// TimeLT applies the LT predicate on the "time" field.
-func TimeLT(v time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLT(FieldTime, v))
+// FileURLNotIn applies the NotIn predicate on the "file_url" field.
+func FileURLNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldFileURL, vs...))
 }
 
-// TimeLTE applies the LTE predicate on the "time" field.
-func TimeLTE(v time.Time) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLTE(FieldTime, v))
+// FileURLGT applies the GT predicate on the "file_url" field.
+func FileURLGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldFileURL, v))
 }
 
-// URLEQ applies the EQ predicate on the "url" field.
-func URLEQ(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldURL, v))
+// FileURLGTE applies the GTE predicate on the "file_url" field.
+func FileURLGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldFileURL, v))
 }
 
-// URLNEQ applies the NEQ predicate on the "url" field.
-func URLNEQ(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNEQ(FieldURL, v))
+// FileURLLT applies the LT predicate on the "file_url" field.
+func FileURLLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldFileURL, v))
 }
 
-// URLIn applies the In predicate on the "url" field.
-func URLIn(vs ...string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldIn(FieldURL, vs...))
+// FileURLLTE applies the LTE predicate on the "file_url" field.
+func FileURLLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldFileURL, v))
 }
 
-// URLNotIn applies the NotIn predicate on the "url" field.
-func URLNotIn(vs ...string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNotIn(FieldURL, vs...))
+// FileURLContains applies the Contains predicate on the "file_url" field.
+func FileURLContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldFileURL, v))
 }
 
-// URLGT applies the GT predicate on the "url" field.
-func URLGT(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGT(FieldURL, v))
+// FileURLHasPrefix applies the HasPrefix predicate on the "file_url" field.
+func FileURLHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldFileURL, v))
 }
 
-// URLGTE applies the GTE predicate on the "url" field.
-func URLGTE(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGTE(FieldURL, v))
+// FileURLHasSuffix applies the HasSuffix predicate on the "file_url" field.
+func FileURLHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldFileURL, v))
 }
 
-// URLLT applies the LT predicate on the "url" field.
-func URLLT(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLT(FieldURL, v))
+// FileURLIsNil applies the IsNil predicate on the "file_url" field.
+func FileURLIsNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldIsNull(FieldFileURL))
 }
 
-// URLLTE applies the LTE predicate on the "url" field.
-func URLLTE(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLTE(FieldURL, v))
+// FileURLNotNil applies the NotNil predicate on the "file_url" field.
+func FileURLNotNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotNull(FieldFileURL))
 }
 
-// URLContains applies the Contains predicate on the "url" field.
-func URLContains(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldContains(FieldURL, v))
+// FileURLEqualFold applies the EqualFold predicate on the "file_url" field.
+func FileURLEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldFileURL, v))
 }
 
-// URLHasPrefix applies the HasPrefix predicate on the "url" field.
-func URLHasPrefix(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldHasPrefix(FieldURL, v))
+// FileURLContainsFold applies the ContainsFold predicate on the "file_url" field.
+func FileURLContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldFileURL, v))
 }
 
-// URLHasSuffix applies the HasSuffix predicate on the "url" field.
-func URLHasSuffix(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldHasSuffix(FieldURL, v))
+// FileStateEQ applies the EQ predicate on the "file_state" field.
+func FileStateEQ(v int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFileState, v))
 }
 
-// URLEqualFold applies the EqualFold predicate on the "url" field.
-func URLEqualFold(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEqualFold(FieldURL, v))
+// FileStateNEQ applies the NEQ predicate on the "file_state" field.
+func FileStateNEQ(v int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldFileState, v))
 }
 
-// URLContainsFold applies the ContainsFold predicate on the "url" field.
-func URLContainsFold(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldContainsFold(FieldURL, v))
+// FileStateIn applies the In predicate on the "file_state" field.
+func FileStateIn(vs ...int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldFileState, vs...))
 }
 
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldType, v))
+// FileStateNotIn applies the NotIn predicate on the "file_state" field.
+func FileStateNotIn(vs ...int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldFileState, vs...))
 }
 
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNEQ(FieldType, v))
+// FileStateGT applies the GT predicate on the "file_state" field.
+func FileStateGT(v int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldFileState, v))
 }
 
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldIn(FieldType, vs...))
+// FileStateGTE applies the GTE predicate on the "file_state" field.
+func FileStateGTE(v int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldFileState, v))
 }
 
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNotIn(FieldType, vs...))
+// FileStateLT applies the LT predicate on the "file_state" field.
+func FileStateLT(v int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldFileState, v))
 }
 
-// TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGT(FieldType, v))
+// FileStateLTE applies the LTE predicate on the "file_state" field.
+func FileStateLTE(v int) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldFileState, v))
 }
 
-// TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGTE(FieldType, v))
+// FileStateIsNil applies the IsNil predicate on the "file_state" field.
+func FileStateIsNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldIsNull(FieldFileState))
 }
 
-// TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLT(FieldType, v))
+// FileStateNotNil applies the NotNil predicate on the "file_state" field.
+func FileStateNotNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotNull(FieldFileState))
 }
 
-// TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLTE(FieldType, v))
+// UploadTimeEQ applies the EQ predicate on the "upload_time" field.
+func UploadTimeEQ(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldUploadTime, v))
 }
 
-// StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldStatus, v))
+// UploadTimeNEQ applies the NEQ predicate on the "upload_time" field.
+func UploadTimeNEQ(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldUploadTime, v))
 }
 
-// StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNEQ(FieldStatus, v))
+// UploadTimeIn applies the In predicate on the "upload_time" field.
+func UploadTimeIn(vs ...time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldUploadTime, vs...))
 }
 
-// StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldIn(FieldStatus, vs...))
+// UploadTimeNotIn applies the NotIn predicate on the "upload_time" field.
+func UploadTimeNotIn(vs ...time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldUploadTime, vs...))
 }
 
-// StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNotIn(FieldStatus, vs...))
+// UploadTimeGT applies the GT predicate on the "upload_time" field.
+func UploadTimeGT(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldUploadTime, v))
 }
 
-// StatusGT applies the GT predicate on the "status" field.
-func StatusGT(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGT(FieldStatus, v))
+// UploadTimeGTE applies the GTE predicate on the "upload_time" field.
+func UploadTimeGTE(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldUploadTime, v))
 }
 
-// StatusGTE applies the GTE predicate on the "status" field.
-func StatusGTE(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGTE(FieldStatus, v))
+// UploadTimeLT applies the LT predicate on the "upload_time" field.
+func UploadTimeLT(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldUploadTime, v))
 }
 
-// StatusLT applies the LT predicate on the "status" field.
-func StatusLT(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLT(FieldStatus, v))
+// UploadTimeLTE applies the LTE predicate on the "upload_time" field.
+func UploadTimeLTE(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldUploadTime, v))
 }
 
-// StatusLTE applies the LTE predicate on the "status" field.
-func StatusLTE(v int) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLTE(FieldStatus, v))
+// UploadTimeIsNil applies the IsNil predicate on the "upload_time" field.
+func UploadTimeIsNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldIsNull(FieldUploadTime))
+}
+
+// UploadTimeNotNil applies the NotNil predicate on the "upload_time" field.
+func UploadTimeNotNil() predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotNull(FieldUploadTime))
+}
+
+// CreateTimeEQ applies the EQ predicate on the "create_time" field.
+func CreateTimeEQ(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldCreateTime, v))
+}
+
+// CreateTimeNEQ applies the NEQ predicate on the "create_time" field.
+func CreateTimeNEQ(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldCreateTime, v))
+}
+
+// CreateTimeIn applies the In predicate on the "create_time" field.
+func CreateTimeIn(vs ...time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldCreateTime, vs...))
+}
+
+// CreateTimeNotIn applies the NotIn predicate on the "create_time" field.
+func CreateTimeNotIn(vs ...time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldCreateTime, vs...))
+}
+
+// CreateTimeGT applies the GT predicate on the "create_time" field.
+func CreateTimeGT(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldCreateTime, v))
+}
+
+// CreateTimeGTE applies the GTE predicate on the "create_time" field.
+func CreateTimeGTE(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldCreateTime, v))
+}
+
+// CreateTimeLT applies the LT predicate on the "create_time" field.
+func CreateTimeLT(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldCreateTime, v))
+}
+
+// CreateTimeLTE applies the LTE predicate on the "create_time" field.
+func CreateTimeLTE(v time.Time) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldCreateTime, v))
+}
+
+// ThesisTitleEQ applies the EQ predicate on the "thesis_title" field.
+func ThesisTitleEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldThesisTitle, v))
+}
+
+// ThesisTitleNEQ applies the NEQ predicate on the "thesis_title" field.
+func ThesisTitleNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldThesisTitle, v))
+}
+
+// ThesisTitleIn applies the In predicate on the "thesis_title" field.
+func ThesisTitleIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldThesisTitle, vs...))
+}
+
+// ThesisTitleNotIn applies the NotIn predicate on the "thesis_title" field.
+func ThesisTitleNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldThesisTitle, vs...))
+}
+
+// ThesisTitleGT applies the GT predicate on the "thesis_title" field.
+func ThesisTitleGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldThesisTitle, v))
+}
+
+// ThesisTitleGTE applies the GTE predicate on the "thesis_title" field.
+func ThesisTitleGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldThesisTitle, v))
+}
+
+// ThesisTitleLT applies the LT predicate on the "thesis_title" field.
+func ThesisTitleLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldThesisTitle, v))
+}
+
+// ThesisTitleLTE applies the LTE predicate on the "thesis_title" field.
+func ThesisTitleLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldThesisTitle, v))
+}
+
+// ThesisTitleContains applies the Contains predicate on the "thesis_title" field.
+func ThesisTitleContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldThesisTitle, v))
+}
+
+// ThesisTitleHasPrefix applies the HasPrefix predicate on the "thesis_title" field.
+func ThesisTitleHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldThesisTitle, v))
+}
+
+// ThesisTitleHasSuffix applies the HasSuffix predicate on the "thesis_title" field.
+func ThesisTitleHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldThesisTitle, v))
+}
+
+// ThesisTitleEqualFold applies the EqualFold predicate on the "thesis_title" field.
+func ThesisTitleEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldThesisTitle, v))
+}
+
+// ThesisTitleContainsFold applies the ContainsFold predicate on the "thesis_title" field.
+func ThesisTitleContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldThesisTitle, v))
 }
 
 // HasUploaders applies the HasEdge predicate on the "uploaders" edge.

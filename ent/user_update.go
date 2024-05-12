@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
@@ -137,19 +138,34 @@ func (uu *UserUpdate) SetTeachers(t *Teachers) *UserUpdate {
 	return uu.SetTeachersID(t.ID)
 }
 
-// AddFileIDs adds the "files" edge to the Thesis entity by IDs.
-func (uu *UserUpdate) AddFileIDs(ids ...int) *UserUpdate {
-	uu.mutation.AddFileIDs(ids...)
+// AddThesiIDs adds the "thesis" edge to the Thesis entity by IDs.
+func (uu *UserUpdate) AddThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddThesiIDs(ids...)
 	return uu
 }
 
-// AddFiles adds the "files" edges to the Thesis entity.
-func (uu *UserUpdate) AddFiles(t ...*Thesis) *UserUpdate {
+// AddThesis adds the "thesis" edges to the Thesis entity.
+func (uu *UserUpdate) AddThesis(t ...*Thesis) *UserUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return uu.AddFileIDs(ids...)
+	return uu.AddThesiIDs(ids...)
+}
+
+// AddReviewIDs adds the "reviews" edge to the Reviews entity by IDs.
+func (uu *UserUpdate) AddReviewIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddReviewIDs(ids...)
+	return uu
+}
+
+// AddReviews adds the "reviews" edges to the Reviews entity.
+func (uu *UserUpdate) AddReviews(r ...*Reviews) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddReviewIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -175,25 +191,46 @@ func (uu *UserUpdate) ClearTeachers() *UserUpdate {
 	return uu
 }
 
-// ClearFiles clears all "files" edges to the Thesis entity.
-func (uu *UserUpdate) ClearFiles() *UserUpdate {
-	uu.mutation.ClearFiles()
+// ClearThesis clears all "thesis" edges to the Thesis entity.
+func (uu *UserUpdate) ClearThesis() *UserUpdate {
+	uu.mutation.ClearThesis()
 	return uu
 }
 
-// RemoveFileIDs removes the "files" edge to Thesis entities by IDs.
-func (uu *UserUpdate) RemoveFileIDs(ids ...int) *UserUpdate {
-	uu.mutation.RemoveFileIDs(ids...)
+// RemoveThesiIDs removes the "thesis" edge to Thesis entities by IDs.
+func (uu *UserUpdate) RemoveThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveThesiIDs(ids...)
 	return uu
 }
 
-// RemoveFiles removes "files" edges to Thesis entities.
-func (uu *UserUpdate) RemoveFiles(t ...*Thesis) *UserUpdate {
+// RemoveThesis removes "thesis" edges to Thesis entities.
+func (uu *UserUpdate) RemoveThesis(t ...*Thesis) *UserUpdate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return uu.RemoveFileIDs(ids...)
+	return uu.RemoveThesiIDs(ids...)
+}
+
+// ClearReviews clears all "reviews" edges to the Reviews entity.
+func (uu *UserUpdate) ClearReviews() *UserUpdate {
+	uu.mutation.ClearReviews()
+	return uu
+}
+
+// RemoveReviewIDs removes the "reviews" edge to Reviews entities by IDs.
+func (uu *UserUpdate) RemoveReviewIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveReviewIDs(ids...)
+	return uu
+}
+
+// RemoveReviews removes "reviews" edges to Reviews entities.
+func (uu *UserUpdate) RemoveReviews(r ...*Reviews) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveReviewIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -331,12 +368,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.FilesCleared() {
+	if uu.mutation.ThesisCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FilesTable,
-			Columns: []string{user.FilesColumn},
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
@@ -344,12 +381,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !uu.mutation.FilesCleared() {
+	if nodes := uu.mutation.RemovedThesisIDs(); len(nodes) > 0 && !uu.mutation.ThesisCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FilesTable,
-			Columns: []string{user.FilesColumn},
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
@@ -360,15 +397,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.FilesIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.ThesisIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FilesTable,
-			Columns: []string{user.FilesColumn},
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedReviewsIDs(); len(nodes) > 0 && !uu.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -502,19 +584,34 @@ func (uuo *UserUpdateOne) SetTeachers(t *Teachers) *UserUpdateOne {
 	return uuo.SetTeachersID(t.ID)
 }
 
-// AddFileIDs adds the "files" edge to the Thesis entity by IDs.
-func (uuo *UserUpdateOne) AddFileIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.AddFileIDs(ids...)
+// AddThesiIDs adds the "thesis" edge to the Thesis entity by IDs.
+func (uuo *UserUpdateOne) AddThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddThesiIDs(ids...)
 	return uuo
 }
 
-// AddFiles adds the "files" edges to the Thesis entity.
-func (uuo *UserUpdateOne) AddFiles(t ...*Thesis) *UserUpdateOne {
+// AddThesis adds the "thesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) AddThesis(t ...*Thesis) *UserUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return uuo.AddFileIDs(ids...)
+	return uuo.AddThesiIDs(ids...)
+}
+
+// AddReviewIDs adds the "reviews" edge to the Reviews entity by IDs.
+func (uuo *UserUpdateOne) AddReviewIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddReviewIDs(ids...)
+	return uuo
+}
+
+// AddReviews adds the "reviews" edges to the Reviews entity.
+func (uuo *UserUpdateOne) AddReviews(r ...*Reviews) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddReviewIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -540,25 +637,46 @@ func (uuo *UserUpdateOne) ClearTeachers() *UserUpdateOne {
 	return uuo
 }
 
-// ClearFiles clears all "files" edges to the Thesis entity.
-func (uuo *UserUpdateOne) ClearFiles() *UserUpdateOne {
-	uuo.mutation.ClearFiles()
+// ClearThesis clears all "thesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) ClearThesis() *UserUpdateOne {
+	uuo.mutation.ClearThesis()
 	return uuo
 }
 
-// RemoveFileIDs removes the "files" edge to Thesis entities by IDs.
-func (uuo *UserUpdateOne) RemoveFileIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.RemoveFileIDs(ids...)
+// RemoveThesiIDs removes the "thesis" edge to Thesis entities by IDs.
+func (uuo *UserUpdateOne) RemoveThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveThesiIDs(ids...)
 	return uuo
 }
 
-// RemoveFiles removes "files" edges to Thesis entities.
-func (uuo *UserUpdateOne) RemoveFiles(t ...*Thesis) *UserUpdateOne {
+// RemoveThesis removes "thesis" edges to Thesis entities.
+func (uuo *UserUpdateOne) RemoveThesis(t ...*Thesis) *UserUpdateOne {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return uuo.RemoveFileIDs(ids...)
+	return uuo.RemoveThesiIDs(ids...)
+}
+
+// ClearReviews clears all "reviews" edges to the Reviews entity.
+func (uuo *UserUpdateOne) ClearReviews() *UserUpdateOne {
+	uuo.mutation.ClearReviews()
+	return uuo
+}
+
+// RemoveReviewIDs removes the "reviews" edge to Reviews entities by IDs.
+func (uuo *UserUpdateOne) RemoveReviewIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveReviewIDs(ids...)
+	return uuo
+}
+
+// RemoveReviews removes "reviews" edges to Reviews entities.
+func (uuo *UserUpdateOne) RemoveReviews(r ...*Reviews) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveReviewIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -726,12 +844,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.FilesCleared() {
+	if uuo.mutation.ThesisCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FilesTable,
-			Columns: []string{user.FilesColumn},
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
@@ -739,12 +857,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !uuo.mutation.FilesCleared() {
+	if nodes := uuo.mutation.RemovedThesisIDs(); len(nodes) > 0 && !uuo.mutation.ThesisCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FilesTable,
-			Columns: []string{user.FilesColumn},
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
@@ -755,15 +873,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.FilesIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.ThesisIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FilesTable,
-			Columns: []string{user.FilesColumn},
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedReviewsIDs(); len(nodes) > 0 && !uuo.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

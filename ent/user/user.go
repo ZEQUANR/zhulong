@@ -24,8 +24,10 @@ const (
 	EdgeStudents = "students"
 	// EdgeTeachers holds the string denoting the teachers edge name in mutations.
 	EdgeTeachers = "teachers"
-	// EdgeFiles holds the string denoting the files edge name in mutations.
-	EdgeFiles = "files"
+	// EdgeThesis holds the string denoting the thesis edge name in mutations.
+	EdgeThesis = "thesis"
+	// EdgeReviews holds the string denoting the reviews edge name in mutations.
+	EdgeReviews = "reviews"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// AdministratorsTable is the table that holds the administrators relation/edge.
@@ -49,13 +51,20 @@ const (
 	TeachersInverseTable = "teachers"
 	// TeachersColumn is the table column denoting the teachers relation/edge.
 	TeachersColumn = "user_teachers"
-	// FilesTable is the table that holds the files relation/edge.
-	FilesTable = "theses"
-	// FilesInverseTable is the table name for the Thesis entity.
+	// ThesisTable is the table that holds the thesis relation/edge.
+	ThesisTable = "theses"
+	// ThesisInverseTable is the table name for the Thesis entity.
 	// It exists in this package in order to avoid circular dependency with the "thesis" package.
-	FilesInverseTable = "theses"
-	// FilesColumn is the table column denoting the files relation/edge.
-	FilesColumn = "user_files"
+	ThesisInverseTable = "theses"
+	// ThesisColumn is the table column denoting the thesis relation/edge.
+	ThesisColumn = "user_thesis"
+	// ReviewsTable is the table that holds the reviews relation/edge.
+	ReviewsTable = "reviews"
+	// ReviewsInverseTable is the table name for the Reviews entity.
+	// It exists in this package in order to avoid circular dependency with the "reviews" package.
+	ReviewsInverseTable = "reviews"
+	// ReviewsColumn is the table column denoting the reviews relation/edge.
+	ReviewsColumn = "user_reviews"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -120,17 +129,31 @@ func ByTeachersField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByFilesCount orders the results by files count.
-func ByFilesCount(opts ...sql.OrderTermOption) OrderOption {
+// ByThesisCount orders the results by thesis count.
+func ByThesisCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newFilesStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newThesisStep(), opts...)
 	}
 }
 
-// ByFiles orders the results by files terms.
-func ByFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByThesis orders the results by thesis terms.
+func ByThesis(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newThesisStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByReviewsCount orders the results by reviews count.
+func ByReviewsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newReviewsStep(), opts...)
+	}
+}
+
+// ByReviews orders the results by reviews terms.
+func ByReviews(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newReviewsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newAdministratorsStep() *sqlgraph.Step {
@@ -154,10 +177,17 @@ func newTeachersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2O, false, TeachersTable, TeachersColumn),
 	)
 }
-func newFilesStep() *sqlgraph.Step {
+func newThesisStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(FilesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, FilesTable, FilesColumn),
+		sqlgraph.To(ThesisInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ThesisTable, ThesisColumn),
+	)
+}
+func newReviewsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ReviewsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ReviewsTable, ReviewsColumn),
 	)
 }

@@ -8,34 +8,32 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Thesis holds the schema definition for the Thesis entity.
-type Thesis struct {
+// Reviews holds the schema definition for the Reviews entity.
+type Reviews struct {
 	ent.Schema
 }
 
-// Fields of the Thesis.
-func (Thesis) Fields() []ent.Field {
+// Fields of the Reviews.
+func (Reviews) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("file_name").
 			Optional(),
 		field.String("file_url").
 			Optional().
 			Unique(),
-		field.Int("file_state").
-			Optional(),
 		field.Time("upload_time").
 			Optional(),
 		field.Time("create_time").
 			Default(time.Now),
-		field.String("thesis_title"),
+		field.String("reviews_title"),
 	}
 }
 
-// Edges of the Thesis.
-func (Thesis) Edges() []ent.Edge {
+// Edges of the Reviews.
+func (Reviews) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("uploaders", User.Type).
-			Ref("thesis").
+			Ref("reviews").
 			Unique(),
 	}
 }

@@ -21,6 +21,18 @@ func (f AdministratorsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AdministratorsMutation", m)
 }
 
+// The ReviewsFunc type is an adapter to allow the use of ordinary
+// function as Reviews mutator.
+type ReviewsFunc func(context.Context, *ent.ReviewsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ReviewsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ReviewsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReviewsMutation", m)
+}
+
 // The StudentsFunc type is an adapter to allow the use of ordinary
 // function as Students mutator.
 type StudentsFunc func(context.Context, *ent.StudentsMutation) (ent.Value, error)

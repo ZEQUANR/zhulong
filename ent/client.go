@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
@@ -29,6 +30,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Administrators is the client for interacting with the Administrators builders.
 	Administrators *AdministratorsClient
+	// Reviews is the client for interacting with the Reviews builders.
+	Reviews *ReviewsClient
 	// Students is the client for interacting with the Students builders.
 	Students *StudentsClient
 	// Teachers is the client for interacting with the Teachers builders.
@@ -49,6 +52,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Administrators = NewAdministratorsClient(c.config)
+	c.Reviews = NewReviewsClient(c.config)
 	c.Students = NewStudentsClient(c.config)
 	c.Teachers = NewTeachersClient(c.config)
 	c.Thesis = NewThesisClient(c.config)
@@ -146,6 +150,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:            ctx,
 		config:         cfg,
 		Administrators: NewAdministratorsClient(cfg),
+		Reviews:        NewReviewsClient(cfg),
 		Students:       NewStudentsClient(cfg),
 		Teachers:       NewTeachersClient(cfg),
 		Thesis:         NewThesisClient(cfg),
@@ -170,6 +175,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:            ctx,
 		config:         cfg,
 		Administrators: NewAdministratorsClient(cfg),
+		Reviews:        NewReviewsClient(cfg),
 		Students:       NewStudentsClient(cfg),
 		Teachers:       NewTeachersClient(cfg),
 		Thesis:         NewThesisClient(cfg),
@@ -202,21 +208,21 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Administrators.Use(hooks...)
-	c.Students.Use(hooks...)
-	c.Teachers.Use(hooks...)
-	c.Thesis.Use(hooks...)
-	c.User.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.Administrators, c.Reviews, c.Students, c.Teachers, c.Thesis, c.User,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Administrators.Intercept(interceptors...)
-	c.Students.Intercept(interceptors...)
-	c.Teachers.Intercept(interceptors...)
-	c.Thesis.Intercept(interceptors...)
-	c.User.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.Administrators, c.Reviews, c.Students, c.Teachers, c.Thesis, c.User,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -224,6 +230,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AdministratorsMutation:
 		return c.Administrators.mutate(ctx, m)
+	case *ReviewsMutation:
+		return c.Reviews.mutate(ctx, m)
 	case *StudentsMutation:
 		return c.Students.mutate(ctx, m)
 	case *TeachersMutation:
@@ -383,6 +391,155 @@ func (c *AdministratorsClient) mutate(ctx context.Context, m *AdministratorsMuta
 		return (&AdministratorsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Administrators mutation op: %q", m.Op())
+	}
+}
+
+// ReviewsClient is a client for the Reviews schema.
+type ReviewsClient struct {
+	config
+}
+
+// NewReviewsClient returns a client for the Reviews from the given config.
+func NewReviewsClient(c config) *ReviewsClient {
+	return &ReviewsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `reviews.Hooks(f(g(h())))`.
+func (c *ReviewsClient) Use(hooks ...Hook) {
+	c.hooks.Reviews = append(c.hooks.Reviews, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `reviews.Intercept(f(g(h())))`.
+func (c *ReviewsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Reviews = append(c.inters.Reviews, interceptors...)
+}
+
+// Create returns a builder for creating a Reviews entity.
+func (c *ReviewsClient) Create() *ReviewsCreate {
+	mutation := newReviewsMutation(c.config, OpCreate)
+	return &ReviewsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Reviews entities.
+func (c *ReviewsClient) CreateBulk(builders ...*ReviewsCreate) *ReviewsCreateBulk {
+	return &ReviewsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ReviewsClient) MapCreateBulk(slice any, setFunc func(*ReviewsCreate, int)) *ReviewsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ReviewsCreateBulk{err: fmt.Errorf("calling to ReviewsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ReviewsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ReviewsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Reviews.
+func (c *ReviewsClient) Update() *ReviewsUpdate {
+	mutation := newReviewsMutation(c.config, OpUpdate)
+	return &ReviewsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ReviewsClient) UpdateOne(r *Reviews) *ReviewsUpdateOne {
+	mutation := newReviewsMutation(c.config, OpUpdateOne, withReviews(r))
+	return &ReviewsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ReviewsClient) UpdateOneID(id int) *ReviewsUpdateOne {
+	mutation := newReviewsMutation(c.config, OpUpdateOne, withReviewsID(id))
+	return &ReviewsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Reviews.
+func (c *ReviewsClient) Delete() *ReviewsDelete {
+	mutation := newReviewsMutation(c.config, OpDelete)
+	return &ReviewsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ReviewsClient) DeleteOne(r *Reviews) *ReviewsDeleteOne {
+	return c.DeleteOneID(r.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ReviewsClient) DeleteOneID(id int) *ReviewsDeleteOne {
+	builder := c.Delete().Where(reviews.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ReviewsDeleteOne{builder}
+}
+
+// Query returns a query builder for Reviews.
+func (c *ReviewsClient) Query() *ReviewsQuery {
+	return &ReviewsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeReviews},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Reviews entity by its id.
+func (c *ReviewsClient) Get(ctx context.Context, id int) (*Reviews, error) {
+	return c.Query().Where(reviews.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ReviewsClient) GetX(ctx context.Context, id int) *Reviews {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUploaders queries the uploaders edge of a Reviews.
+func (c *ReviewsClient) QueryUploaders(r *Reviews) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reviews.Table, reviews.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, reviews.UploadersTable, reviews.UploadersColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ReviewsClient) Hooks() []Hook {
+	return c.hooks.Reviews
+}
+
+// Interceptors returns the client interceptors.
+func (c *ReviewsClient) Interceptors() []Interceptor {
+	return c.inters.Reviews
+}
+
+func (c *ReviewsClient) mutate(ctx context.Context, m *ReviewsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ReviewsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ReviewsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ReviewsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ReviewsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Reviews mutation op: %q", m.Op())
 	}
 }
 
@@ -989,15 +1146,31 @@ func (c *UserClient) QueryTeachers(u *User) *TeachersQuery {
 	return query
 }
 
-// QueryFiles queries the files edge of a User.
-func (c *UserClient) QueryFiles(u *User) *ThesisQuery {
+// QueryThesis queries the thesis edge of a User.
+func (c *UserClient) QueryThesis(u *User) *ThesisQuery {
 	query := (&ThesisClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(thesis.Table, thesis.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.FilesTable, user.FilesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ThesisTable, user.ThesisColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryReviews queries the reviews edge of a User.
+func (c *UserClient) QueryReviews(u *User) *ReviewsQuery {
+	query := (&ReviewsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(reviews.Table, reviews.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ReviewsTable, user.ReviewsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -1033,9 +1206,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Administrators, Students, Teachers, Thesis, User []ent.Hook
+		Administrators, Reviews, Students, Teachers, Thesis, User []ent.Hook
 	}
 	inters struct {
-		Administrators, Students, Teachers, Thesis, User []ent.Interceptor
+		Administrators, Reviews, Students, Teachers, Thesis, User []ent.Interceptor
 	}
 )

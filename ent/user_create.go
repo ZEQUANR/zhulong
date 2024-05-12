@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
@@ -98,19 +99,34 @@ func (uc *UserCreate) SetTeachers(t *Teachers) *UserCreate {
 	return uc.SetTeachersID(t.ID)
 }
 
-// AddFileIDs adds the "files" edge to the Thesis entity by IDs.
-func (uc *UserCreate) AddFileIDs(ids ...int) *UserCreate {
-	uc.mutation.AddFileIDs(ids...)
+// AddThesiIDs adds the "thesis" edge to the Thesis entity by IDs.
+func (uc *UserCreate) AddThesiIDs(ids ...int) *UserCreate {
+	uc.mutation.AddThesiIDs(ids...)
 	return uc
 }
 
-// AddFiles adds the "files" edges to the Thesis entity.
-func (uc *UserCreate) AddFiles(t ...*Thesis) *UserCreate {
+// AddThesis adds the "thesis" edges to the Thesis entity.
+func (uc *UserCreate) AddThesis(t ...*Thesis) *UserCreate {
 	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return uc.AddFileIDs(ids...)
+	return uc.AddThesiIDs(ids...)
+}
+
+// AddReviewIDs adds the "reviews" edge to the Reviews entity by IDs.
+func (uc *UserCreate) AddReviewIDs(ids ...int) *UserCreate {
+	uc.mutation.AddReviewIDs(ids...)
+	return uc
+}
+
+// AddReviews adds the "reviews" edges to the Reviews entity.
+func (uc *UserCreate) AddReviews(r ...*Reviews) *UserCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddReviewIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -242,15 +258,31 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.FilesIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.ThesisIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FilesTable,
-			Columns: []string{user.FilesColumn},
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

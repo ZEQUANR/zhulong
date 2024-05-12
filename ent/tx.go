@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Administrators is the client for interacting with the Administrators builders.
 	Administrators *AdministratorsClient
+	// Reviews is the client for interacting with the Reviews builders.
+	Reviews *ReviewsClient
 	// Students is the client for interacting with the Students builders.
 	Students *StudentsClient
 	// Teachers is the client for interacting with the Teachers builders.
@@ -154,6 +156,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Administrators = NewAdministratorsClient(tx.config)
+	tx.Reviews = NewReviewsClient(tx.config)
 	tx.Students = NewStudentsClient(tx.config)
 	tx.Teachers = NewTeachersClient(tx.config)
 	tx.Thesis = NewThesisClient(tx.config)
