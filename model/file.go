@@ -18,7 +18,7 @@ type File struct {
 }
 
 func (o *File) Save(c *gin.Context) error {
-	if _, err := os.Stat(o.Path); err != nil || !os.IsNotExist(err) {
+	if _, err := os.Stat(o.Path); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("检查目录时出错: %w", err)
 	}
 
@@ -27,9 +27,11 @@ func (o *File) Save(c *gin.Context) error {
 	}
 
 	timeStr := time.Now().Format("2006年01月02日15时04分05秒-000000-")
-	o.Path = o.Path + path.Join(o.Path, timeStr+o.Name)
+	o.Path = path.Join(o.Path, timeStr+o.Name)
 
-	c.SaveUploadedFile(o.Blob, o.Path)
+	if err := c.SaveUploadedFile(o.Blob, o.Path); err != nil {
+		return fmt.Errorf("保存文件时出错: %w", err)
+	}
 
 	return nil
 }
@@ -55,13 +57,15 @@ func (o *File) Delete() error {
 	return nil
 }
 
-func (o *File) GetPath() (string, error) {
+func (o *File) GetPath() error {
 	dir, err := os.Getwd()
 	if err != nil {
-		return "", fmt.Errorf("unable to get current working directory: %v", err)
+		return fmt.Errorf("unable to get current working directory: %v", err)
 	}
 
-	return dir, nil
+	o.Path = dir
+
+	return nil
 }
 
 func (o *File) CheckPath() error {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
+	"github.com/ZEQUANR/zhulong/driver"
 	"github.com/ZEQUANR/zhulong/ent"
 )
 
@@ -137,21 +137,12 @@ func createStudents(ctx context.Context, client *ent.Client) error {
 // }
 
 func main() {
-	// ctx := context.Background()
-	// client := driver.MysqlClient
+	ctx := context.Background()
+	client := driver.MysqlClient
 
-	// createAdministrators(ctx, client)
-	// createTeachers(ctx, client)
-	// createStudents(ctx, client)
-
-	baseDir, err := os.Getwd()
-	if err != nil {
-		fmt.Printf("Failed to get the current working directory: %v\n", err)
-		// 这里可以根据实际情况选择继续执行、退出程序或是进行其他错误处理
-		return
-	}
-
-	fmt.Printf("The current working directory is: %s\n", baseDir)
+	createAdministrators(ctx, client)
+	createTeachers(ctx, client)
+	createStudents(ctx, client)
 
 	// createThesiss(ctx, client)
 }

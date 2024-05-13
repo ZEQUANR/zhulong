@@ -31,7 +31,7 @@ func ThesisCreate(c *gin.Context) {
 	}
 
 	thesis, err := services.CreateThesis(int(id.(float64)), data)
-	if err := c.BindJSON(&data); err != nil {
+	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
 		return
 	}
@@ -39,7 +39,6 @@ func ThesisCreate(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"thesis_id": thesis.ID,
 	})
-
 }
 
 func ThesisUpload(c *gin.Context) {
@@ -61,7 +60,7 @@ func ThesisUpload(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("file")
+	blob, err := c.FormFile("file")
 	if err != nil {
 		if err != http.ErrMissingFile {
 			logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
@@ -69,12 +68,23 @@ func ThesisUpload(c *gin.Context) {
 		return
 	}
 
-	a := model.File{
-		Name: file.Filename,
+	file := model.File{
+		Name: blob.Filename,
+		Blob: blob,
 	}
 
-	thesis, err := services.UploadThesis(int(id.(float64)), data.ThesisId, a)
-	if err := c.Bind(&data); err != nil {
+	if err := file.GetPath(); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	thesis, err := services.UploadThesis(int(id.(float64)), data.ThesisId, file)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	if err := file.Save(c); err != nil {
 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
 		return
 	}
