@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"path"
 	"time"
 
 	"github.com/ZEQUANR/zhulong/ent"
@@ -12,7 +13,7 @@ import (
 	"github.com/ZEQUANR/zhulong/model/api"
 )
 
-func CreateThesis(id int, createThesis api.CreateThesis) (*ent.Thesis, error) {
+func CreateThesis(id int, data api.CreateThesis) (*ent.Thesis, error) {
 	ctx := context.Background()
 
 	user, err := client.User.
@@ -20,16 +21,23 @@ func CreateThesis(id int, createThesis api.CreateThesis) (*ent.Thesis, error) {
 		Where(user.ID(id)).
 		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("func: CreateThesis %w", err)
+		return nil, fmt.Errorf("func: CreateThesis | index: 0 | err: %w", err)
 	}
 
 	thesis, err := client.Thesis.
 		Create().
-		SetThesisTitle(createThesis.ThesisTitle).
+		SetChineseTitle(data.ChineseTitle).
+		SetEnglishTitle(data.EnglishTitle).
+		SetAuthors(data.Authors).
+		SetTeachers(data.Teachers).
+		SetFirstAdvance(data.FirstAdvance).
+		SetSecondAdvance(data.SecondAdvance).
+		SetThirdAdvance(data.ThirdAdvance).
+		SetDrawback(data.Drawback).
 		SetUploaders(user).
 		Save(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("func: CreateThesis %w", err)
+		return nil, fmt.Errorf("func: CreateThesis | index: 1 | err: %w", err)
 	}
 
 	return thesis, nil
@@ -43,25 +51,25 @@ func UploadThesis(userId int, thesisID int, file model.File) (*ent.Thesis, error
 		Where(thesis.ID(thesisID)).
 		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("func: UploadThesis %w", err)
+		return nil, fmt.Errorf("func: UploadThesis | index: 0 | err: %w", err)
 	}
 
 	user, err := paper.
 		QueryUploaders().
 		Only(ctx)
 	if err != nil || user.ID != userId {
-		return nil, fmt.Errorf("func: UploadThesis %w", err)
+		return nil, fmt.Errorf("func: UploadThesis | index: 1 | err: %w", err)
 	}
 
 	result, err := paper.
 		Update().
 		SetFileName(file.Name).
-		SetFileURL(file.Path).
-		SetFileState(0).
+		SetFileURL(path.Join(file.Path, file.Name)).
+		SetFileState(model.FileState.ToBeReviewed).
 		SetUploadTime(time.Now()).
 		Save(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("func: UploadThesis %w", err)
+		return nil, fmt.Errorf("func: UploadThesis | index: 2 | err: %w", err)
 	}
 
 	return result, nil

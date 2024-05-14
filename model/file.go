@@ -11,10 +11,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var FileState = struct {
+	ToBeReviewed    int // 待评审
+	UnderReview     int // 评审中
+	ReviewCompleted int // 评审完成
+	Repulse         int // 打回
+}{
+	ToBeReviewed:    0,
+	UnderReview:     1,
+	ReviewCompleted: 2,
+	Repulse:         3,
+}
+
 type File struct {
-	Name string
-	Path string
-	Blob *multipart.FileHeader
+	Name string                // 文件名
+	Path string                // 文件存储路径
+	Blob *multipart.FileHeader // 文件本体
 }
 
 func (o *File) Save(c *gin.Context) error {
@@ -26,10 +38,7 @@ func (o *File) Save(c *gin.Context) error {
 		return fmt.Errorf("创建目录时出错: %w", err)
 	}
 
-	timeStr := time.Now().Format("2006年01月02日15时04分05秒-000000-")
-	o.Path = path.Join(o.Path, timeStr+o.Name)
-
-	if err := c.SaveUploadedFile(o.Blob, o.Path); err != nil {
+	if err := c.SaveUploadedFile(o.Blob, path.Join(o.Path, o.Name)); err != nil {
 		return fmt.Errorf("保存文件时出错: %w", err)
 	}
 
@@ -63,7 +72,11 @@ func (o *File) GetPath() error {
 		return fmt.Errorf("unable to get current working directory: %v", err)
 	}
 
-	o.Path = dir
+	o.Path = path.Join(dir, "files")
+
+	o.Path = path.Join(o.Path, time.Now().Format("2006-01-02"))
+
+	o.Path = path.Join(o.Path, time.Now().Format("2006-01-02-15-04-05"))
 
 	return nil
 }

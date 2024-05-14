@@ -25,9 +25,16 @@ func (Thesis) Fields() []ent.Field {
 			Optional(),
 		field.Time("upload_time").
 			Optional(),
+		field.String("chinese_title"),
+		field.String("english_title"),
+		field.String("authors"),
+		field.String("teachers"),
+		field.String("first_advance"),
+		field.String("second_advance"),
+		field.String("third_advance"),
+		field.String("drawback"),
 		field.Time("create_time").
 			Default(time.Now),
-		field.String("thesis_title"),
 	}
 }
 

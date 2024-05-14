@@ -12,13 +12,7 @@ import (
 )
 
 func ThesisCreate(c *gin.Context) {
-	token, err := utils.ExtractToken(c)
-	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
-		return
-	}
-
-	id, err := utils.ParseAToken(token, "user_id")
+	userId, err := utils.ParseUserIDInToken(c)
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
 		return
@@ -30,9 +24,9 @@ func ThesisCreate(c *gin.Context) {
 		return
 	}
 
-	thesis, err := services.CreateThesis(int(id.(float64)), data)
+	thesis, err := services.CreateThesis(userId, data)
 	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionCreate, logger.ErrorBodyCreateThesis, err)
 		return
 	}
 
@@ -42,13 +36,7 @@ func ThesisCreate(c *gin.Context) {
 }
 
 func ThesisUpload(c *gin.Context) {
-	token, err := utils.ExtractToken(c)
-	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
-		return
-	}
-
-	id, err := utils.ParseAToken(token, "user_id")
+	userId, err := utils.ParseUserIDInToken(c)
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
 		return
@@ -56,15 +44,13 @@ func ThesisUpload(c *gin.Context) {
 
 	data := api.UploadThesis{}
 	if err := c.Bind(&data); err != nil {
-		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
 		return
 	}
 
 	blob, err := c.FormFile("file")
 	if err != nil {
-		if err != http.ErrMissingFile {
-			logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
-		}
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
 		return
 	}
 
@@ -74,18 +60,18 @@ func ThesisUpload(c *gin.Context) {
 	}
 
 	if err := file.GetPath(); err != nil {
-		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionCreate, logger.ErrorBodyCreatePath, err)
 		return
 	}
 
-	thesis, err := services.UploadThesis(int(id.(float64)), data.ThesisId, file)
+	thesis, err := services.UploadThesis(userId, data.ThesisId, file)
 	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionUpdate, logger.ErrorBodyUpdateThesis, err)
 		return
 	}
 
 	if err := file.Save(c); err != nil {
-		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionSave, logger.ErrorBodySaveThesis, err)
 		return
 	}
 

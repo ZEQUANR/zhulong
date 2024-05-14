@@ -22,10 +22,24 @@ const (
 	FieldFileState = "file_state"
 	// FieldUploadTime holds the string denoting the upload_time field in the database.
 	FieldUploadTime = "upload_time"
+	// FieldChineseTitle holds the string denoting the chinese_title field in the database.
+	FieldChineseTitle = "chinese_title"
+	// FieldEnglishTitle holds the string denoting the english_title field in the database.
+	FieldEnglishTitle = "english_title"
+	// FieldAuthors holds the string denoting the authors field in the database.
+	FieldAuthors = "authors"
+	// FieldTeachers holds the string denoting the teachers field in the database.
+	FieldTeachers = "teachers"
+	// FieldFirstAdvance holds the string denoting the first_advance field in the database.
+	FieldFirstAdvance = "first_advance"
+	// FieldSecondAdvance holds the string denoting the second_advance field in the database.
+	FieldSecondAdvance = "second_advance"
+	// FieldThirdAdvance holds the string denoting the third_advance field in the database.
+	FieldThirdAdvance = "third_advance"
+	// FieldDrawback holds the string denoting the drawback field in the database.
+	FieldDrawback = "drawback"
 	// FieldCreateTime holds the string denoting the create_time field in the database.
 	FieldCreateTime = "create_time"
-	// FieldThesisTitle holds the string denoting the thesis_title field in the database.
-	FieldThesisTitle = "thesis_title"
 	// EdgeUploaders holds the string denoting the uploaders edge name in mutations.
 	EdgeUploaders = "uploaders"
 	// Table holds the table name of the thesis in the database.
@@ -46,8 +60,15 @@ var Columns = []string{
 	FieldFileURL,
 	FieldFileState,
 	FieldUploadTime,
+	FieldChineseTitle,
+	FieldEnglishTitle,
+	FieldAuthors,
+	FieldTeachers,
+	FieldFirstAdvance,
+	FieldSecondAdvance,
+	FieldThirdAdvance,
+	FieldDrawback,
 	FieldCreateTime,
-	FieldThesisTitle,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "theses"
@@ -104,14 +125,49 @@ func ByUploadTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUploadTime, opts...).ToFunc()
 }
 
+// ByChineseTitle orders the results by the chinese_title field.
+func ByChineseTitle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldChineseTitle, opts...).ToFunc()
+}
+
+// ByEnglishTitle orders the results by the english_title field.
+func ByEnglishTitle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEnglishTitle, opts...).ToFunc()
+}
+
+// ByAuthors orders the results by the authors field.
+func ByAuthors(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthors, opts...).ToFunc()
+}
+
+// ByTeachers orders the results by the teachers field.
+func ByTeachers(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTeachers, opts...).ToFunc()
+}
+
+// ByFirstAdvance orders the results by the first_advance field.
+func ByFirstAdvance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstAdvance, opts...).ToFunc()
+}
+
+// BySecondAdvance orders the results by the second_advance field.
+func BySecondAdvance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSecondAdvance, opts...).ToFunc()
+}
+
+// ByThirdAdvance orders the results by the third_advance field.
+func ByThirdAdvance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldThirdAdvance, opts...).ToFunc()
+}
+
+// ByDrawback orders the results by the drawback field.
+func ByDrawback(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDrawback, opts...).ToFunc()
+}
+
 // ByCreateTime orders the results by the create_time field.
 func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
-}
-
-// ByThesisTitle orders the results by the thesis_title field.
-func ByThesisTitle(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldThesisTitle, opts...).ToFunc()
 }
 
 // ByUploadersField orders the results by uploaders field.

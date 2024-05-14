@@ -26,10 +26,24 @@ type Thesis struct {
 	FileState int `json:"file_state,omitempty"`
 	// UploadTime holds the value of the "upload_time" field.
 	UploadTime time.Time `json:"upload_time,omitempty"`
+	// ChineseTitle holds the value of the "chinese_title" field.
+	ChineseTitle string `json:"chinese_title,omitempty"`
+	// EnglishTitle holds the value of the "english_title" field.
+	EnglishTitle string `json:"english_title,omitempty"`
+	// Authors holds the value of the "authors" field.
+	Authors string `json:"authors,omitempty"`
+	// Teachers holds the value of the "teachers" field.
+	Teachers string `json:"teachers,omitempty"`
+	// FirstAdvance holds the value of the "first_advance" field.
+	FirstAdvance string `json:"first_advance,omitempty"`
+	// SecondAdvance holds the value of the "second_advance" field.
+	SecondAdvance string `json:"second_advance,omitempty"`
+	// ThirdAdvance holds the value of the "third_advance" field.
+	ThirdAdvance string `json:"third_advance,omitempty"`
+	// Drawback holds the value of the "drawback" field.
+	Drawback string `json:"drawback,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
-	// ThesisTitle holds the value of the "thesis_title" field.
-	ThesisTitle string `json:"thesis_title,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ThesisQuery when eager-loading is set.
 	Edges        ThesisEdges `json:"edges"`
@@ -64,7 +78,7 @@ func (*Thesis) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case thesis.FieldID, thesis.FieldFileState:
 			values[i] = new(sql.NullInt64)
-		case thesis.FieldFileName, thesis.FieldFileURL, thesis.FieldThesisTitle:
+		case thesis.FieldFileName, thesis.FieldFileURL, thesis.FieldChineseTitle, thesis.FieldEnglishTitle, thesis.FieldAuthors, thesis.FieldTeachers, thesis.FieldFirstAdvance, thesis.FieldSecondAdvance, thesis.FieldThirdAdvance, thesis.FieldDrawback:
 			values[i] = new(sql.NullString)
 		case thesis.FieldUploadTime, thesis.FieldCreateTime:
 			values[i] = new(sql.NullTime)
@@ -115,17 +129,59 @@ func (t *Thesis) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.UploadTime = value.Time
 			}
+		case thesis.FieldChineseTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field chinese_title", values[i])
+			} else if value.Valid {
+				t.ChineseTitle = value.String
+			}
+		case thesis.FieldEnglishTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field english_title", values[i])
+			} else if value.Valid {
+				t.EnglishTitle = value.String
+			}
+		case thesis.FieldAuthors:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field authors", values[i])
+			} else if value.Valid {
+				t.Authors = value.String
+			}
+		case thesis.FieldTeachers:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field teachers", values[i])
+			} else if value.Valid {
+				t.Teachers = value.String
+			}
+		case thesis.FieldFirstAdvance:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field first_advance", values[i])
+			} else if value.Valid {
+				t.FirstAdvance = value.String
+			}
+		case thesis.FieldSecondAdvance:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field second_advance", values[i])
+			} else if value.Valid {
+				t.SecondAdvance = value.String
+			}
+		case thesis.FieldThirdAdvance:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field third_advance", values[i])
+			} else if value.Valid {
+				t.ThirdAdvance = value.String
+			}
+		case thesis.FieldDrawback:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field drawback", values[i])
+			} else if value.Valid {
+				t.Drawback = value.String
+			}
 		case thesis.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
 				t.CreateTime = value.Time
-			}
-		case thesis.FieldThesisTitle:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field thesis_title", values[i])
-			} else if value.Valid {
-				t.ThesisTitle = value.String
 			}
 		case thesis.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -187,11 +243,32 @@ func (t *Thesis) String() string {
 	builder.WriteString("upload_time=")
 	builder.WriteString(t.UploadTime.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("chinese_title=")
+	builder.WriteString(t.ChineseTitle)
+	builder.WriteString(", ")
+	builder.WriteString("english_title=")
+	builder.WriteString(t.EnglishTitle)
+	builder.WriteString(", ")
+	builder.WriteString("authors=")
+	builder.WriteString(t.Authors)
+	builder.WriteString(", ")
+	builder.WriteString("teachers=")
+	builder.WriteString(t.Teachers)
+	builder.WriteString(", ")
+	builder.WriteString("first_advance=")
+	builder.WriteString(t.FirstAdvance)
+	builder.WriteString(", ")
+	builder.WriteString("second_advance=")
+	builder.WriteString(t.SecondAdvance)
+	builder.WriteString(", ")
+	builder.WriteString("third_advance=")
+	builder.WriteString(t.ThirdAdvance)
+	builder.WriteString(", ")
+	builder.WriteString("drawback=")
+	builder.WriteString(t.Drawback)
+	builder.WriteString(", ")
 	builder.WriteString("create_time=")
 	builder.WriteString(t.CreateTime.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("thesis_title=")
-	builder.WriteString(t.ThesisTitle)
 	builder.WriteByte(')')
 	return builder.String()
 }

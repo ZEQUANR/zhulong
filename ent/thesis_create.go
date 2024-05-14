@@ -77,6 +77,54 @@ func (tc *ThesisCreate) SetNillableUploadTime(t *time.Time) *ThesisCreate {
 	return tc
 }
 
+// SetChineseTitle sets the "chinese_title" field.
+func (tc *ThesisCreate) SetChineseTitle(s string) *ThesisCreate {
+	tc.mutation.SetChineseTitle(s)
+	return tc
+}
+
+// SetEnglishTitle sets the "english_title" field.
+func (tc *ThesisCreate) SetEnglishTitle(s string) *ThesisCreate {
+	tc.mutation.SetEnglishTitle(s)
+	return tc
+}
+
+// SetAuthors sets the "authors" field.
+func (tc *ThesisCreate) SetAuthors(s string) *ThesisCreate {
+	tc.mutation.SetAuthors(s)
+	return tc
+}
+
+// SetTeachers sets the "teachers" field.
+func (tc *ThesisCreate) SetTeachers(s string) *ThesisCreate {
+	tc.mutation.SetTeachers(s)
+	return tc
+}
+
+// SetFirstAdvance sets the "first_advance" field.
+func (tc *ThesisCreate) SetFirstAdvance(s string) *ThesisCreate {
+	tc.mutation.SetFirstAdvance(s)
+	return tc
+}
+
+// SetSecondAdvance sets the "second_advance" field.
+func (tc *ThesisCreate) SetSecondAdvance(s string) *ThesisCreate {
+	tc.mutation.SetSecondAdvance(s)
+	return tc
+}
+
+// SetThirdAdvance sets the "third_advance" field.
+func (tc *ThesisCreate) SetThirdAdvance(s string) *ThesisCreate {
+	tc.mutation.SetThirdAdvance(s)
+	return tc
+}
+
+// SetDrawback sets the "drawback" field.
+func (tc *ThesisCreate) SetDrawback(s string) *ThesisCreate {
+	tc.mutation.SetDrawback(s)
+	return tc
+}
+
 // SetCreateTime sets the "create_time" field.
 func (tc *ThesisCreate) SetCreateTime(t time.Time) *ThesisCreate {
 	tc.mutation.SetCreateTime(t)
@@ -88,12 +136,6 @@ func (tc *ThesisCreate) SetNillableCreateTime(t *time.Time) *ThesisCreate {
 	if t != nil {
 		tc.SetCreateTime(*t)
 	}
-	return tc
-}
-
-// SetThesisTitle sets the "thesis_title" field.
-func (tc *ThesisCreate) SetThesisTitle(s string) *ThesisCreate {
-	tc.mutation.SetThesisTitle(s)
 	return tc
 }
 
@@ -159,11 +201,32 @@ func (tc *ThesisCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *ThesisCreate) check() error {
+	if _, ok := tc.mutation.ChineseTitle(); !ok {
+		return &ValidationError{Name: "chinese_title", err: errors.New(`ent: missing required field "Thesis.chinese_title"`)}
+	}
+	if _, ok := tc.mutation.EnglishTitle(); !ok {
+		return &ValidationError{Name: "english_title", err: errors.New(`ent: missing required field "Thesis.english_title"`)}
+	}
+	if _, ok := tc.mutation.Authors(); !ok {
+		return &ValidationError{Name: "authors", err: errors.New(`ent: missing required field "Thesis.authors"`)}
+	}
+	if _, ok := tc.mutation.Teachers(); !ok {
+		return &ValidationError{Name: "teachers", err: errors.New(`ent: missing required field "Thesis.teachers"`)}
+	}
+	if _, ok := tc.mutation.FirstAdvance(); !ok {
+		return &ValidationError{Name: "first_advance", err: errors.New(`ent: missing required field "Thesis.first_advance"`)}
+	}
+	if _, ok := tc.mutation.SecondAdvance(); !ok {
+		return &ValidationError{Name: "second_advance", err: errors.New(`ent: missing required field "Thesis.second_advance"`)}
+	}
+	if _, ok := tc.mutation.ThirdAdvance(); !ok {
+		return &ValidationError{Name: "third_advance", err: errors.New(`ent: missing required field "Thesis.third_advance"`)}
+	}
+	if _, ok := tc.mutation.Drawback(); !ok {
+		return &ValidationError{Name: "drawback", err: errors.New(`ent: missing required field "Thesis.drawback"`)}
+	}
 	if _, ok := tc.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Thesis.create_time"`)}
-	}
-	if _, ok := tc.mutation.ThesisTitle(); !ok {
-		return &ValidationError{Name: "thesis_title", err: errors.New(`ent: missing required field "Thesis.thesis_title"`)}
 	}
 	return nil
 }
@@ -207,13 +270,41 @@ func (tc *ThesisCreate) createSpec() (*Thesis, *sqlgraph.CreateSpec) {
 		_spec.SetField(thesis.FieldUploadTime, field.TypeTime, value)
 		_node.UploadTime = value
 	}
+	if value, ok := tc.mutation.ChineseTitle(); ok {
+		_spec.SetField(thesis.FieldChineseTitle, field.TypeString, value)
+		_node.ChineseTitle = value
+	}
+	if value, ok := tc.mutation.EnglishTitle(); ok {
+		_spec.SetField(thesis.FieldEnglishTitle, field.TypeString, value)
+		_node.EnglishTitle = value
+	}
+	if value, ok := tc.mutation.Authors(); ok {
+		_spec.SetField(thesis.FieldAuthors, field.TypeString, value)
+		_node.Authors = value
+	}
+	if value, ok := tc.mutation.Teachers(); ok {
+		_spec.SetField(thesis.FieldTeachers, field.TypeString, value)
+		_node.Teachers = value
+	}
+	if value, ok := tc.mutation.FirstAdvance(); ok {
+		_spec.SetField(thesis.FieldFirstAdvance, field.TypeString, value)
+		_node.FirstAdvance = value
+	}
+	if value, ok := tc.mutation.SecondAdvance(); ok {
+		_spec.SetField(thesis.FieldSecondAdvance, field.TypeString, value)
+		_node.SecondAdvance = value
+	}
+	if value, ok := tc.mutation.ThirdAdvance(); ok {
+		_spec.SetField(thesis.FieldThirdAdvance, field.TypeString, value)
+		_node.ThirdAdvance = value
+	}
+	if value, ok := tc.mutation.Drawback(); ok {
+		_spec.SetField(thesis.FieldDrawback, field.TypeString, value)
+		_node.Drawback = value
+	}
 	if value, ok := tc.mutation.CreateTime(); ok {
 		_spec.SetField(thesis.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
-	}
-	if value, ok := tc.mutation.ThesisTitle(); ok {
-		_spec.SetField(thesis.FieldThesisTitle, field.TypeString, value)
-		_node.ThesisTitle = value
 	}
 	if nodes := tc.mutation.UploadersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

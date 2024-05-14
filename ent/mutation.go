@@ -2490,8 +2490,15 @@ type ThesisMutation struct {
 	file_state       *int
 	addfile_state    *int
 	upload_time      *time.Time
+	chinese_title    *string
+	english_title    *string
+	authors          *string
+	teachers         *string
+	first_advance    *string
+	second_advance   *string
+	third_advance    *string
+	drawback         *string
 	create_time      *time.Time
-	thesis_title     *string
 	clearedFields    map[string]struct{}
 	uploaders        *int
 	cleareduploaders bool
@@ -2815,6 +2822,294 @@ func (m *ThesisMutation) ResetUploadTime() {
 	delete(m.clearedFields, thesis.FieldUploadTime)
 }
 
+// SetChineseTitle sets the "chinese_title" field.
+func (m *ThesisMutation) SetChineseTitle(s string) {
+	m.chinese_title = &s
+}
+
+// ChineseTitle returns the value of the "chinese_title" field in the mutation.
+func (m *ThesisMutation) ChineseTitle() (r string, exists bool) {
+	v := m.chinese_title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChineseTitle returns the old "chinese_title" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldChineseTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChineseTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChineseTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChineseTitle: %w", err)
+	}
+	return oldValue.ChineseTitle, nil
+}
+
+// ResetChineseTitle resets all changes to the "chinese_title" field.
+func (m *ThesisMutation) ResetChineseTitle() {
+	m.chinese_title = nil
+}
+
+// SetEnglishTitle sets the "english_title" field.
+func (m *ThesisMutation) SetEnglishTitle(s string) {
+	m.english_title = &s
+}
+
+// EnglishTitle returns the value of the "english_title" field in the mutation.
+func (m *ThesisMutation) EnglishTitle() (r string, exists bool) {
+	v := m.english_title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnglishTitle returns the old "english_title" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldEnglishTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnglishTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnglishTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnglishTitle: %w", err)
+	}
+	return oldValue.EnglishTitle, nil
+}
+
+// ResetEnglishTitle resets all changes to the "english_title" field.
+func (m *ThesisMutation) ResetEnglishTitle() {
+	m.english_title = nil
+}
+
+// SetAuthors sets the "authors" field.
+func (m *ThesisMutation) SetAuthors(s string) {
+	m.authors = &s
+}
+
+// Authors returns the value of the "authors" field in the mutation.
+func (m *ThesisMutation) Authors() (r string, exists bool) {
+	v := m.authors
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthors returns the old "authors" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldAuthors(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthors is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthors requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthors: %w", err)
+	}
+	return oldValue.Authors, nil
+}
+
+// ResetAuthors resets all changes to the "authors" field.
+func (m *ThesisMutation) ResetAuthors() {
+	m.authors = nil
+}
+
+// SetTeachers sets the "teachers" field.
+func (m *ThesisMutation) SetTeachers(s string) {
+	m.teachers = &s
+}
+
+// Teachers returns the value of the "teachers" field in the mutation.
+func (m *ThesisMutation) Teachers() (r string, exists bool) {
+	v := m.teachers
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTeachers returns the old "teachers" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldTeachers(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTeachers is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTeachers requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTeachers: %w", err)
+	}
+	return oldValue.Teachers, nil
+}
+
+// ResetTeachers resets all changes to the "teachers" field.
+func (m *ThesisMutation) ResetTeachers() {
+	m.teachers = nil
+}
+
+// SetFirstAdvance sets the "first_advance" field.
+func (m *ThesisMutation) SetFirstAdvance(s string) {
+	m.first_advance = &s
+}
+
+// FirstAdvance returns the value of the "first_advance" field in the mutation.
+func (m *ThesisMutation) FirstAdvance() (r string, exists bool) {
+	v := m.first_advance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstAdvance returns the old "first_advance" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldFirstAdvance(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstAdvance is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstAdvance requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstAdvance: %w", err)
+	}
+	return oldValue.FirstAdvance, nil
+}
+
+// ResetFirstAdvance resets all changes to the "first_advance" field.
+func (m *ThesisMutation) ResetFirstAdvance() {
+	m.first_advance = nil
+}
+
+// SetSecondAdvance sets the "second_advance" field.
+func (m *ThesisMutation) SetSecondAdvance(s string) {
+	m.second_advance = &s
+}
+
+// SecondAdvance returns the value of the "second_advance" field in the mutation.
+func (m *ThesisMutation) SecondAdvance() (r string, exists bool) {
+	v := m.second_advance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecondAdvance returns the old "second_advance" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldSecondAdvance(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSecondAdvance is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSecondAdvance requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecondAdvance: %w", err)
+	}
+	return oldValue.SecondAdvance, nil
+}
+
+// ResetSecondAdvance resets all changes to the "second_advance" field.
+func (m *ThesisMutation) ResetSecondAdvance() {
+	m.second_advance = nil
+}
+
+// SetThirdAdvance sets the "third_advance" field.
+func (m *ThesisMutation) SetThirdAdvance(s string) {
+	m.third_advance = &s
+}
+
+// ThirdAdvance returns the value of the "third_advance" field in the mutation.
+func (m *ThesisMutation) ThirdAdvance() (r string, exists bool) {
+	v := m.third_advance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldThirdAdvance returns the old "third_advance" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldThirdAdvance(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldThirdAdvance is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldThirdAdvance requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldThirdAdvance: %w", err)
+	}
+	return oldValue.ThirdAdvance, nil
+}
+
+// ResetThirdAdvance resets all changes to the "third_advance" field.
+func (m *ThesisMutation) ResetThirdAdvance() {
+	m.third_advance = nil
+}
+
+// SetDrawback sets the "drawback" field.
+func (m *ThesisMutation) SetDrawback(s string) {
+	m.drawback = &s
+}
+
+// Drawback returns the value of the "drawback" field in the mutation.
+func (m *ThesisMutation) Drawback() (r string, exists bool) {
+	v := m.drawback
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDrawback returns the old "drawback" field's value of the Thesis entity.
+// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ThesisMutation) OldDrawback(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDrawback is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDrawback requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDrawback: %w", err)
+	}
+	return oldValue.Drawback, nil
+}
+
+// ResetDrawback resets all changes to the "drawback" field.
+func (m *ThesisMutation) ResetDrawback() {
+	m.drawback = nil
+}
+
 // SetCreateTime sets the "create_time" field.
 func (m *ThesisMutation) SetCreateTime(t time.Time) {
 	m.create_time = &t
@@ -2849,42 +3144,6 @@ func (m *ThesisMutation) OldCreateTime(ctx context.Context) (v time.Time, err er
 // ResetCreateTime resets all changes to the "create_time" field.
 func (m *ThesisMutation) ResetCreateTime() {
 	m.create_time = nil
-}
-
-// SetThesisTitle sets the "thesis_title" field.
-func (m *ThesisMutation) SetThesisTitle(s string) {
-	m.thesis_title = &s
-}
-
-// ThesisTitle returns the value of the "thesis_title" field in the mutation.
-func (m *ThesisMutation) ThesisTitle() (r string, exists bool) {
-	v := m.thesis_title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldThesisTitle returns the old "thesis_title" field's value of the Thesis entity.
-// If the Thesis object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ThesisMutation) OldThesisTitle(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldThesisTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldThesisTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldThesisTitle: %w", err)
-	}
-	return oldValue.ThesisTitle, nil
-}
-
-// ResetThesisTitle resets all changes to the "thesis_title" field.
-func (m *ThesisMutation) ResetThesisTitle() {
-	m.thesis_title = nil
 }
 
 // SetUploadersID sets the "uploaders" edge to the User entity by id.
@@ -2960,7 +3219,7 @@ func (m *ThesisMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ThesisMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 13)
 	if m.file_name != nil {
 		fields = append(fields, thesis.FieldFileName)
 	}
@@ -2973,11 +3232,32 @@ func (m *ThesisMutation) Fields() []string {
 	if m.upload_time != nil {
 		fields = append(fields, thesis.FieldUploadTime)
 	}
+	if m.chinese_title != nil {
+		fields = append(fields, thesis.FieldChineseTitle)
+	}
+	if m.english_title != nil {
+		fields = append(fields, thesis.FieldEnglishTitle)
+	}
+	if m.authors != nil {
+		fields = append(fields, thesis.FieldAuthors)
+	}
+	if m.teachers != nil {
+		fields = append(fields, thesis.FieldTeachers)
+	}
+	if m.first_advance != nil {
+		fields = append(fields, thesis.FieldFirstAdvance)
+	}
+	if m.second_advance != nil {
+		fields = append(fields, thesis.FieldSecondAdvance)
+	}
+	if m.third_advance != nil {
+		fields = append(fields, thesis.FieldThirdAdvance)
+	}
+	if m.drawback != nil {
+		fields = append(fields, thesis.FieldDrawback)
+	}
 	if m.create_time != nil {
 		fields = append(fields, thesis.FieldCreateTime)
-	}
-	if m.thesis_title != nil {
-		fields = append(fields, thesis.FieldThesisTitle)
 	}
 	return fields
 }
@@ -2995,10 +3275,24 @@ func (m *ThesisMutation) Field(name string) (ent.Value, bool) {
 		return m.FileState()
 	case thesis.FieldUploadTime:
 		return m.UploadTime()
+	case thesis.FieldChineseTitle:
+		return m.ChineseTitle()
+	case thesis.FieldEnglishTitle:
+		return m.EnglishTitle()
+	case thesis.FieldAuthors:
+		return m.Authors()
+	case thesis.FieldTeachers:
+		return m.Teachers()
+	case thesis.FieldFirstAdvance:
+		return m.FirstAdvance()
+	case thesis.FieldSecondAdvance:
+		return m.SecondAdvance()
+	case thesis.FieldThirdAdvance:
+		return m.ThirdAdvance()
+	case thesis.FieldDrawback:
+		return m.Drawback()
 	case thesis.FieldCreateTime:
 		return m.CreateTime()
-	case thesis.FieldThesisTitle:
-		return m.ThesisTitle()
 	}
 	return nil, false
 }
@@ -3016,10 +3310,24 @@ func (m *ThesisMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldFileState(ctx)
 	case thesis.FieldUploadTime:
 		return m.OldUploadTime(ctx)
+	case thesis.FieldChineseTitle:
+		return m.OldChineseTitle(ctx)
+	case thesis.FieldEnglishTitle:
+		return m.OldEnglishTitle(ctx)
+	case thesis.FieldAuthors:
+		return m.OldAuthors(ctx)
+	case thesis.FieldTeachers:
+		return m.OldTeachers(ctx)
+	case thesis.FieldFirstAdvance:
+		return m.OldFirstAdvance(ctx)
+	case thesis.FieldSecondAdvance:
+		return m.OldSecondAdvance(ctx)
+	case thesis.FieldThirdAdvance:
+		return m.OldThirdAdvance(ctx)
+	case thesis.FieldDrawback:
+		return m.OldDrawback(ctx)
 	case thesis.FieldCreateTime:
 		return m.OldCreateTime(ctx)
-	case thesis.FieldThesisTitle:
-		return m.OldThesisTitle(ctx)
 	}
 	return nil, fmt.Errorf("unknown Thesis field %s", name)
 }
@@ -3057,19 +3365,68 @@ func (m *ThesisMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUploadTime(v)
 		return nil
+	case thesis.FieldChineseTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChineseTitle(v)
+		return nil
+	case thesis.FieldEnglishTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnglishTitle(v)
+		return nil
+	case thesis.FieldAuthors:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthors(v)
+		return nil
+	case thesis.FieldTeachers:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTeachers(v)
+		return nil
+	case thesis.FieldFirstAdvance:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstAdvance(v)
+		return nil
+	case thesis.FieldSecondAdvance:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecondAdvance(v)
+		return nil
+	case thesis.FieldThirdAdvance:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetThirdAdvance(v)
+		return nil
+	case thesis.FieldDrawback:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDrawback(v)
+		return nil
 	case thesis.FieldCreateTime:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreateTime(v)
-		return nil
-	case thesis.FieldThesisTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetThesisTitle(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Thesis field %s", name)
@@ -3174,11 +3531,32 @@ func (m *ThesisMutation) ResetField(name string) error {
 	case thesis.FieldUploadTime:
 		m.ResetUploadTime()
 		return nil
+	case thesis.FieldChineseTitle:
+		m.ResetChineseTitle()
+		return nil
+	case thesis.FieldEnglishTitle:
+		m.ResetEnglishTitle()
+		return nil
+	case thesis.FieldAuthors:
+		m.ResetAuthors()
+		return nil
+	case thesis.FieldTeachers:
+		m.ResetTeachers()
+		return nil
+	case thesis.FieldFirstAdvance:
+		m.ResetFirstAdvance()
+		return nil
+	case thesis.FieldSecondAdvance:
+		m.ResetSecondAdvance()
+		return nil
+	case thesis.FieldThirdAdvance:
+		m.ResetThirdAdvance()
+		return nil
+	case thesis.FieldDrawback:
+		m.ResetDrawback()
+		return nil
 	case thesis.FieldCreateTime:
 		m.ResetCreateTime()
-		return nil
-	case thesis.FieldThesisTitle:
-		m.ResetThesisTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown Thesis field %s", name)

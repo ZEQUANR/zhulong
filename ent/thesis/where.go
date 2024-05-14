@@ -75,14 +75,49 @@ func UploadTime(v time.Time) predicate.Thesis {
 	return predicate.Thesis(sql.FieldEQ(FieldUploadTime, v))
 }
 
+// ChineseTitle applies equality check predicate on the "chinese_title" field. It's identical to ChineseTitleEQ.
+func ChineseTitle(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldChineseTitle, v))
+}
+
+// EnglishTitle applies equality check predicate on the "english_title" field. It's identical to EnglishTitleEQ.
+func EnglishTitle(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldEnglishTitle, v))
+}
+
+// Authors applies equality check predicate on the "authors" field. It's identical to AuthorsEQ.
+func Authors(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldAuthors, v))
+}
+
+// Teachers applies equality check predicate on the "teachers" field. It's identical to TeachersEQ.
+func Teachers(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldTeachers, v))
+}
+
+// FirstAdvance applies equality check predicate on the "first_advance" field. It's identical to FirstAdvanceEQ.
+func FirstAdvance(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFirstAdvance, v))
+}
+
+// SecondAdvance applies equality check predicate on the "second_advance" field. It's identical to SecondAdvanceEQ.
+func SecondAdvance(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldSecondAdvance, v))
+}
+
+// ThirdAdvance applies equality check predicate on the "third_advance" field. It's identical to ThirdAdvanceEQ.
+func ThirdAdvance(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldThirdAdvance, v))
+}
+
+// Drawback applies equality check predicate on the "drawback" field. It's identical to DrawbackEQ.
+func Drawback(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldDrawback, v))
+}
+
 // CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
 func CreateTime(v time.Time) predicate.Thesis {
 	return predicate.Thesis(sql.FieldEQ(FieldCreateTime, v))
-}
-
-// ThesisTitle applies equality check predicate on the "thesis_title" field. It's identical to ThesisTitleEQ.
-func ThesisTitle(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldThesisTitle, v))
 }
 
 // FileNameEQ applies the EQ predicate on the "file_name" field.
@@ -335,6 +370,526 @@ func UploadTimeNotNil() predicate.Thesis {
 	return predicate.Thesis(sql.FieldNotNull(FieldUploadTime))
 }
 
+// ChineseTitleEQ applies the EQ predicate on the "chinese_title" field.
+func ChineseTitleEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldChineseTitle, v))
+}
+
+// ChineseTitleNEQ applies the NEQ predicate on the "chinese_title" field.
+func ChineseTitleNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldChineseTitle, v))
+}
+
+// ChineseTitleIn applies the In predicate on the "chinese_title" field.
+func ChineseTitleIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldChineseTitle, vs...))
+}
+
+// ChineseTitleNotIn applies the NotIn predicate on the "chinese_title" field.
+func ChineseTitleNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldChineseTitle, vs...))
+}
+
+// ChineseTitleGT applies the GT predicate on the "chinese_title" field.
+func ChineseTitleGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldChineseTitle, v))
+}
+
+// ChineseTitleGTE applies the GTE predicate on the "chinese_title" field.
+func ChineseTitleGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldChineseTitle, v))
+}
+
+// ChineseTitleLT applies the LT predicate on the "chinese_title" field.
+func ChineseTitleLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldChineseTitle, v))
+}
+
+// ChineseTitleLTE applies the LTE predicate on the "chinese_title" field.
+func ChineseTitleLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldChineseTitle, v))
+}
+
+// ChineseTitleContains applies the Contains predicate on the "chinese_title" field.
+func ChineseTitleContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldChineseTitle, v))
+}
+
+// ChineseTitleHasPrefix applies the HasPrefix predicate on the "chinese_title" field.
+func ChineseTitleHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldChineseTitle, v))
+}
+
+// ChineseTitleHasSuffix applies the HasSuffix predicate on the "chinese_title" field.
+func ChineseTitleHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldChineseTitle, v))
+}
+
+// ChineseTitleEqualFold applies the EqualFold predicate on the "chinese_title" field.
+func ChineseTitleEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldChineseTitle, v))
+}
+
+// ChineseTitleContainsFold applies the ContainsFold predicate on the "chinese_title" field.
+func ChineseTitleContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldChineseTitle, v))
+}
+
+// EnglishTitleEQ applies the EQ predicate on the "english_title" field.
+func EnglishTitleEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldEnglishTitle, v))
+}
+
+// EnglishTitleNEQ applies the NEQ predicate on the "english_title" field.
+func EnglishTitleNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldEnglishTitle, v))
+}
+
+// EnglishTitleIn applies the In predicate on the "english_title" field.
+func EnglishTitleIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldEnglishTitle, vs...))
+}
+
+// EnglishTitleNotIn applies the NotIn predicate on the "english_title" field.
+func EnglishTitleNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldEnglishTitle, vs...))
+}
+
+// EnglishTitleGT applies the GT predicate on the "english_title" field.
+func EnglishTitleGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldEnglishTitle, v))
+}
+
+// EnglishTitleGTE applies the GTE predicate on the "english_title" field.
+func EnglishTitleGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldEnglishTitle, v))
+}
+
+// EnglishTitleLT applies the LT predicate on the "english_title" field.
+func EnglishTitleLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldEnglishTitle, v))
+}
+
+// EnglishTitleLTE applies the LTE predicate on the "english_title" field.
+func EnglishTitleLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldEnglishTitle, v))
+}
+
+// EnglishTitleContains applies the Contains predicate on the "english_title" field.
+func EnglishTitleContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldEnglishTitle, v))
+}
+
+// EnglishTitleHasPrefix applies the HasPrefix predicate on the "english_title" field.
+func EnglishTitleHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldEnglishTitle, v))
+}
+
+// EnglishTitleHasSuffix applies the HasSuffix predicate on the "english_title" field.
+func EnglishTitleHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldEnglishTitle, v))
+}
+
+// EnglishTitleEqualFold applies the EqualFold predicate on the "english_title" field.
+func EnglishTitleEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldEnglishTitle, v))
+}
+
+// EnglishTitleContainsFold applies the ContainsFold predicate on the "english_title" field.
+func EnglishTitleContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldEnglishTitle, v))
+}
+
+// AuthorsEQ applies the EQ predicate on the "authors" field.
+func AuthorsEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldAuthors, v))
+}
+
+// AuthorsNEQ applies the NEQ predicate on the "authors" field.
+func AuthorsNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldAuthors, v))
+}
+
+// AuthorsIn applies the In predicate on the "authors" field.
+func AuthorsIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldAuthors, vs...))
+}
+
+// AuthorsNotIn applies the NotIn predicate on the "authors" field.
+func AuthorsNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldAuthors, vs...))
+}
+
+// AuthorsGT applies the GT predicate on the "authors" field.
+func AuthorsGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldAuthors, v))
+}
+
+// AuthorsGTE applies the GTE predicate on the "authors" field.
+func AuthorsGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldAuthors, v))
+}
+
+// AuthorsLT applies the LT predicate on the "authors" field.
+func AuthorsLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldAuthors, v))
+}
+
+// AuthorsLTE applies the LTE predicate on the "authors" field.
+func AuthorsLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldAuthors, v))
+}
+
+// AuthorsContains applies the Contains predicate on the "authors" field.
+func AuthorsContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldAuthors, v))
+}
+
+// AuthorsHasPrefix applies the HasPrefix predicate on the "authors" field.
+func AuthorsHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldAuthors, v))
+}
+
+// AuthorsHasSuffix applies the HasSuffix predicate on the "authors" field.
+func AuthorsHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldAuthors, v))
+}
+
+// AuthorsEqualFold applies the EqualFold predicate on the "authors" field.
+func AuthorsEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldAuthors, v))
+}
+
+// AuthorsContainsFold applies the ContainsFold predicate on the "authors" field.
+func AuthorsContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldAuthors, v))
+}
+
+// TeachersEQ applies the EQ predicate on the "teachers" field.
+func TeachersEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldTeachers, v))
+}
+
+// TeachersNEQ applies the NEQ predicate on the "teachers" field.
+func TeachersNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldTeachers, v))
+}
+
+// TeachersIn applies the In predicate on the "teachers" field.
+func TeachersIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldTeachers, vs...))
+}
+
+// TeachersNotIn applies the NotIn predicate on the "teachers" field.
+func TeachersNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldTeachers, vs...))
+}
+
+// TeachersGT applies the GT predicate on the "teachers" field.
+func TeachersGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldTeachers, v))
+}
+
+// TeachersGTE applies the GTE predicate on the "teachers" field.
+func TeachersGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldTeachers, v))
+}
+
+// TeachersLT applies the LT predicate on the "teachers" field.
+func TeachersLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldTeachers, v))
+}
+
+// TeachersLTE applies the LTE predicate on the "teachers" field.
+func TeachersLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldTeachers, v))
+}
+
+// TeachersContains applies the Contains predicate on the "teachers" field.
+func TeachersContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldTeachers, v))
+}
+
+// TeachersHasPrefix applies the HasPrefix predicate on the "teachers" field.
+func TeachersHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldTeachers, v))
+}
+
+// TeachersHasSuffix applies the HasSuffix predicate on the "teachers" field.
+func TeachersHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldTeachers, v))
+}
+
+// TeachersEqualFold applies the EqualFold predicate on the "teachers" field.
+func TeachersEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldTeachers, v))
+}
+
+// TeachersContainsFold applies the ContainsFold predicate on the "teachers" field.
+func TeachersContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldTeachers, v))
+}
+
+// FirstAdvanceEQ applies the EQ predicate on the "first_advance" field.
+func FirstAdvanceEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceNEQ applies the NEQ predicate on the "first_advance" field.
+func FirstAdvanceNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceIn applies the In predicate on the "first_advance" field.
+func FirstAdvanceIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldFirstAdvance, vs...))
+}
+
+// FirstAdvanceNotIn applies the NotIn predicate on the "first_advance" field.
+func FirstAdvanceNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldFirstAdvance, vs...))
+}
+
+// FirstAdvanceGT applies the GT predicate on the "first_advance" field.
+func FirstAdvanceGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceGTE applies the GTE predicate on the "first_advance" field.
+func FirstAdvanceGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceLT applies the LT predicate on the "first_advance" field.
+func FirstAdvanceLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceLTE applies the LTE predicate on the "first_advance" field.
+func FirstAdvanceLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceContains applies the Contains predicate on the "first_advance" field.
+func FirstAdvanceContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceHasPrefix applies the HasPrefix predicate on the "first_advance" field.
+func FirstAdvanceHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceHasSuffix applies the HasSuffix predicate on the "first_advance" field.
+func FirstAdvanceHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceEqualFold applies the EqualFold predicate on the "first_advance" field.
+func FirstAdvanceEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldFirstAdvance, v))
+}
+
+// FirstAdvanceContainsFold applies the ContainsFold predicate on the "first_advance" field.
+func FirstAdvanceContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldFirstAdvance, v))
+}
+
+// SecondAdvanceEQ applies the EQ predicate on the "second_advance" field.
+func SecondAdvanceEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceNEQ applies the NEQ predicate on the "second_advance" field.
+func SecondAdvanceNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceIn applies the In predicate on the "second_advance" field.
+func SecondAdvanceIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldSecondAdvance, vs...))
+}
+
+// SecondAdvanceNotIn applies the NotIn predicate on the "second_advance" field.
+func SecondAdvanceNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldSecondAdvance, vs...))
+}
+
+// SecondAdvanceGT applies the GT predicate on the "second_advance" field.
+func SecondAdvanceGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceGTE applies the GTE predicate on the "second_advance" field.
+func SecondAdvanceGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceLT applies the LT predicate on the "second_advance" field.
+func SecondAdvanceLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceLTE applies the LTE predicate on the "second_advance" field.
+func SecondAdvanceLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceContains applies the Contains predicate on the "second_advance" field.
+func SecondAdvanceContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceHasPrefix applies the HasPrefix predicate on the "second_advance" field.
+func SecondAdvanceHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceHasSuffix applies the HasSuffix predicate on the "second_advance" field.
+func SecondAdvanceHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceEqualFold applies the EqualFold predicate on the "second_advance" field.
+func SecondAdvanceEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldSecondAdvance, v))
+}
+
+// SecondAdvanceContainsFold applies the ContainsFold predicate on the "second_advance" field.
+func SecondAdvanceContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldSecondAdvance, v))
+}
+
+// ThirdAdvanceEQ applies the EQ predicate on the "third_advance" field.
+func ThirdAdvanceEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceNEQ applies the NEQ predicate on the "third_advance" field.
+func ThirdAdvanceNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceIn applies the In predicate on the "third_advance" field.
+func ThirdAdvanceIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldThirdAdvance, vs...))
+}
+
+// ThirdAdvanceNotIn applies the NotIn predicate on the "third_advance" field.
+func ThirdAdvanceNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldThirdAdvance, vs...))
+}
+
+// ThirdAdvanceGT applies the GT predicate on the "third_advance" field.
+func ThirdAdvanceGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceGTE applies the GTE predicate on the "third_advance" field.
+func ThirdAdvanceGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceLT applies the LT predicate on the "third_advance" field.
+func ThirdAdvanceLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceLTE applies the LTE predicate on the "third_advance" field.
+func ThirdAdvanceLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceContains applies the Contains predicate on the "third_advance" field.
+func ThirdAdvanceContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceHasPrefix applies the HasPrefix predicate on the "third_advance" field.
+func ThirdAdvanceHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceHasSuffix applies the HasSuffix predicate on the "third_advance" field.
+func ThirdAdvanceHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceEqualFold applies the EqualFold predicate on the "third_advance" field.
+func ThirdAdvanceEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldThirdAdvance, v))
+}
+
+// ThirdAdvanceContainsFold applies the ContainsFold predicate on the "third_advance" field.
+func ThirdAdvanceContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldThirdAdvance, v))
+}
+
+// DrawbackEQ applies the EQ predicate on the "drawback" field.
+func DrawbackEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEQ(FieldDrawback, v))
+}
+
+// DrawbackNEQ applies the NEQ predicate on the "drawback" field.
+func DrawbackNEQ(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNEQ(FieldDrawback, v))
+}
+
+// DrawbackIn applies the In predicate on the "drawback" field.
+func DrawbackIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldIn(FieldDrawback, vs...))
+}
+
+// DrawbackNotIn applies the NotIn predicate on the "drawback" field.
+func DrawbackNotIn(vs ...string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldNotIn(FieldDrawback, vs...))
+}
+
+// DrawbackGT applies the GT predicate on the "drawback" field.
+func DrawbackGT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGT(FieldDrawback, v))
+}
+
+// DrawbackGTE applies the GTE predicate on the "drawback" field.
+func DrawbackGTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldGTE(FieldDrawback, v))
+}
+
+// DrawbackLT applies the LT predicate on the "drawback" field.
+func DrawbackLT(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLT(FieldDrawback, v))
+}
+
+// DrawbackLTE applies the LTE predicate on the "drawback" field.
+func DrawbackLTE(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldLTE(FieldDrawback, v))
+}
+
+// DrawbackContains applies the Contains predicate on the "drawback" field.
+func DrawbackContains(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContains(FieldDrawback, v))
+}
+
+// DrawbackHasPrefix applies the HasPrefix predicate on the "drawback" field.
+func DrawbackHasPrefix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasPrefix(FieldDrawback, v))
+}
+
+// DrawbackHasSuffix applies the HasSuffix predicate on the "drawback" field.
+func DrawbackHasSuffix(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldHasSuffix(FieldDrawback, v))
+}
+
+// DrawbackEqualFold applies the EqualFold predicate on the "drawback" field.
+func DrawbackEqualFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldEqualFold(FieldDrawback, v))
+}
+
+// DrawbackContainsFold applies the ContainsFold predicate on the "drawback" field.
+func DrawbackContainsFold(v string) predicate.Thesis {
+	return predicate.Thesis(sql.FieldContainsFold(FieldDrawback, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Thesis {
 	return predicate.Thesis(sql.FieldEQ(FieldCreateTime, v))
@@ -373,71 +928,6 @@ func CreateTimeLT(v time.Time) predicate.Thesis {
 // CreateTimeLTE applies the LTE predicate on the "create_time" field.
 func CreateTimeLTE(v time.Time) predicate.Thesis {
 	return predicate.Thesis(sql.FieldLTE(FieldCreateTime, v))
-}
-
-// ThesisTitleEQ applies the EQ predicate on the "thesis_title" field.
-func ThesisTitleEQ(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEQ(FieldThesisTitle, v))
-}
-
-// ThesisTitleNEQ applies the NEQ predicate on the "thesis_title" field.
-func ThesisTitleNEQ(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNEQ(FieldThesisTitle, v))
-}
-
-// ThesisTitleIn applies the In predicate on the "thesis_title" field.
-func ThesisTitleIn(vs ...string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldIn(FieldThesisTitle, vs...))
-}
-
-// ThesisTitleNotIn applies the NotIn predicate on the "thesis_title" field.
-func ThesisTitleNotIn(vs ...string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldNotIn(FieldThesisTitle, vs...))
-}
-
-// ThesisTitleGT applies the GT predicate on the "thesis_title" field.
-func ThesisTitleGT(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGT(FieldThesisTitle, v))
-}
-
-// ThesisTitleGTE applies the GTE predicate on the "thesis_title" field.
-func ThesisTitleGTE(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldGTE(FieldThesisTitle, v))
-}
-
-// ThesisTitleLT applies the LT predicate on the "thesis_title" field.
-func ThesisTitleLT(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLT(FieldThesisTitle, v))
-}
-
-// ThesisTitleLTE applies the LTE predicate on the "thesis_title" field.
-func ThesisTitleLTE(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldLTE(FieldThesisTitle, v))
-}
-
-// ThesisTitleContains applies the Contains predicate on the "thesis_title" field.
-func ThesisTitleContains(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldContains(FieldThesisTitle, v))
-}
-
-// ThesisTitleHasPrefix applies the HasPrefix predicate on the "thesis_title" field.
-func ThesisTitleHasPrefix(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldHasPrefix(FieldThesisTitle, v))
-}
-
-// ThesisTitleHasSuffix applies the HasSuffix predicate on the "thesis_title" field.
-func ThesisTitleHasSuffix(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldHasSuffix(FieldThesisTitle, v))
-}
-
-// ThesisTitleEqualFold applies the EqualFold predicate on the "thesis_title" field.
-func ThesisTitleEqualFold(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldEqualFold(FieldThesisTitle, v))
-}
-
-// ThesisTitleContainsFold applies the ContainsFold predicate on the "thesis_title" field.
-func ThesisTitleContainsFold(v string) predicate.Thesis {
-	return predicate.Thesis(sql.FieldContainsFold(FieldThesisTitle, v))
 }
 
 // HasUploaders applies the HasEdge predicate on the "uploaders" edge.

@@ -1,8 +1,8 @@
 package api
 
 type Login struct {
-	Account  string `json:"account" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Account  string `json:"account" binding:"required"`  // 账户
+	Password string `json:"password" binding:"required"` // 密码
 }
 
 type Administrator struct {

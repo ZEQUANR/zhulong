@@ -116,6 +116,118 @@ func (tu *ThesisUpdate) ClearUploadTime() *ThesisUpdate {
 	return tu
 }
 
+// SetChineseTitle sets the "chinese_title" field.
+func (tu *ThesisUpdate) SetChineseTitle(s string) *ThesisUpdate {
+	tu.mutation.SetChineseTitle(s)
+	return tu
+}
+
+// SetNillableChineseTitle sets the "chinese_title" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableChineseTitle(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetChineseTitle(*s)
+	}
+	return tu
+}
+
+// SetEnglishTitle sets the "english_title" field.
+func (tu *ThesisUpdate) SetEnglishTitle(s string) *ThesisUpdate {
+	tu.mutation.SetEnglishTitle(s)
+	return tu
+}
+
+// SetNillableEnglishTitle sets the "english_title" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableEnglishTitle(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetEnglishTitle(*s)
+	}
+	return tu
+}
+
+// SetAuthors sets the "authors" field.
+func (tu *ThesisUpdate) SetAuthors(s string) *ThesisUpdate {
+	tu.mutation.SetAuthors(s)
+	return tu
+}
+
+// SetNillableAuthors sets the "authors" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableAuthors(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetAuthors(*s)
+	}
+	return tu
+}
+
+// SetTeachers sets the "teachers" field.
+func (tu *ThesisUpdate) SetTeachers(s string) *ThesisUpdate {
+	tu.mutation.SetTeachers(s)
+	return tu
+}
+
+// SetNillableTeachers sets the "teachers" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableTeachers(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetTeachers(*s)
+	}
+	return tu
+}
+
+// SetFirstAdvance sets the "first_advance" field.
+func (tu *ThesisUpdate) SetFirstAdvance(s string) *ThesisUpdate {
+	tu.mutation.SetFirstAdvance(s)
+	return tu
+}
+
+// SetNillableFirstAdvance sets the "first_advance" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableFirstAdvance(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetFirstAdvance(*s)
+	}
+	return tu
+}
+
+// SetSecondAdvance sets the "second_advance" field.
+func (tu *ThesisUpdate) SetSecondAdvance(s string) *ThesisUpdate {
+	tu.mutation.SetSecondAdvance(s)
+	return tu
+}
+
+// SetNillableSecondAdvance sets the "second_advance" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableSecondAdvance(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetSecondAdvance(*s)
+	}
+	return tu
+}
+
+// SetThirdAdvance sets the "third_advance" field.
+func (tu *ThesisUpdate) SetThirdAdvance(s string) *ThesisUpdate {
+	tu.mutation.SetThirdAdvance(s)
+	return tu
+}
+
+// SetNillableThirdAdvance sets the "third_advance" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableThirdAdvance(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetThirdAdvance(*s)
+	}
+	return tu
+}
+
+// SetDrawback sets the "drawback" field.
+func (tu *ThesisUpdate) SetDrawback(s string) *ThesisUpdate {
+	tu.mutation.SetDrawback(s)
+	return tu
+}
+
+// SetNillableDrawback sets the "drawback" field if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableDrawback(s *string) *ThesisUpdate {
+	if s != nil {
+		tu.SetDrawback(*s)
+	}
+	return tu
+}
+
 // SetCreateTime sets the "create_time" field.
 func (tu *ThesisUpdate) SetCreateTime(t time.Time) *ThesisUpdate {
 	tu.mutation.SetCreateTime(t)
@@ -126,20 +238,6 @@ func (tu *ThesisUpdate) SetCreateTime(t time.Time) *ThesisUpdate {
 func (tu *ThesisUpdate) SetNillableCreateTime(t *time.Time) *ThesisUpdate {
 	if t != nil {
 		tu.SetCreateTime(*t)
-	}
-	return tu
-}
-
-// SetThesisTitle sets the "thesis_title" field.
-func (tu *ThesisUpdate) SetThesisTitle(s string) *ThesisUpdate {
-	tu.mutation.SetThesisTitle(s)
-	return tu
-}
-
-// SetNillableThesisTitle sets the "thesis_title" field if the given value is not nil.
-func (tu *ThesisUpdate) SetNillableThesisTitle(s *string) *ThesisUpdate {
-	if s != nil {
-		tu.SetThesisTitle(*s)
 	}
 	return tu
 }
@@ -237,11 +335,32 @@ func (tu *ThesisUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.UploadTimeCleared() {
 		_spec.ClearField(thesis.FieldUploadTime, field.TypeTime)
 	}
+	if value, ok := tu.mutation.ChineseTitle(); ok {
+		_spec.SetField(thesis.FieldChineseTitle, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.EnglishTitle(); ok {
+		_spec.SetField(thesis.FieldEnglishTitle, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.Authors(); ok {
+		_spec.SetField(thesis.FieldAuthors, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.Teachers(); ok {
+		_spec.SetField(thesis.FieldTeachers, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.FirstAdvance(); ok {
+		_spec.SetField(thesis.FieldFirstAdvance, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.SecondAdvance(); ok {
+		_spec.SetField(thesis.FieldSecondAdvance, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.ThirdAdvance(); ok {
+		_spec.SetField(thesis.FieldThirdAdvance, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.Drawback(); ok {
+		_spec.SetField(thesis.FieldDrawback, field.TypeString, value)
+	}
 	if value, ok := tu.mutation.CreateTime(); ok {
 		_spec.SetField(thesis.FieldCreateTime, field.TypeTime, value)
-	}
-	if value, ok := tu.mutation.ThesisTitle(); ok {
-		_spec.SetField(thesis.FieldThesisTitle, field.TypeString, value)
 	}
 	if tu.mutation.UploadersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -379,6 +498,118 @@ func (tuo *ThesisUpdateOne) ClearUploadTime() *ThesisUpdateOne {
 	return tuo
 }
 
+// SetChineseTitle sets the "chinese_title" field.
+func (tuo *ThesisUpdateOne) SetChineseTitle(s string) *ThesisUpdateOne {
+	tuo.mutation.SetChineseTitle(s)
+	return tuo
+}
+
+// SetNillableChineseTitle sets the "chinese_title" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableChineseTitle(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetChineseTitle(*s)
+	}
+	return tuo
+}
+
+// SetEnglishTitle sets the "english_title" field.
+func (tuo *ThesisUpdateOne) SetEnglishTitle(s string) *ThesisUpdateOne {
+	tuo.mutation.SetEnglishTitle(s)
+	return tuo
+}
+
+// SetNillableEnglishTitle sets the "english_title" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableEnglishTitle(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetEnglishTitle(*s)
+	}
+	return tuo
+}
+
+// SetAuthors sets the "authors" field.
+func (tuo *ThesisUpdateOne) SetAuthors(s string) *ThesisUpdateOne {
+	tuo.mutation.SetAuthors(s)
+	return tuo
+}
+
+// SetNillableAuthors sets the "authors" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableAuthors(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetAuthors(*s)
+	}
+	return tuo
+}
+
+// SetTeachers sets the "teachers" field.
+func (tuo *ThesisUpdateOne) SetTeachers(s string) *ThesisUpdateOne {
+	tuo.mutation.SetTeachers(s)
+	return tuo
+}
+
+// SetNillableTeachers sets the "teachers" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableTeachers(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetTeachers(*s)
+	}
+	return tuo
+}
+
+// SetFirstAdvance sets the "first_advance" field.
+func (tuo *ThesisUpdateOne) SetFirstAdvance(s string) *ThesisUpdateOne {
+	tuo.mutation.SetFirstAdvance(s)
+	return tuo
+}
+
+// SetNillableFirstAdvance sets the "first_advance" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableFirstAdvance(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetFirstAdvance(*s)
+	}
+	return tuo
+}
+
+// SetSecondAdvance sets the "second_advance" field.
+func (tuo *ThesisUpdateOne) SetSecondAdvance(s string) *ThesisUpdateOne {
+	tuo.mutation.SetSecondAdvance(s)
+	return tuo
+}
+
+// SetNillableSecondAdvance sets the "second_advance" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableSecondAdvance(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetSecondAdvance(*s)
+	}
+	return tuo
+}
+
+// SetThirdAdvance sets the "third_advance" field.
+func (tuo *ThesisUpdateOne) SetThirdAdvance(s string) *ThesisUpdateOne {
+	tuo.mutation.SetThirdAdvance(s)
+	return tuo
+}
+
+// SetNillableThirdAdvance sets the "third_advance" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableThirdAdvance(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetThirdAdvance(*s)
+	}
+	return tuo
+}
+
+// SetDrawback sets the "drawback" field.
+func (tuo *ThesisUpdateOne) SetDrawback(s string) *ThesisUpdateOne {
+	tuo.mutation.SetDrawback(s)
+	return tuo
+}
+
+// SetNillableDrawback sets the "drawback" field if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableDrawback(s *string) *ThesisUpdateOne {
+	if s != nil {
+		tuo.SetDrawback(*s)
+	}
+	return tuo
+}
+
 // SetCreateTime sets the "create_time" field.
 func (tuo *ThesisUpdateOne) SetCreateTime(t time.Time) *ThesisUpdateOne {
 	tuo.mutation.SetCreateTime(t)
@@ -389,20 +620,6 @@ func (tuo *ThesisUpdateOne) SetCreateTime(t time.Time) *ThesisUpdateOne {
 func (tuo *ThesisUpdateOne) SetNillableCreateTime(t *time.Time) *ThesisUpdateOne {
 	if t != nil {
 		tuo.SetCreateTime(*t)
-	}
-	return tuo
-}
-
-// SetThesisTitle sets the "thesis_title" field.
-func (tuo *ThesisUpdateOne) SetThesisTitle(s string) *ThesisUpdateOne {
-	tuo.mutation.SetThesisTitle(s)
-	return tuo
-}
-
-// SetNillableThesisTitle sets the "thesis_title" field if the given value is not nil.
-func (tuo *ThesisUpdateOne) SetNillableThesisTitle(s *string) *ThesisUpdateOne {
-	if s != nil {
-		tuo.SetThesisTitle(*s)
 	}
 	return tuo
 }
@@ -530,11 +747,32 @@ func (tuo *ThesisUpdateOne) sqlSave(ctx context.Context) (_node *Thesis, err err
 	if tuo.mutation.UploadTimeCleared() {
 		_spec.ClearField(thesis.FieldUploadTime, field.TypeTime)
 	}
+	if value, ok := tuo.mutation.ChineseTitle(); ok {
+		_spec.SetField(thesis.FieldChineseTitle, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.EnglishTitle(); ok {
+		_spec.SetField(thesis.FieldEnglishTitle, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.Authors(); ok {
+		_spec.SetField(thesis.FieldAuthors, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.Teachers(); ok {
+		_spec.SetField(thesis.FieldTeachers, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.FirstAdvance(); ok {
+		_spec.SetField(thesis.FieldFirstAdvance, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.SecondAdvance(); ok {
+		_spec.SetField(thesis.FieldSecondAdvance, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.ThirdAdvance(); ok {
+		_spec.SetField(thesis.FieldThirdAdvance, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.Drawback(); ok {
+		_spec.SetField(thesis.FieldDrawback, field.TypeString, value)
+	}
 	if value, ok := tuo.mutation.CreateTime(); ok {
 		_spec.SetField(thesis.FieldCreateTime, field.TypeTime, value)
-	}
-	if value, ok := tuo.mutation.ThesisTitle(); ok {
-		_spec.SetField(thesis.FieldThesisTitle, field.TypeString, value)
 	}
 	if tuo.mutation.UploadersCleared() {
 		edge := &sqlgraph.EdgeSpec{

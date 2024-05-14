@@ -23,7 +23,7 @@ func init() {
 	thesisFields := schema.Thesis{}.Fields()
 	_ = thesisFields
 	// thesisDescCreateTime is the schema descriptor for create_time field.
-	thesisDescCreateTime := thesisFields[4].Descriptor()
+	thesisDescCreateTime := thesisFields[12].Descriptor()
 	// thesis.DefaultCreateTime holds the default value on creation for the create_time field.
 	thesis.DefaultCreateTime = thesisDescCreateTime.Default.(func() time.Time)
 }

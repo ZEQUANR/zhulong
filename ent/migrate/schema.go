@@ -110,8 +110,15 @@ var (
 		{Name: "file_url", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "file_state", Type: field.TypeInt, Nullable: true},
 		{Name: "upload_time", Type: field.TypeTime, Nullable: true},
+		{Name: "chinese_title", Type: field.TypeString},
+		{Name: "english_title", Type: field.TypeString},
+		{Name: "authors", Type: field.TypeString},
+		{Name: "teachers", Type: field.TypeString},
+		{Name: "first_advance", Type: field.TypeString},
+		{Name: "second_advance", Type: field.TypeString},
+		{Name: "third_advance", Type: field.TypeString},
+		{Name: "drawback", Type: field.TypeString},
 		{Name: "create_time", Type: field.TypeTime},
-		{Name: "thesis_title", Type: field.TypeString},
 		{Name: "user_thesis", Type: field.TypeInt, Nullable: true},
 	}
 	// ThesesTable holds the schema information for the "theses" table.
@@ -122,7 +129,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "theses_users_thesis",
-				Columns:    []*schema.Column{ThesesColumns[7]},
+				Columns:    []*schema.Column{ThesesColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
