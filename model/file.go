@@ -31,15 +31,15 @@ type File struct {
 
 func (o *File) Save(c *gin.Context) error {
 	if _, err := os.Stat(o.Path); err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("检查目录时出错: %w", err)
+		return fmt.Errorf("struct: File | func: Save | index: 0 | err: Error checking directory: %w", err)
 	}
 
 	if err := os.MkdirAll(o.Path, 0777); err != nil {
-		return fmt.Errorf("创建目录时出错: %w", err)
+		return fmt.Errorf("struct: File | func: Save | index: 1 | err: Error creating directory: %w", err)
 	}
 
 	if err := c.SaveUploadedFile(o.Blob, path.Join(o.Path, o.Name)); err != nil {
-		return fmt.Errorf("保存文件时出错: %w", err)
+		return fmt.Errorf("struct: File | func: Save | index: 2 | err: Error saving file: %w", err)
 	}
 
 	return nil
@@ -48,18 +48,18 @@ func (o *File) Save(c *gin.Context) error {
 func (o *File) Delete() error {
 	absPath, err := filepath.Abs(o.Path)
 	if err != nil {
-		return fmt.Errorf("无法获取绝对路径: %w", err)
+		return fmt.Errorf("struct: File | func: Delete | index: 0 | err: Cannot get absolute path: %w", err)
 	}
 
 	info, err := os.Stat(absPath)
 	if err != nil {
-		return fmt.Errorf("无法获取路径信息: %w", err)
+		return fmt.Errorf("struct: File | func: Delete | index: 1 | err: Failed to obtain path information: %w", err)
 	}
 
 	if !info.IsDir() {
 		err = os.Remove(absPath)
 		if err != nil {
-			return fmt.Errorf("删除文件时出错: %w", err)
+			return fmt.Errorf("struct: File | func: Delete | index: 2 | err: Error deleting file: %w", err)
 		}
 	}
 
@@ -69,13 +69,11 @@ func (o *File) Delete() error {
 func (o *File) GetPath() error {
 	dir, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("unable to get current working directory: %v", err)
+		return fmt.Errorf("struct: File | func: GetPath | index: 0 | err: Unable to get current working directory: %w", err)
 	}
 
 	o.Path = path.Join(dir, "files")
-
 	o.Path = path.Join(o.Path, time.Now().Format("2006-01-02"))
-
 	o.Path = path.Join(o.Path, time.Now().Format("2006-01-02-15-04-05"))
 
 	return nil
@@ -84,14 +82,14 @@ func (o *File) GetPath() error {
 func (o *File) CheckPath() error {
 	absPath, err := filepath.Abs(o.Path)
 	if err != nil {
-		return fmt.Errorf("无法获取绝对路径: %w", err)
+		return fmt.Errorf("struct: File | func: CheckPath | index: 0 | err: Cannot get absolute path: %w", err)
 	}
 
 	if _, err := os.Stat(absPath); err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf("路径不存在: %w", err)
+			return fmt.Errorf("struct: File | func: CheckPath | index: 1 | err: Path does not exist: %w", err)
 		}
-		return fmt.Errorf("检查路径时出错: %w", err)
+		return fmt.Errorf("struct: File | func: CheckPath | index: 2 | err: Error checking path: %w", err)
 	}
 
 	return nil
