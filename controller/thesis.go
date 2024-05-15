@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ZEQUANR/zhulong/logger"
@@ -78,4 +79,34 @@ func ThesisUpload(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"thesis_id": thesis.ID,
 	})
+}
+
+func ThesisToBeReviewedList(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	if user.Role != model.Admin {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyPermissions, fmt.Errorf(""))
+		return
+	}
+
+	result, err := services.QueryToBeReviewedThesisList()
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"datas": result,
+	})
+
 }

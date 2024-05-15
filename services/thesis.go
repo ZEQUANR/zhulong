@@ -74,3 +74,31 @@ func UploadThesis(userId int, thesisID int, file model.File) (*ent.Thesis, error
 
 	return result, nil
 }
+
+func QueryToBeReviewedThesisList() ([]api.ToBeReviewedThesisList, error) {
+	ctx := context.Background()
+
+	var result []api.ToBeReviewedThesisList
+	err := client.Thesis.
+		Query().
+		Select(
+			thesis.FieldID,
+			thesis.FieldFileName,
+			thesis.FieldFileState,
+			thesis.FieldUploadTime,
+			thesis.FieldChineseTitle,
+			thesis.FieldEnglishTitle,
+			thesis.FieldAuthors,
+			thesis.FieldTeachers,
+			thesis.FieldFirstAdvance,
+			thesis.FieldSecondAdvance,
+			thesis.FieldThirdAdvance,
+			thesis.FieldDrawback,
+		).
+		Scan(ctx, &result)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryToBeReviewedThesisList | index: 0 | err: %w", err)
+	}
+
+	return result, nil
+}

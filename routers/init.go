@@ -22,6 +22,7 @@ func Init(router *gin.Engine) {
 		{
 			thesis.POST("/create", controller.ThesisCreate)
 			thesis.POST("/upload", controller.ThesisUpload)
+			thesis.POST("/allotList", controller.ThesisToBeReviewedList)
 			thesis.POST("/download")
 		}
 
