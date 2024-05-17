@@ -101,7 +101,7 @@ func ThesisToBeReviewedList(c *gin.Context) {
 
 	result, err := services.QueryToBeReviewedThesisList()
 	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyToBeReviewedList, err)
 		return
 	}
 
@@ -141,5 +141,29 @@ func ThesisAllocation(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "ok",
+	})
+}
+
+func ThesisUnderReviewList(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	result, err := services.QueryUnderReviewThesisList(user.ID)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyUnderReviewList, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"datas": result,
 	})
 }

@@ -168,6 +168,21 @@ func (uu *UserUpdate) AddReviews(r ...*Reviews) *UserUpdate {
 	return uu.AddReviewIDs(ids...)
 }
 
+// AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
+func (uu *UserUpdate) AddExamineThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddExamineThesiIDs(ids...)
+	return uu
+}
+
+// AddExamineThesis adds the "examineThesis" edges to the Thesis entity.
+func (uu *UserUpdate) AddExamineThesis(t ...*Thesis) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddExamineThesiIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -231,6 +246,27 @@ func (uu *UserUpdate) RemoveReviews(r ...*Reviews) *UserUpdate {
 		ids[i] = r[i].ID
 	}
 	return uu.RemoveReviewIDs(ids...)
+}
+
+// ClearExamineThesis clears all "examineThesis" edges to the Thesis entity.
+func (uu *UserUpdate) ClearExamineThesis() *UserUpdate {
+	uu.mutation.ClearExamineThesis()
+	return uu
+}
+
+// RemoveExamineThesiIDs removes the "examineThesis" edge to Thesis entities by IDs.
+func (uu *UserUpdate) RemoveExamineThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveExamineThesiIDs(ids...)
+	return uu
+}
+
+// RemoveExamineThesis removes "examineThesis" edges to Thesis entities.
+func (uu *UserUpdate) RemoveExamineThesis(t ...*Thesis) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveExamineThesiIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -458,6 +494,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedExamineThesisIDs(); len(nodes) > 0 && !uu.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ExamineThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -614,6 +695,21 @@ func (uuo *UserUpdateOne) AddReviews(r ...*Reviews) *UserUpdateOne {
 	return uuo.AddReviewIDs(ids...)
 }
 
+// AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
+func (uuo *UserUpdateOne) AddExamineThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddExamineThesiIDs(ids...)
+	return uuo
+}
+
+// AddExamineThesis adds the "examineThesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) AddExamineThesis(t ...*Thesis) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddExamineThesiIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -677,6 +773,27 @@ func (uuo *UserUpdateOne) RemoveReviews(r ...*Reviews) *UserUpdateOne {
 		ids[i] = r[i].ID
 	}
 	return uuo.RemoveReviewIDs(ids...)
+}
+
+// ClearExamineThesis clears all "examineThesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) ClearExamineThesis() *UserUpdateOne {
+	uuo.mutation.ClearExamineThesis()
+	return uuo
+}
+
+// RemoveExamineThesiIDs removes the "examineThesis" edge to Thesis entities by IDs.
+func (uuo *UserUpdateOne) RemoveExamineThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveExamineThesiIDs(ids...)
+	return uuo
+}
+
+// RemoveExamineThesis removes "examineThesis" edges to Thesis entities.
+func (uuo *UserUpdateOne) RemoveExamineThesis(t ...*Thesis) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveExamineThesiIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -927,6 +1044,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedExamineThesisIDs(); len(nodes) > 0 && !uuo.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ExamineThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -129,6 +129,21 @@ func (uc *UserCreate) AddReviews(r ...*Reviews) *UserCreate {
 	return uc.AddReviewIDs(ids...)
 }
 
+// AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
+func (uc *UserCreate) AddExamineThesiIDs(ids ...int) *UserCreate {
+	uc.mutation.AddExamineThesiIDs(ids...)
+	return uc
+}
+
+// AddExamineThesis adds the "examineThesis" edges to the Thesis entity.
+func (uc *UserCreate) AddExamineThesis(t ...*Thesis) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddExamineThesiIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -283,6 +298,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ExamineThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

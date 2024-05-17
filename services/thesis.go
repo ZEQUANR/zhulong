@@ -138,3 +138,40 @@ func UpdateAllocationThesis(data api.AllocationThesis) error {
 
 	return nil
 }
+
+func QueryUnderReviewThesisList(id int) ([]api.ToBeReviewedThesisList, error) {
+	ctx := context.Background()
+
+	user, err := client.User.
+		Query().
+		Select().
+		Where(user.ID(id)).
+		Only(ctx)
+	if err != nil || user.Role == model.Student {
+		return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 0 | err: %w", err)
+	}
+
+	var result []api.ToBeReviewedThesisList
+	err = user.
+		QueryExamineThesis().
+		Select(
+			thesis.FieldID,
+			thesis.FieldFileName,
+			thesis.FieldFileState,
+			thesis.FieldUploadTime,
+			thesis.FieldChineseTitle,
+			thesis.FieldEnglishTitle,
+			thesis.FieldAuthors,
+			thesis.FieldTeachers,
+			thesis.FieldFirstAdvance,
+			thesis.FieldSecondAdvance,
+			thesis.FieldThirdAdvance,
+			thesis.FieldDrawback,
+		).
+		Scan(ctx, &result)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 1 | err: %w", err)
+	}
+
+	return result, nil
+}

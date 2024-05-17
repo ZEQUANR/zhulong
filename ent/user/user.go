@@ -28,6 +28,8 @@ const (
 	EdgeThesis = "thesis"
 	// EdgeReviews holds the string denoting the reviews edge name in mutations.
 	EdgeReviews = "reviews"
+	// EdgeExamineThesis holds the string denoting the examinethesis edge name in mutations.
+	EdgeExamineThesis = "examineThesis"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// AdministratorsTable is the table that holds the administrators relation/edge.
@@ -65,6 +67,13 @@ const (
 	ReviewsInverseTable = "reviews"
 	// ReviewsColumn is the table column denoting the reviews relation/edge.
 	ReviewsColumn = "user_reviews"
+	// ExamineThesisTable is the table that holds the examineThesis relation/edge.
+	ExamineThesisTable = "theses"
+	// ExamineThesisInverseTable is the table name for the Thesis entity.
+	// It exists in this package in order to avoid circular dependency with the "thesis" package.
+	ExamineThesisInverseTable = "theses"
+	// ExamineThesisColumn is the table column denoting the examineThesis relation/edge.
+	ExamineThesisColumn = "thesis_examine"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -156,6 +165,20 @@ func ByReviews(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newReviewsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByExamineThesisCount orders the results by examineThesis count.
+func ByExamineThesisCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newExamineThesisStep(), opts...)
+	}
+}
+
+// ByExamineThesis orders the results by examineThesis terms.
+func ByExamineThesis(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExamineThesisStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newAdministratorsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -189,5 +212,12 @@ func newReviewsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ReviewsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ReviewsTable, ReviewsColumn),
+	)
+}
+func newExamineThesisStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExamineThesisInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, ExamineThesisTable, ExamineThesisColumn),
 	)
 }

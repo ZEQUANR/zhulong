@@ -3718,6 +3718,9 @@ type UserMutation struct {
 	reviews               map[int]struct{}
 	removedreviews        map[int]struct{}
 	clearedreviews        bool
+	examineThesis         map[int]struct{}
+	removedexamineThesis  map[int]struct{}
+	clearedexamineThesis  bool
 	done                  bool
 	oldValue              func(context.Context) (*User, error)
 	predicates            []predicate.User
@@ -4174,6 +4177,60 @@ func (m *UserMutation) ResetReviews() {
 	m.removedreviews = nil
 }
 
+// AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by ids.
+func (m *UserMutation) AddExamineThesiIDs(ids ...int) {
+	if m.examineThesis == nil {
+		m.examineThesis = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.examineThesis[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExamineThesis clears the "examineThesis" edge to the Thesis entity.
+func (m *UserMutation) ClearExamineThesis() {
+	m.clearedexamineThesis = true
+}
+
+// ExamineThesisCleared reports if the "examineThesis" edge to the Thesis entity was cleared.
+func (m *UserMutation) ExamineThesisCleared() bool {
+	return m.clearedexamineThesis
+}
+
+// RemoveExamineThesiIDs removes the "examineThesis" edge to the Thesis entity by IDs.
+func (m *UserMutation) RemoveExamineThesiIDs(ids ...int) {
+	if m.removedexamineThesis == nil {
+		m.removedexamineThesis = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.examineThesis, ids[i])
+		m.removedexamineThesis[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExamineThesis returns the removed IDs of the "examineThesis" edge to the Thesis entity.
+func (m *UserMutation) RemovedExamineThesisIDs() (ids []int) {
+	for id := range m.removedexamineThesis {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExamineThesisIDs returns the "examineThesis" edge IDs in the mutation.
+func (m *UserMutation) ExamineThesisIDs() (ids []int) {
+	for id := range m.examineThesis {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExamineThesis resets all changes to the "examineThesis" edge.
+func (m *UserMutation) ResetExamineThesis() {
+	m.examineThesis = nil
+	m.clearedexamineThesis = false
+	m.removedexamineThesis = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -4356,7 +4413,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.administrators != nil {
 		edges = append(edges, user.EdgeAdministrators)
 	}
@@ -4371,6 +4428,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.reviews != nil {
 		edges = append(edges, user.EdgeReviews)
+	}
+	if m.examineThesis != nil {
+		edges = append(edges, user.EdgeExamineThesis)
 	}
 	return edges
 }
@@ -4403,18 +4463,27 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeExamineThesis:
+		ids := make([]ent.Value, 0, len(m.examineThesis))
+		for id := range m.examineThesis {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedthesis != nil {
 		edges = append(edges, user.EdgeThesis)
 	}
 	if m.removedreviews != nil {
 		edges = append(edges, user.EdgeReviews)
+	}
+	if m.removedexamineThesis != nil {
+		edges = append(edges, user.EdgeExamineThesis)
 	}
 	return edges
 }
@@ -4435,13 +4504,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeExamineThesis:
+		ids := make([]ent.Value, 0, len(m.removedexamineThesis))
+		for id := range m.removedexamineThesis {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedadministrators {
 		edges = append(edges, user.EdgeAdministrators)
 	}
@@ -4456,6 +4531,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedreviews {
 		edges = append(edges, user.EdgeReviews)
+	}
+	if m.clearedexamineThesis {
+		edges = append(edges, user.EdgeExamineThesis)
 	}
 	return edges
 }
@@ -4474,6 +4552,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedthesis
 	case user.EdgeReviews:
 		return m.clearedreviews
+	case user.EdgeExamineThesis:
+		return m.clearedexamineThesis
 	}
 	return false
 }
@@ -4513,6 +4593,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeReviews:
 		m.ResetReviews()
+		return nil
+	case user.EdgeExamineThesis:
+		m.ResetExamineThesis()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

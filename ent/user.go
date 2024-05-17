@@ -43,9 +43,11 @@ type UserEdges struct {
 	Thesis []*Thesis `json:"thesis,omitempty"`
 	// Reviews holds the value of the reviews edge.
 	Reviews []*Reviews `json:"reviews,omitempty"`
+	// ExamineThesis holds the value of the examineThesis edge.
+	ExamineThesis []*Thesis `json:"examineThesis,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // AdministratorsOrErr returns the Administrators value or an error if the edge
@@ -97,6 +99,15 @@ func (e UserEdges) ReviewsOrErr() ([]*Reviews, error) {
 		return e.Reviews, nil
 	}
 	return nil, &NotLoadedError{edge: "reviews"}
+}
+
+// ExamineThesisOrErr returns the ExamineThesis value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ExamineThesisOrErr() ([]*Thesis, error) {
+	if e.loadedTypes[5] {
+		return e.ExamineThesis, nil
+	}
+	return nil, &NotLoadedError{edge: "examineThesis"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -183,6 +194,11 @@ func (u *User) QueryThesis() *ThesisQuery {
 // QueryReviews queries the "reviews" edge of the User entity.
 func (u *User) QueryReviews() *ReviewsQuery {
 	return NewUserClient(u.config).QueryReviews(u)
+}
+
+// QueryExamineThesis queries the "examineThesis" edge of the User entity.
+func (u *User) QueryExamineThesis() *ThesisQuery {
+	return NewUserClient(u.config).QueryExamineThesis(u)
 }
 
 // Update returns a builder for updating this User.

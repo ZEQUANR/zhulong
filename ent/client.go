@@ -1194,6 +1194,22 @@ func (c *UserClient) QueryReviews(u *User) *ReviewsQuery {
 	return query
 }
 
+// QueryExamineThesis queries the examineThesis edge of a User.
+func (c *UserClient) QueryExamineThesis(u *User) *ThesisQuery {
+	query := (&ThesisClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(thesis.Table, thesis.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.ExamineThesisTable, user.ExamineThesisColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
