@@ -119,6 +119,7 @@ var (
 		{Name: "third_advance", Type: field.TypeString},
 		{Name: "drawback", Type: field.TypeString},
 		{Name: "create_time", Type: field.TypeTime},
+		{Name: "thesis_examine", Type: field.TypeInt, Nullable: true},
 		{Name: "user_thesis", Type: field.TypeInt, Nullable: true},
 	}
 	// ThesesTable holds the schema information for the "theses" table.
@@ -128,8 +129,14 @@ var (
 		PrimaryKey: []*schema.Column{ThesesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "theses_users_thesis",
+				Symbol:     "theses_users_examine",
 				Columns:    []*schema.Column{ThesesColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "theses_users_thesis",
+				Columns:    []*schema.Column{ThesesColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -165,4 +172,5 @@ func init() {
 	StudentsTable.ForeignKeys[0].RefTable = UsersTable
 	TeachersTable.ForeignKeys[0].RefTable = UsersTable
 	ThesesTable.ForeignKeys[0].RefTable = UsersTable
+	ThesesTable.ForeignKeys[1].RefTable = UsersTable
 }

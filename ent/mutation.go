@@ -2502,6 +2502,8 @@ type ThesisMutation struct {
 	clearedFields    map[string]struct{}
 	uploaders        *int
 	cleareduploaders bool
+	examine          *int
+	clearedexamine   bool
 	done             bool
 	oldValue         func(context.Context) (*Thesis, error)
 	predicates       []predicate.Thesis
@@ -3185,6 +3187,45 @@ func (m *ThesisMutation) ResetUploaders() {
 	m.cleareduploaders = false
 }
 
+// SetExamineID sets the "examine" edge to the User entity by id.
+func (m *ThesisMutation) SetExamineID(id int) {
+	m.examine = &id
+}
+
+// ClearExamine clears the "examine" edge to the User entity.
+func (m *ThesisMutation) ClearExamine() {
+	m.clearedexamine = true
+}
+
+// ExamineCleared reports if the "examine" edge to the User entity was cleared.
+func (m *ThesisMutation) ExamineCleared() bool {
+	return m.clearedexamine
+}
+
+// ExamineID returns the "examine" edge ID in the mutation.
+func (m *ThesisMutation) ExamineID() (id int, exists bool) {
+	if m.examine != nil {
+		return *m.examine, true
+	}
+	return
+}
+
+// ExamineIDs returns the "examine" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ExamineID instead. It exists only for internal usage by the builders.
+func (m *ThesisMutation) ExamineIDs() (ids []int) {
+	if id := m.examine; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetExamine resets all changes to the "examine" edge.
+func (m *ThesisMutation) ResetExamine() {
+	m.examine = nil
+	m.clearedexamine = false
+}
+
 // Where appends a list predicates to the ThesisMutation builder.
 func (m *ThesisMutation) Where(ps ...predicate.Thesis) {
 	m.predicates = append(m.predicates, ps...)
@@ -3564,9 +3605,12 @@ func (m *ThesisMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ThesisMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.uploaders != nil {
 		edges = append(edges, thesis.EdgeUploaders)
+	}
+	if m.examine != nil {
+		edges = append(edges, thesis.EdgeExamine)
 	}
 	return edges
 }
@@ -3579,13 +3623,17 @@ func (m *ThesisMutation) AddedIDs(name string) []ent.Value {
 		if id := m.uploaders; id != nil {
 			return []ent.Value{*id}
 		}
+	case thesis.EdgeExamine:
+		if id := m.examine; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ThesisMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -3597,9 +3645,12 @@ func (m *ThesisMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ThesisMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareduploaders {
 		edges = append(edges, thesis.EdgeUploaders)
+	}
+	if m.clearedexamine {
+		edges = append(edges, thesis.EdgeExamine)
 	}
 	return edges
 }
@@ -3610,6 +3661,8 @@ func (m *ThesisMutation) EdgeCleared(name string) bool {
 	switch name {
 	case thesis.EdgeUploaders:
 		return m.cleareduploaders
+	case thesis.EdgeExamine:
+		return m.clearedexamine
 	}
 	return false
 }
@@ -3621,6 +3674,9 @@ func (m *ThesisMutation) ClearEdge(name string) error {
 	case thesis.EdgeUploaders:
 		m.ClearUploaders()
 		return nil
+	case thesis.EdgeExamine:
+		m.ClearExamine()
+		return nil
 	}
 	return fmt.Errorf("unknown Thesis unique edge %s", name)
 }
@@ -3631,6 +3687,9 @@ func (m *ThesisMutation) ResetEdge(name string) error {
 	switch name {
 	case thesis.EdgeUploaders:
 		m.ResetUploaders()
+		return nil
+	case thesis.EdgeExamine:
+		m.ResetExamine()
 		return nil
 	}
 	return fmt.Errorf("unknown Thesis edge %s", name)

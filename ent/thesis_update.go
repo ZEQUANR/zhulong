@@ -261,6 +261,25 @@ func (tu *ThesisUpdate) SetUploaders(u *User) *ThesisUpdate {
 	return tu.SetUploadersID(u.ID)
 }
 
+// SetExamineID sets the "examine" edge to the User entity by ID.
+func (tu *ThesisUpdate) SetExamineID(id int) *ThesisUpdate {
+	tu.mutation.SetExamineID(id)
+	return tu
+}
+
+// SetNillableExamineID sets the "examine" edge to the User entity by ID if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableExamineID(id *int) *ThesisUpdate {
+	if id != nil {
+		tu = tu.SetExamineID(*id)
+	}
+	return tu
+}
+
+// SetExamine sets the "examine" edge to the User entity.
+func (tu *ThesisUpdate) SetExamine(u *User) *ThesisUpdate {
+	return tu.SetExamineID(u.ID)
+}
+
 // Mutation returns the ThesisMutation object of the builder.
 func (tu *ThesisUpdate) Mutation() *ThesisMutation {
 	return tu.mutation
@@ -269,6 +288,12 @@ func (tu *ThesisUpdate) Mutation() *ThesisMutation {
 // ClearUploaders clears the "uploaders" edge to the User entity.
 func (tu *ThesisUpdate) ClearUploaders() *ThesisUpdate {
 	tu.mutation.ClearUploaders()
+	return tu
+}
+
+// ClearExamine clears the "examine" edge to the User entity.
+func (tu *ThesisUpdate) ClearExamine() *ThesisUpdate {
+	tu.mutation.ClearExamine()
 	return tu
 }
 
@@ -381,6 +406,35 @@ func (tu *ThesisUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Inverse: true,
 			Table:   thesis.UploadersTable,
 			Columns: []string{thesis.UploadersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.ExamineCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   thesis.ExamineTable,
+			Columns: []string{thesis.ExamineColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.ExamineIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   thesis.ExamineTable,
+			Columns: []string{thesis.ExamineColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -643,6 +697,25 @@ func (tuo *ThesisUpdateOne) SetUploaders(u *User) *ThesisUpdateOne {
 	return tuo.SetUploadersID(u.ID)
 }
 
+// SetExamineID sets the "examine" edge to the User entity by ID.
+func (tuo *ThesisUpdateOne) SetExamineID(id int) *ThesisUpdateOne {
+	tuo.mutation.SetExamineID(id)
+	return tuo
+}
+
+// SetNillableExamineID sets the "examine" edge to the User entity by ID if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableExamineID(id *int) *ThesisUpdateOne {
+	if id != nil {
+		tuo = tuo.SetExamineID(*id)
+	}
+	return tuo
+}
+
+// SetExamine sets the "examine" edge to the User entity.
+func (tuo *ThesisUpdateOne) SetExamine(u *User) *ThesisUpdateOne {
+	return tuo.SetExamineID(u.ID)
+}
+
 // Mutation returns the ThesisMutation object of the builder.
 func (tuo *ThesisUpdateOne) Mutation() *ThesisMutation {
 	return tuo.mutation
@@ -651,6 +724,12 @@ func (tuo *ThesisUpdateOne) Mutation() *ThesisMutation {
 // ClearUploaders clears the "uploaders" edge to the User entity.
 func (tuo *ThesisUpdateOne) ClearUploaders() *ThesisUpdateOne {
 	tuo.mutation.ClearUploaders()
+	return tuo
+}
+
+// ClearExamine clears the "examine" edge to the User entity.
+func (tuo *ThesisUpdateOne) ClearExamine() *ThesisUpdateOne {
+	tuo.mutation.ClearExamine()
 	return tuo
 }
 
@@ -793,6 +872,35 @@ func (tuo *ThesisUpdateOne) sqlSave(ctx context.Context) (_node *Thesis, err err
 			Inverse: true,
 			Table:   thesis.UploadersTable,
 			Columns: []string{thesis.UploadersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.ExamineCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   thesis.ExamineTable,
+			Columns: []string{thesis.ExamineColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.ExamineIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   thesis.ExamineTable,
+			Columns: []string{thesis.ExamineColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),

@@ -42,6 +42,8 @@ const (
 	FieldCreateTime = "create_time"
 	// EdgeUploaders holds the string denoting the uploaders edge name in mutations.
 	EdgeUploaders = "uploaders"
+	// EdgeExamine holds the string denoting the examine edge name in mutations.
+	EdgeExamine = "examine"
 	// Table holds the table name of the thesis in the database.
 	Table = "theses"
 	// UploadersTable is the table that holds the uploaders relation/edge.
@@ -51,6 +53,13 @@ const (
 	UploadersInverseTable = "users"
 	// UploadersColumn is the table column denoting the uploaders relation/edge.
 	UploadersColumn = "user_thesis"
+	// ExamineTable is the table that holds the examine relation/edge.
+	ExamineTable = "theses"
+	// ExamineInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	ExamineInverseTable = "users"
+	// ExamineColumn is the table column denoting the examine relation/edge.
+	ExamineColumn = "thesis_examine"
 )
 
 // Columns holds all SQL columns for thesis fields.
@@ -74,6 +83,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "theses"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"thesis_examine",
 	"user_thesis",
 }
 
@@ -176,10 +186,24 @@ func ByUploadersField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUploadersStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByExamineField orders the results by examine field.
+func ByExamineField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExamineStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUploadersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UploadersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UploadersTable, UploadersColumn),
+	)
+}
+func newExamineStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExamineInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, ExamineTable, ExamineColumn),
 	)
 }

@@ -44,5 +44,7 @@ func (Thesis) Edges() []ent.Edge {
 		edge.From("uploaders", User.Type).
 			Ref("thesis").
 			Unique(),
+		edge.To("examine", User.Type).
+			Unique(),
 	}
 }

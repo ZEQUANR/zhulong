@@ -33,3 +33,8 @@ type ToBeReviewedThesisList struct {
 	ThirdAdvance  string    `json:"third_advance"`  // 论文第三创新点
 	Drawback      string    `json:"drawback"`       // 论文不足
 }
+
+type AllocationThesis struct {
+	ThesisID  []int `json:"thesisIds" binding:"required"` // 论文 ID
+	TeacherID int   `json:"teacherId" binding:"required"` // 老师 ID
+}

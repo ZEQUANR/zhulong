@@ -965,6 +965,22 @@ func (c *ThesisClient) QueryUploaders(t *Thesis) *UserQuery {
 	return query
 }
 
+// QueryExamine queries the examine edge of a Thesis.
+func (c *ThesisClient) QueryExamine(t *Thesis) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(thesis.Table, thesis.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, thesis.ExamineTable, thesis.ExamineColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ThesisClient) Hooks() []Hook {
 	return c.hooks.Thesis

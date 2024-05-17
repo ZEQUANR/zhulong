@@ -22,16 +22,17 @@ const (
 type ErrorBody string
 
 const (
-	ErrorBodyParameters    ErrorBody = "Invalid Request Parameters"                    // 无效的请求参数
-	ErrorBodyRequestHeader ErrorBody = "Invalid Request Header"                        // 无效的请求头
-	ErrorBodyQueryingUser  ErrorBody = "Failed Querying User"                          // 查询用户失败
-	ErrorBodyCreateToken   ErrorBody = "Failed To Create Token"                        // 创建 Token 失败
-	ErrorBodyParseToken    ErrorBody = "Failed To Parse Token"                         // 解析 Token 失败
-	ErrorBodyCreateThesis  ErrorBody = "Thesis Creation Failure"                       // 创建论文失败
-	ErrorBodyCreatePath    ErrorBody = "Failed To Create Token"                        // 创建 Path 失败
-	ErrorBodyUpdateThesis  ErrorBody = "Failed To Update The Thesis Information"       // 更新论文信息失败
-	ErrorBodySaveThesis    ErrorBody = "Failed To Save The Thesis File"                // 保持论文文件失败
-	ErrorBodyPermissions   ErrorBody = "The Current User Has Insufficient Permissions" // 当前用户权限不足
+	ErrorBodyParameters       ErrorBody = "Invalid Request Parameters"                    // 无效的请求参数
+	ErrorBodyRequestHeader    ErrorBody = "Invalid Request Header"                        // 无效的请求头
+	ErrorBodyQueryingUser     ErrorBody = "Failed Querying User"                          // 查询用户失败
+	ErrorBodyCreateToken      ErrorBody = "Failed To Create Token"                        // 创建 Token 失败
+	ErrorBodyParseToken       ErrorBody = "Failed To Parse Token"                         // 解析 Token 失败
+	ErrorBodyCreateThesis     ErrorBody = "Thesis Creation Failure"                       // 创建论文失败
+	ErrorBodyCreatePath       ErrorBody = "Failed To Create Token"                        // 创建 Path 失败
+	ErrorBodyUpdateThesis     ErrorBody = "Failed To Update The Thesis Information"       // 更新论文信息失败
+	ErrorBodySaveThesis       ErrorBody = "Failed To Save The Thesis File"                // 保持论文文件失败
+	ErrorBodyPermissions      ErrorBody = "The Current User Has Insufficient Permissions" // 当前用户权限不足
+	ErrorBodyAssignmentThesis ErrorBody = "Assignment Thesis Failure"                     // 分配论文失败
 
 	// insufficient privileges
 )

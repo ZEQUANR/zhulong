@@ -102,3 +102,39 @@ func QueryToBeReviewedThesisList() ([]api.ToBeReviewedThesisList, error) {
 
 	return result, nil
 }
+
+func UpdateAllocationThesis(data api.AllocationThesis) error {
+	ctx := context.Background()
+
+	user, err := client.User.
+		Query().
+		Where(user.ID(data.TeacherID)).
+		Only(ctx)
+	if err != nil || user.Role == model.Student {
+		return fmt.Errorf("func: UpdateAllocationThesis | index: 0 | err: %w", err)
+	}
+
+	for _, value := range data.ThesisID {
+		result, err := client.Thesis.
+			Query().
+			Where(thesis.ID(value)).
+			Only(ctx)
+		if err != nil || result.FileState != model.FileState.ToBeReviewed {
+			return fmt.Errorf("func: UpdateAllocationThesis | index: 1 | err: %w", err)
+		}
+	}
+
+	for _, value := range data.ThesisID {
+		_, err := client.Thesis.
+			Update().
+			Where(thesis.ID(value)).
+			SetFileState(model.FileState.UnderReview).
+			SetExamine(user).
+			Save(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateAllocationThesis | index: 2 | err: %w", err)
+		}
+	}
+
+	return nil
+}

@@ -46,18 +46,21 @@ type Thesis struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ThesisQuery when eager-loading is set.
-	Edges        ThesisEdges `json:"edges"`
-	user_thesis  *int
-	selectValues sql.SelectValues
+	Edges          ThesisEdges `json:"edges"`
+	thesis_examine *int
+	user_thesis    *int
+	selectValues   sql.SelectValues
 }
 
 // ThesisEdges holds the relations/edges for other nodes in the graph.
 type ThesisEdges struct {
 	// Uploaders holds the value of the uploaders edge.
 	Uploaders *User `json:"uploaders,omitempty"`
+	// Examine holds the value of the examine edge.
+	Examine *User `json:"examine,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UploadersOrErr returns the Uploaders value or an error if the edge
@@ -71,6 +74,17 @@ func (e ThesisEdges) UploadersOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "uploaders"}
 }
 
+// ExamineOrErr returns the Examine value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ThesisEdges) ExamineOrErr() (*User, error) {
+	if e.Examine != nil {
+		return e.Examine, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "examine"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Thesis) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -82,7 +96,9 @@ func (*Thesis) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case thesis.FieldUploadTime, thesis.FieldCreateTime:
 			values[i] = new(sql.NullTime)
-		case thesis.ForeignKeys[0]: // user_thesis
+		case thesis.ForeignKeys[0]: // thesis_examine
+			values[i] = new(sql.NullInt64)
+		case thesis.ForeignKeys[1]: // user_thesis
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -185,6 +201,13 @@ func (t *Thesis) assignValues(columns []string, values []any) error {
 			}
 		case thesis.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field thesis_examine", value)
+			} else if value.Valid {
+				t.thesis_examine = new(int)
+				*t.thesis_examine = int(value.Int64)
+			}
+		case thesis.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_thesis", value)
 			} else if value.Valid {
 				t.user_thesis = new(int)
@@ -206,6 +229,11 @@ func (t *Thesis) Value(name string) (ent.Value, error) {
 // QueryUploaders queries the "uploaders" edge of the Thesis entity.
 func (t *Thesis) QueryUploaders() *UserQuery {
 	return NewThesisClient(t.config).QueryUploaders(t)
+}
+
+// QueryExamine queries the "examine" edge of the Thesis entity.
+func (t *Thesis) QueryExamine() *UserQuery {
+	return NewThesisClient(t.config).QueryExamine(t)
 }
 
 // Update returns a builder for updating this Thesis.

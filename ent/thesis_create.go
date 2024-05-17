@@ -158,6 +158,25 @@ func (tc *ThesisCreate) SetUploaders(u *User) *ThesisCreate {
 	return tc.SetUploadersID(u.ID)
 }
 
+// SetExamineID sets the "examine" edge to the User entity by ID.
+func (tc *ThesisCreate) SetExamineID(id int) *ThesisCreate {
+	tc.mutation.SetExamineID(id)
+	return tc
+}
+
+// SetNillableExamineID sets the "examine" edge to the User entity by ID if the given value is not nil.
+func (tc *ThesisCreate) SetNillableExamineID(id *int) *ThesisCreate {
+	if id != nil {
+		tc = tc.SetExamineID(*id)
+	}
+	return tc
+}
+
+// SetExamine sets the "examine" edge to the User entity.
+func (tc *ThesisCreate) SetExamine(u *User) *ThesisCreate {
+	return tc.SetExamineID(u.ID)
+}
+
 // Mutation returns the ThesisMutation object of the builder.
 func (tc *ThesisCreate) Mutation() *ThesisMutation {
 	return tc.mutation
@@ -321,6 +340,23 @@ func (tc *ThesisCreate) createSpec() (*Thesis, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_thesis = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.ExamineIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   thesis.ExamineTable,
+			Columns: []string{thesis.ExamineColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.thesis_examine = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

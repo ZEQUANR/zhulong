@@ -23,6 +23,7 @@ type ThesisQuery struct {
 	inters        []Interceptor
 	predicates    []predicate.Thesis
 	withUploaders *UserQuery
+	withExamine   *UserQuery
 	withFKs       bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -75,6 +76,28 @@ func (tq *ThesisQuery) QueryUploaders() *UserQuery {
 			sqlgraph.From(thesis.Table, thesis.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, thesis.UploadersTable, thesis.UploadersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExamine chains the current query on the "examine" edge.
+func (tq *ThesisQuery) QueryExamine() *UserQuery {
+	query := (&UserClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(thesis.Table, thesis.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, thesis.ExamineTable, thesis.ExamineColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,6 +298,7 @@ func (tq *ThesisQuery) Clone() *ThesisQuery {
 		inters:        append([]Interceptor{}, tq.inters...),
 		predicates:    append([]predicate.Thesis{}, tq.predicates...),
 		withUploaders: tq.withUploaders.Clone(),
+		withExamine:   tq.withExamine.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -289,6 +313,17 @@ func (tq *ThesisQuery) WithUploaders(opts ...func(*UserQuery)) *ThesisQuery {
 		opt(query)
 	}
 	tq.withUploaders = query
+	return tq
+}
+
+// WithExamine tells the query-builder to eager-load the nodes that are connected to
+// the "examine" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *ThesisQuery) WithExamine(opts ...func(*UserQuery)) *ThesisQuery {
+	query := (&UserClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withExamine = query
 	return tq
 }
 
@@ -371,11 +406,12 @@ func (tq *ThesisQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Thesi
 		nodes       = []*Thesis{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			tq.withUploaders != nil,
+			tq.withExamine != nil,
 		}
 	)
-	if tq.withUploaders != nil {
+	if tq.withUploaders != nil || tq.withExamine != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -402,6 +438,12 @@ func (tq *ThesisQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Thesi
 	if query := tq.withUploaders; query != nil {
 		if err := tq.loadUploaders(ctx, query, nodes, nil,
 			func(n *Thesis, e *User) { n.Edges.Uploaders = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withExamine; query != nil {
+		if err := tq.loadExamine(ctx, query, nodes, nil,
+			func(n *Thesis, e *User) { n.Edges.Examine = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -433,6 +475,38 @@ func (tq *ThesisQuery) loadUploaders(ctx context.Context, query *UserQuery, node
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "user_thesis" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (tq *ThesisQuery) loadExamine(ctx context.Context, query *UserQuery, nodes []*Thesis, init func(*Thesis), assign func(*Thesis, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Thesis)
+	for i := range nodes {
+		if nodes[i].thesis_examine == nil {
+			continue
+		}
+		fk := *nodes[i].thesis_examine
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "thesis_examine" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

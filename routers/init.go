@@ -14,8 +14,8 @@ func Init(router *gin.Engine) {
 			user.POST("/login", controller.UserLogin)
 			user.POST("/info", controller.UserInfo)
 			user.POST("/editor", controller.UserEditor)
-			user.POST("/register", controller.UserRegister)
-			user.POST("/logout", controller.UserLogout)
+			// user.POST("/register", controller.UserRegister)
+			// user.POST("/logout", controller.UserLogout)
 		}
 
 		thesis := v1.Group("/thesis")
@@ -23,6 +23,7 @@ func Init(router *gin.Engine) {
 			thesis.POST("/create", controller.ThesisCreate)
 			thesis.POST("/upload", controller.ThesisUpload)
 			thesis.POST("/allotList", controller.ThesisToBeReviewedList)
+			thesis.POST("/allocation", controller.ThesisAllocation)
 			thesis.POST("/download")
 		}
 
