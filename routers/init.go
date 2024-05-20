@@ -25,7 +25,7 @@ func Init(router *gin.Engine) {
 			thesis.POST("/allotList", controller.ThesisToBeReviewedList)
 			thesis.POST("/allocation", controller.ThesisAllocation)
 			thesis.POST("/reviewList", controller.ThesisUnderReviewList)
-			thesis.POST("/download")
+			thesis.POST("/download", controller.ThesisDownload)
 		}
 
 		review := v1.Group("/review")

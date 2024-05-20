@@ -175,3 +175,45 @@ func QueryUnderReviewThesisList(id int) ([]api.ToBeReviewedThesisList, error) {
 
 	return result, nil
 }
+
+func QueryThesisDownloadPath(id int, data api.DownloadThesis) (*ent.Thesis, error) {
+	ctx := context.Background()
+
+	user, err := client.User.
+		Query().
+		Select().
+		Where(user.ID(id)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 1 | err: %w", err)
+	}
+
+	t, err := client.Thesis.
+		Query().
+		Select().
+		Where(thesis.ID(data.ThesisId)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 2 | err: %w", err)
+	}
+
+	qid, err := t.
+		QueryExamine().
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 3 | err: %w", err)
+	}
+
+	eid, err := t.
+		QueryUploaders().
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 4 | err: %w", err)
+	}
+
+	if user.Role != model.Admin && (qid.ID != id && eid.ID != id) {
+		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 5 | err: %w", err)
+	}
+
+	return t, nil
+}

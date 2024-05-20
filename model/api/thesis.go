@@ -2,7 +2,6 @@ package api
 
 import "time"
 
-// request arguments
 type CreateThesis struct {
 	ChineseTitle  string `json:"chineseTitle" binding:"required"`  // 论文中文标题
 	EnglishTitle  string `json:"englishTitle" binding:"required"`  // 论文英文标题
@@ -14,9 +13,12 @@ type CreateThesis struct {
 	Drawback      string `json:"drawback" binding:"required"`      // 论文不足
 }
 
-// request arguments
 type UploadThesis struct {
 	ThesisId int `bson:"thesis_id" form:"thesis_id"` // 论文 ID
+}
+
+type DownloadThesis struct {
+	ThesisId int `json:"Thesis_id" binding:"required"` // 论文 ID
 }
 
 type ToBeReviewedThesisList struct {

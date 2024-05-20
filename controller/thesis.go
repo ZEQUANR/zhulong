@@ -167,3 +167,25 @@ func ThesisUnderReviewList(c *gin.Context) {
 		"datas": result,
 	})
 }
+
+func ThesisDownload(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	data := api.DownloadThesis{}
+	if err := c.BindJSON(&data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+		return
+	}
+
+	result, err := services.QueryThesisDownloadPath(userId, data)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyThesisDownloadLink, err)
+		return
+	}
+
+	c.File(result.FileURL)
+}
