@@ -10,5 +10,5 @@ func CreateLog(c *gin.Context, who ErrorWho, errorCause ErrorAction, effect Erro
 	e := fmt.Errorf(fmt.Sprintf("%s|%s|%s|[%s]", who, errorCause, effect, err.Error()))
 
 	// middlewares.LogError(c, middlewares.LoggerTypeNormal, e)
-	c.JSON(200, gin.H{"message": e.Error()})
+	c.JSON(ErrorCode[who], gin.H{"message": e.Error()})
 }

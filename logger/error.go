@@ -1,5 +1,7 @@
 package logger
 
+import "net/http"
+
 type ErrorWho string
 
 const (
@@ -37,6 +39,12 @@ const (
 	ErrorBodyUnderReviewList    ErrorBody = "Failed To Obtain A List Of Thesis Under Review"     // 获取评阅中论文列表失败
 	ErrorBodyThesisDownloadLink ErrorBody = "Failed To Obtain The Thesis Download Link"          // 获取论文下载链接失败
 )
+
+var ErrorCode = map[ErrorWho]int{
+	ErrorWhoServer:   http.StatusBadRequest,          // 服务端 400
+	ErrorWhoClient:   http.StatusUnauthorized,        // 客户端 401
+	ErrorWhoDatabase: http.StatusInternalServerError, // 数据库 500
+}
 
 // type ErrorCause struct {
 // 	Content string
