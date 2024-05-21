@@ -298,12 +298,12 @@ func (aq *AdministratorsQuery) WithUsers(opts ...func(*UserQuery)) *Administrato
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Avatar string `json:"avatar,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Administrators.Query().
-//		GroupBy(administrators.FieldName).
+//		GroupBy(administrators.FieldAvatar).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (aq *AdministratorsQuery) GroupBy(field string, fields ...string) *AdministratorsGroupBy {
@@ -321,11 +321,11 @@ func (aq *AdministratorsQuery) GroupBy(field string, fields ...string) *Administ
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Avatar string `json:"avatar,omitempty"`
 //	}
 //
 //	client.Administrators.Query().
-//		Select(administrators.FieldName).
+//		Select(administrators.FieldAvatar).
 //		Scan(ctx, &v)
 func (aq *AdministratorsQuery) Select(fields ...string) *AdministratorsSelect {
 	aq.ctx.Fields = append(aq.ctx.Fields, fields...)

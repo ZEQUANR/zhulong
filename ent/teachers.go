@@ -17,14 +17,16 @@ type Teachers struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Avatar holds the value of the "avatar" field.
+	Avatar string `json:"avatar,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// College holds the value of the "college" field.
 	College string `json:"college,omitempty"`
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
-	// Identity holds the value of the "identity" field.
-	Identity string `json:"identity,omitempty"`
+	// Number holds the value of the "number" field.
+	Number string `json:"number,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TeachersQuery when eager-loading is set.
 	Edges         TeachersEdges `json:"edges"`
@@ -59,7 +61,7 @@ func (*Teachers) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case teachers.FieldID:
 			values[i] = new(sql.NullInt64)
-		case teachers.FieldName, teachers.FieldCollege, teachers.FieldPhone, teachers.FieldIdentity:
+		case teachers.FieldAvatar, teachers.FieldName, teachers.FieldCollege, teachers.FieldPhone, teachers.FieldNumber:
 			values[i] = new(sql.NullString)
 		case teachers.ForeignKeys[0]: // user_teachers
 			values[i] = new(sql.NullInt64)
@@ -84,6 +86,12 @@ func (t *Teachers) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			t.ID = int(value.Int64)
+		case teachers.FieldAvatar:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar", values[i])
+			} else if value.Valid {
+				t.Avatar = value.String
+			}
 		case teachers.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -102,11 +110,11 @@ func (t *Teachers) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Phone = value.String
 			}
-		case teachers.FieldIdentity:
+		case teachers.FieldNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field identity", values[i])
+				return fmt.Errorf("unexpected type %T for field number", values[i])
 			} else if value.Valid {
-				t.Identity = value.String
+				t.Number = value.String
 			}
 		case teachers.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -156,6 +164,9 @@ func (t *Teachers) String() string {
 	var builder strings.Builder
 	builder.WriteString("Teachers(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
+	builder.WriteString("avatar=")
+	builder.WriteString(t.Avatar)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(t.Name)
 	builder.WriteString(", ")
@@ -165,8 +176,8 @@ func (t *Teachers) String() string {
 	builder.WriteString("phone=")
 	builder.WriteString(t.Phone)
 	builder.WriteString(", ")
-	builder.WriteString("identity=")
-	builder.WriteString(t.Identity)
+	builder.WriteString("number=")
+	builder.WriteString(t.Number)
 	builder.WriteByte(')')
 	return builder.String()
 }

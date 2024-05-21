@@ -20,6 +20,12 @@ type StudentsCreate struct {
 	hooks    []Hook
 }
 
+// SetAvatar sets the "avatar" field.
+func (sc *StudentsCreate) SetAvatar(s string) *StudentsCreate {
+	sc.mutation.SetAvatar(s)
+	return sc
+}
+
 // SetName sets the "name" field.
 func (sc *StudentsCreate) SetName(s string) *StudentsCreate {
 	sc.mutation.SetName(s)
@@ -38,9 +44,9 @@ func (sc *StudentsCreate) SetPhone(s string) *StudentsCreate {
 	return sc
 }
 
-// SetSubject sets the "subject" field.
-func (sc *StudentsCreate) SetSubject(s string) *StudentsCreate {
-	sc.mutation.SetSubject(s)
+// SetMajor sets the "major" field.
+func (sc *StudentsCreate) SetMajor(s string) *StudentsCreate {
+	sc.mutation.SetMajor(s)
 	return sc
 }
 
@@ -50,9 +56,9 @@ func (sc *StudentsCreate) SetClass(s string) *StudentsCreate {
 	return sc
 }
 
-// SetIdentity sets the "identity" field.
-func (sc *StudentsCreate) SetIdentity(s string) *StudentsCreate {
-	sc.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (sc *StudentsCreate) SetNumber(s string) *StudentsCreate {
+	sc.mutation.SetNumber(s)
 	return sc
 }
 
@@ -101,6 +107,9 @@ func (sc *StudentsCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (sc *StudentsCreate) check() error {
+	if _, ok := sc.mutation.Avatar(); !ok {
+		return &ValidationError{Name: "avatar", err: errors.New(`ent: missing required field "Students.avatar"`)}
+	}
 	if _, ok := sc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Students.name"`)}
 	}
@@ -110,14 +119,14 @@ func (sc *StudentsCreate) check() error {
 	if _, ok := sc.mutation.Phone(); !ok {
 		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "Students.phone"`)}
 	}
-	if _, ok := sc.mutation.Subject(); !ok {
-		return &ValidationError{Name: "subject", err: errors.New(`ent: missing required field "Students.subject"`)}
+	if _, ok := sc.mutation.Major(); !ok {
+		return &ValidationError{Name: "major", err: errors.New(`ent: missing required field "Students.major"`)}
 	}
 	if _, ok := sc.mutation.Class(); !ok {
 		return &ValidationError{Name: "class", err: errors.New(`ent: missing required field "Students.class"`)}
 	}
-	if _, ok := sc.mutation.Identity(); !ok {
-		return &ValidationError{Name: "identity", err: errors.New(`ent: missing required field "Students.identity"`)}
+	if _, ok := sc.mutation.Number(); !ok {
+		return &ValidationError{Name: "number", err: errors.New(`ent: missing required field "Students.number"`)}
 	}
 	if _, ok := sc.mutation.UsersID(); !ok {
 		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Students.users"`)}
@@ -148,6 +157,10 @@ func (sc *StudentsCreate) createSpec() (*Students, *sqlgraph.CreateSpec) {
 		_node = &Students{config: sc.config}
 		_spec = sqlgraph.NewCreateSpec(students.Table, sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt))
 	)
+	if value, ok := sc.mutation.Avatar(); ok {
+		_spec.SetField(students.FieldAvatar, field.TypeString, value)
+		_node.Avatar = value
+	}
 	if value, ok := sc.mutation.Name(); ok {
 		_spec.SetField(students.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -160,17 +173,17 @@ func (sc *StudentsCreate) createSpec() (*Students, *sqlgraph.CreateSpec) {
 		_spec.SetField(students.FieldPhone, field.TypeString, value)
 		_node.Phone = value
 	}
-	if value, ok := sc.mutation.Subject(); ok {
-		_spec.SetField(students.FieldSubject, field.TypeString, value)
-		_node.Subject = value
+	if value, ok := sc.mutation.Major(); ok {
+		_spec.SetField(students.FieldMajor, field.TypeString, value)
+		_node.Major = value
 	}
 	if value, ok := sc.mutation.Class(); ok {
 		_spec.SetField(students.FieldClass, field.TypeString, value)
 		_node.Class = value
 	}
-	if value, ok := sc.mutation.Identity(); ok {
-		_spec.SetField(students.FieldIdentity, field.TypeString, value)
-		_node.Identity = value
+	if value, ok := sc.mutation.Number(); ok {
+		_spec.SetField(students.FieldNumber, field.TypeString, value)
+		_node.Number = value
 	}
 	if nodes := sc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

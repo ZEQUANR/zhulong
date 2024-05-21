@@ -28,6 +28,20 @@ func (su *StudentsUpdate) Where(ps ...predicate.Students) *StudentsUpdate {
 	return su
 }
 
+// SetAvatar sets the "avatar" field.
+func (su *StudentsUpdate) SetAvatar(s string) *StudentsUpdate {
+	su.mutation.SetAvatar(s)
+	return su
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (su *StudentsUpdate) SetNillableAvatar(s *string) *StudentsUpdate {
+	if s != nil {
+		su.SetAvatar(*s)
+	}
+	return su
+}
+
 // SetName sets the "name" field.
 func (su *StudentsUpdate) SetName(s string) *StudentsUpdate {
 	su.mutation.SetName(s)
@@ -70,16 +84,16 @@ func (su *StudentsUpdate) SetNillablePhone(s *string) *StudentsUpdate {
 	return su
 }
 
-// SetSubject sets the "subject" field.
-func (su *StudentsUpdate) SetSubject(s string) *StudentsUpdate {
-	su.mutation.SetSubject(s)
+// SetMajor sets the "major" field.
+func (su *StudentsUpdate) SetMajor(s string) *StudentsUpdate {
+	su.mutation.SetMajor(s)
 	return su
 }
 
-// SetNillableSubject sets the "subject" field if the given value is not nil.
-func (su *StudentsUpdate) SetNillableSubject(s *string) *StudentsUpdate {
+// SetNillableMajor sets the "major" field if the given value is not nil.
+func (su *StudentsUpdate) SetNillableMajor(s *string) *StudentsUpdate {
 	if s != nil {
-		su.SetSubject(*s)
+		su.SetMajor(*s)
 	}
 	return su
 }
@@ -98,16 +112,16 @@ func (su *StudentsUpdate) SetNillableClass(s *string) *StudentsUpdate {
 	return su
 }
 
-// SetIdentity sets the "identity" field.
-func (su *StudentsUpdate) SetIdentity(s string) *StudentsUpdate {
-	su.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (su *StudentsUpdate) SetNumber(s string) *StudentsUpdate {
+	su.mutation.SetNumber(s)
 	return su
 }
 
-// SetNillableIdentity sets the "identity" field if the given value is not nil.
-func (su *StudentsUpdate) SetNillableIdentity(s *string) *StudentsUpdate {
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (su *StudentsUpdate) SetNillableNumber(s *string) *StudentsUpdate {
 	if s != nil {
-		su.SetIdentity(*s)
+		su.SetNumber(*s)
 	}
 	return su
 }
@@ -181,6 +195,9 @@ func (su *StudentsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := su.mutation.Avatar(); ok {
+		_spec.SetField(students.FieldAvatar, field.TypeString, value)
+	}
 	if value, ok := su.mutation.Name(); ok {
 		_spec.SetField(students.FieldName, field.TypeString, value)
 	}
@@ -190,14 +207,14 @@ func (su *StudentsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := su.mutation.Phone(); ok {
 		_spec.SetField(students.FieldPhone, field.TypeString, value)
 	}
-	if value, ok := su.mutation.Subject(); ok {
-		_spec.SetField(students.FieldSubject, field.TypeString, value)
+	if value, ok := su.mutation.Major(); ok {
+		_spec.SetField(students.FieldMajor, field.TypeString, value)
 	}
 	if value, ok := su.mutation.Class(); ok {
 		_spec.SetField(students.FieldClass, field.TypeString, value)
 	}
-	if value, ok := su.mutation.Identity(); ok {
-		_spec.SetField(students.FieldIdentity, field.TypeString, value)
+	if value, ok := su.mutation.Number(); ok {
+		_spec.SetField(students.FieldNumber, field.TypeString, value)
 	}
 	if su.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -248,6 +265,20 @@ type StudentsUpdateOne struct {
 	mutation *StudentsMutation
 }
 
+// SetAvatar sets the "avatar" field.
+func (suo *StudentsUpdateOne) SetAvatar(s string) *StudentsUpdateOne {
+	suo.mutation.SetAvatar(s)
+	return suo
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (suo *StudentsUpdateOne) SetNillableAvatar(s *string) *StudentsUpdateOne {
+	if s != nil {
+		suo.SetAvatar(*s)
+	}
+	return suo
+}
+
 // SetName sets the "name" field.
 func (suo *StudentsUpdateOne) SetName(s string) *StudentsUpdateOne {
 	suo.mutation.SetName(s)
@@ -290,16 +321,16 @@ func (suo *StudentsUpdateOne) SetNillablePhone(s *string) *StudentsUpdateOne {
 	return suo
 }
 
-// SetSubject sets the "subject" field.
-func (suo *StudentsUpdateOne) SetSubject(s string) *StudentsUpdateOne {
-	suo.mutation.SetSubject(s)
+// SetMajor sets the "major" field.
+func (suo *StudentsUpdateOne) SetMajor(s string) *StudentsUpdateOne {
+	suo.mutation.SetMajor(s)
 	return suo
 }
 
-// SetNillableSubject sets the "subject" field if the given value is not nil.
-func (suo *StudentsUpdateOne) SetNillableSubject(s *string) *StudentsUpdateOne {
+// SetNillableMajor sets the "major" field if the given value is not nil.
+func (suo *StudentsUpdateOne) SetNillableMajor(s *string) *StudentsUpdateOne {
 	if s != nil {
-		suo.SetSubject(*s)
+		suo.SetMajor(*s)
 	}
 	return suo
 }
@@ -318,16 +349,16 @@ func (suo *StudentsUpdateOne) SetNillableClass(s *string) *StudentsUpdateOne {
 	return suo
 }
 
-// SetIdentity sets the "identity" field.
-func (suo *StudentsUpdateOne) SetIdentity(s string) *StudentsUpdateOne {
-	suo.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (suo *StudentsUpdateOne) SetNumber(s string) *StudentsUpdateOne {
+	suo.mutation.SetNumber(s)
 	return suo
 }
 
-// SetNillableIdentity sets the "identity" field if the given value is not nil.
-func (suo *StudentsUpdateOne) SetNillableIdentity(s *string) *StudentsUpdateOne {
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (suo *StudentsUpdateOne) SetNillableNumber(s *string) *StudentsUpdateOne {
 	if s != nil {
-		suo.SetIdentity(*s)
+		suo.SetNumber(*s)
 	}
 	return suo
 }
@@ -431,6 +462,9 @@ func (suo *StudentsUpdateOne) sqlSave(ctx context.Context) (_node *Students, err
 			}
 		}
 	}
+	if value, ok := suo.mutation.Avatar(); ok {
+		_spec.SetField(students.FieldAvatar, field.TypeString, value)
+	}
 	if value, ok := suo.mutation.Name(); ok {
 		_spec.SetField(students.FieldName, field.TypeString, value)
 	}
@@ -440,14 +474,14 @@ func (suo *StudentsUpdateOne) sqlSave(ctx context.Context) (_node *Students, err
 	if value, ok := suo.mutation.Phone(); ok {
 		_spec.SetField(students.FieldPhone, field.TypeString, value)
 	}
-	if value, ok := suo.mutation.Subject(); ok {
-		_spec.SetField(students.FieldSubject, field.TypeString, value)
+	if value, ok := suo.mutation.Major(); ok {
+		_spec.SetField(students.FieldMajor, field.TypeString, value)
 	}
 	if value, ok := suo.mutation.Class(); ok {
 		_spec.SetField(students.FieldClass, field.TypeString, value)
 	}
-	if value, ok := suo.mutation.Identity(); ok {
-		_spec.SetField(students.FieldIdentity, field.TypeString, value)
+	if value, ok := suo.mutation.Number(); ok {
+		_spec.SetField(students.FieldNumber, field.TypeString, value)
 	}
 	if suo.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{

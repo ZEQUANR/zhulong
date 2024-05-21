@@ -217,3 +217,20 @@ func QueryThesisDownloadPath(id int, data api.DownloadThesis) (*ent.Thesis, erro
 
 	return t, nil
 }
+
+func UpdateThesisRandomAllocation(data api.RandomAllocationThesis) (*ent.Thesis, error) {
+	ctx := context.Background()
+
+	for _, v := range data.ThesisID {
+		t, err := client.Thesis.
+			Query().
+			Select().
+			Where(thesis.ID(v)).
+			Only(ctx)
+		if err != nil || t.FileState != model.FileState.ToBeReviewed {
+			return nil, fmt.Errorf("func: UpdateThesisRandomAllocation | index: 0 | err: %w", err)
+		}
+	}
+
+	return nil, nil
+}

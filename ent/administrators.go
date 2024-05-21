@@ -17,14 +17,16 @@ type Administrators struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Avatar holds the value of the "avatar" field.
+	Avatar string `json:"avatar,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// College holds the value of the "college" field.
 	College string `json:"college,omitempty"`
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
-	// Identity holds the value of the "identity" field.
-	Identity string `json:"identity,omitempty"`
+	// Number holds the value of the "number" field.
+	Number string `json:"number,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AdministratorsQuery when eager-loading is set.
 	Edges               AdministratorsEdges `json:"edges"`
@@ -59,7 +61,7 @@ func (*Administrators) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case administrators.FieldID:
 			values[i] = new(sql.NullInt64)
-		case administrators.FieldName, administrators.FieldCollege, administrators.FieldPhone, administrators.FieldIdentity:
+		case administrators.FieldAvatar, administrators.FieldName, administrators.FieldCollege, administrators.FieldPhone, administrators.FieldNumber:
 			values[i] = new(sql.NullString)
 		case administrators.ForeignKeys[0]: // user_administrators
 			values[i] = new(sql.NullInt64)
@@ -84,6 +86,12 @@ func (a *Administrators) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			a.ID = int(value.Int64)
+		case administrators.FieldAvatar:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar", values[i])
+			} else if value.Valid {
+				a.Avatar = value.String
+			}
 		case administrators.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -102,11 +110,11 @@ func (a *Administrators) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.Phone = value.String
 			}
-		case administrators.FieldIdentity:
+		case administrators.FieldNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field identity", values[i])
+				return fmt.Errorf("unexpected type %T for field number", values[i])
 			} else if value.Valid {
-				a.Identity = value.String
+				a.Number = value.String
 			}
 		case administrators.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -156,6 +164,9 @@ func (a *Administrators) String() string {
 	var builder strings.Builder
 	builder.WriteString("Administrators(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
+	builder.WriteString("avatar=")
+	builder.WriteString(a.Avatar)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(a.Name)
 	builder.WriteString(", ")
@@ -165,8 +176,8 @@ func (a *Administrators) String() string {
 	builder.WriteString("phone=")
 	builder.WriteString(a.Phone)
 	builder.WriteString(", ")
-	builder.WriteString("identity=")
-	builder.WriteString(a.Identity)
+	builder.WriteString("number=")
+	builder.WriteString(a.Number)
 	builder.WriteByte(')')
 	return builder.String()
 }

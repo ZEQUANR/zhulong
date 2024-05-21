@@ -298,12 +298,12 @@ func (sq *StudentsQuery) WithUsers(opts ...func(*UserQuery)) *StudentsQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Avatar string `json:"avatar,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Students.Query().
-//		GroupBy(students.FieldName).
+//		GroupBy(students.FieldAvatar).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (sq *StudentsQuery) GroupBy(field string, fields ...string) *StudentsGroupBy {
@@ -321,11 +321,11 @@ func (sq *StudentsQuery) GroupBy(field string, fields ...string) *StudentsGroupB
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Avatar string `json:"avatar,omitempty"`
 //	}
 //
 //	client.Students.Query().
-//		Select(students.FieldName).
+//		Select(students.FieldAvatar).
 //		Scan(ctx, &v)
 func (sq *StudentsQuery) Select(fields ...string) *StudentsSelect {
 	sq.ctx.Fields = append(sq.ctx.Fields, fields...)

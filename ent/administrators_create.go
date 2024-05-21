@@ -20,6 +20,12 @@ type AdministratorsCreate struct {
 	hooks    []Hook
 }
 
+// SetAvatar sets the "avatar" field.
+func (ac *AdministratorsCreate) SetAvatar(s string) *AdministratorsCreate {
+	ac.mutation.SetAvatar(s)
+	return ac
+}
+
 // SetName sets the "name" field.
 func (ac *AdministratorsCreate) SetName(s string) *AdministratorsCreate {
 	ac.mutation.SetName(s)
@@ -38,9 +44,9 @@ func (ac *AdministratorsCreate) SetPhone(s string) *AdministratorsCreate {
 	return ac
 }
 
-// SetIdentity sets the "identity" field.
-func (ac *AdministratorsCreate) SetIdentity(s string) *AdministratorsCreate {
-	ac.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (ac *AdministratorsCreate) SetNumber(s string) *AdministratorsCreate {
+	ac.mutation.SetNumber(s)
 	return ac
 }
 
@@ -89,6 +95,9 @@ func (ac *AdministratorsCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (ac *AdministratorsCreate) check() error {
+	if _, ok := ac.mutation.Avatar(); !ok {
+		return &ValidationError{Name: "avatar", err: errors.New(`ent: missing required field "Administrators.avatar"`)}
+	}
 	if _, ok := ac.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Administrators.name"`)}
 	}
@@ -98,8 +107,8 @@ func (ac *AdministratorsCreate) check() error {
 	if _, ok := ac.mutation.Phone(); !ok {
 		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "Administrators.phone"`)}
 	}
-	if _, ok := ac.mutation.Identity(); !ok {
-		return &ValidationError{Name: "identity", err: errors.New(`ent: missing required field "Administrators.identity"`)}
+	if _, ok := ac.mutation.Number(); !ok {
+		return &ValidationError{Name: "number", err: errors.New(`ent: missing required field "Administrators.number"`)}
 	}
 	if _, ok := ac.mutation.UsersID(); !ok {
 		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Administrators.users"`)}
@@ -130,6 +139,10 @@ func (ac *AdministratorsCreate) createSpec() (*Administrators, *sqlgraph.CreateS
 		_node = &Administrators{config: ac.config}
 		_spec = sqlgraph.NewCreateSpec(administrators.Table, sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt))
 	)
+	if value, ok := ac.mutation.Avatar(); ok {
+		_spec.SetField(administrators.FieldAvatar, field.TypeString, value)
+		_node.Avatar = value
+	}
 	if value, ok := ac.mutation.Name(); ok {
 		_spec.SetField(administrators.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -142,9 +155,9 @@ func (ac *AdministratorsCreate) createSpec() (*Administrators, *sqlgraph.CreateS
 		_spec.SetField(administrators.FieldPhone, field.TypeString, value)
 		_node.Phone = value
 	}
-	if value, ok := ac.mutation.Identity(); ok {
-		_spec.SetField(administrators.FieldIdentity, field.TypeString, value)
-		_node.Identity = value
+	if value, ok := ac.mutation.Number(); ok {
+		_spec.SetField(administrators.FieldNumber, field.TypeString, value)
+		_node.Number = value
 	}
 	if nodes := ac.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -28,6 +28,20 @@ func (tu *TeachersUpdate) Where(ps ...predicate.Teachers) *TeachersUpdate {
 	return tu
 }
 
+// SetAvatar sets the "avatar" field.
+func (tu *TeachersUpdate) SetAvatar(s string) *TeachersUpdate {
+	tu.mutation.SetAvatar(s)
+	return tu
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (tu *TeachersUpdate) SetNillableAvatar(s *string) *TeachersUpdate {
+	if s != nil {
+		tu.SetAvatar(*s)
+	}
+	return tu
+}
+
 // SetName sets the "name" field.
 func (tu *TeachersUpdate) SetName(s string) *TeachersUpdate {
 	tu.mutation.SetName(s)
@@ -70,16 +84,16 @@ func (tu *TeachersUpdate) SetNillablePhone(s *string) *TeachersUpdate {
 	return tu
 }
 
-// SetIdentity sets the "identity" field.
-func (tu *TeachersUpdate) SetIdentity(s string) *TeachersUpdate {
-	tu.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (tu *TeachersUpdate) SetNumber(s string) *TeachersUpdate {
+	tu.mutation.SetNumber(s)
 	return tu
 }
 
-// SetNillableIdentity sets the "identity" field if the given value is not nil.
-func (tu *TeachersUpdate) SetNillableIdentity(s *string) *TeachersUpdate {
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (tu *TeachersUpdate) SetNillableNumber(s *string) *TeachersUpdate {
 	if s != nil {
-		tu.SetIdentity(*s)
+		tu.SetNumber(*s)
 	}
 	return tu
 }
@@ -153,6 +167,9 @@ func (tu *TeachersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := tu.mutation.Avatar(); ok {
+		_spec.SetField(teachers.FieldAvatar, field.TypeString, value)
+	}
 	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(teachers.FieldName, field.TypeString, value)
 	}
@@ -162,8 +179,8 @@ func (tu *TeachersUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Phone(); ok {
 		_spec.SetField(teachers.FieldPhone, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.Identity(); ok {
-		_spec.SetField(teachers.FieldIdentity, field.TypeString, value)
+	if value, ok := tu.mutation.Number(); ok {
+		_spec.SetField(teachers.FieldNumber, field.TypeString, value)
 	}
 	if tu.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -214,6 +231,20 @@ type TeachersUpdateOne struct {
 	mutation *TeachersMutation
 }
 
+// SetAvatar sets the "avatar" field.
+func (tuo *TeachersUpdateOne) SetAvatar(s string) *TeachersUpdateOne {
+	tuo.mutation.SetAvatar(s)
+	return tuo
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (tuo *TeachersUpdateOne) SetNillableAvatar(s *string) *TeachersUpdateOne {
+	if s != nil {
+		tuo.SetAvatar(*s)
+	}
+	return tuo
+}
+
 // SetName sets the "name" field.
 func (tuo *TeachersUpdateOne) SetName(s string) *TeachersUpdateOne {
 	tuo.mutation.SetName(s)
@@ -256,16 +287,16 @@ func (tuo *TeachersUpdateOne) SetNillablePhone(s *string) *TeachersUpdateOne {
 	return tuo
 }
 
-// SetIdentity sets the "identity" field.
-func (tuo *TeachersUpdateOne) SetIdentity(s string) *TeachersUpdateOne {
-	tuo.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (tuo *TeachersUpdateOne) SetNumber(s string) *TeachersUpdateOne {
+	tuo.mutation.SetNumber(s)
 	return tuo
 }
 
-// SetNillableIdentity sets the "identity" field if the given value is not nil.
-func (tuo *TeachersUpdateOne) SetNillableIdentity(s *string) *TeachersUpdateOne {
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (tuo *TeachersUpdateOne) SetNillableNumber(s *string) *TeachersUpdateOne {
 	if s != nil {
-		tuo.SetIdentity(*s)
+		tuo.SetNumber(*s)
 	}
 	return tuo
 }
@@ -369,6 +400,9 @@ func (tuo *TeachersUpdateOne) sqlSave(ctx context.Context) (_node *Teachers, err
 			}
 		}
 	}
+	if value, ok := tuo.mutation.Avatar(); ok {
+		_spec.SetField(teachers.FieldAvatar, field.TypeString, value)
+	}
 	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(teachers.FieldName, field.TypeString, value)
 	}
@@ -378,8 +412,8 @@ func (tuo *TeachersUpdateOne) sqlSave(ctx context.Context) (_node *Teachers, err
 	if value, ok := tuo.mutation.Phone(); ok {
 		_spec.SetField(teachers.FieldPhone, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.Identity(); ok {
-		_spec.SetField(teachers.FieldIdentity, field.TypeString, value)
+	if value, ok := tuo.mutation.Number(); ok {
+		_spec.SetField(teachers.FieldNumber, field.TypeString, value)
 	}
 	if tuo.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{

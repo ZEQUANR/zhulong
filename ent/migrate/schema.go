@@ -11,10 +11,11 @@ var (
 	// AdministratorsColumns holds the columns for the "administrators" table.
 	AdministratorsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "avatar", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "college", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString},
-		{Name: "identity", Type: field.TypeString},
+		{Name: "number", Type: field.TypeString},
 		{Name: "user_administrators", Type: field.TypeInt, Unique: true},
 	}
 	// AdministratorsTable holds the schema information for the "administrators" table.
@@ -25,7 +26,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "administrators_users_administrators",
-				Columns:    []*schema.Column{AdministratorsColumns[5]},
+				Columns:    []*schema.Column{AdministratorsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -58,12 +59,13 @@ var (
 	// StudentsColumns holds the columns for the "students" table.
 	StudentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "avatar", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "college", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString},
-		{Name: "subject", Type: field.TypeString},
+		{Name: "major", Type: field.TypeString},
 		{Name: "class", Type: field.TypeString},
-		{Name: "identity", Type: field.TypeString},
+		{Name: "number", Type: field.TypeString},
 		{Name: "user_students", Type: field.TypeInt, Unique: true},
 	}
 	// StudentsTable holds the schema information for the "students" table.
@@ -74,7 +76,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "students_users_students",
-				Columns:    []*schema.Column{StudentsColumns[7]},
+				Columns:    []*schema.Column{StudentsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -83,10 +85,11 @@ var (
 	// TeachersColumns holds the columns for the "teachers" table.
 	TeachersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "avatar", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "college", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString},
-		{Name: "identity", Type: field.TypeString},
+		{Name: "number", Type: field.TypeString},
 		{Name: "user_teachers", Type: field.TypeInt, Unique: true},
 	}
 	// TeachersTable holds the schema information for the "teachers" table.
@@ -97,7 +100,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "teachers_users_teachers",
-				Columns:    []*schema.Column{TeachersColumns[5]},
+				Columns:    []*schema.Column{TeachersColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

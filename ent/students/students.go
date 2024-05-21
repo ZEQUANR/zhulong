@@ -12,18 +12,20 @@ const (
 	Label = "students"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldAvatar holds the string denoting the avatar field in the database.
+	FieldAvatar = "avatar"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldCollege holds the string denoting the college field in the database.
 	FieldCollege = "college"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
-	// FieldSubject holds the string denoting the subject field in the database.
-	FieldSubject = "subject"
+	// FieldMajor holds the string denoting the major field in the database.
+	FieldMajor = "major"
 	// FieldClass holds the string denoting the class field in the database.
 	FieldClass = "class"
-	// FieldIdentity holds the string denoting the identity field in the database.
-	FieldIdentity = "identity"
+	// FieldNumber holds the string denoting the number field in the database.
+	FieldNumber = "number"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
 	// Table holds the table name of the students in the database.
@@ -40,12 +42,13 @@ const (
 // Columns holds all SQL columns for students fields.
 var Columns = []string{
 	FieldID,
+	FieldAvatar,
 	FieldName,
 	FieldCollege,
 	FieldPhone,
-	FieldSubject,
+	FieldMajor,
 	FieldClass,
-	FieldIdentity,
+	FieldNumber,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "students"
@@ -77,6 +80,11 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
+// ByAvatar orders the results by the avatar field.
+func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAvatar, opts...).ToFunc()
+}
+
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
@@ -92,9 +100,9 @@ func ByPhone(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPhone, opts...).ToFunc()
 }
 
-// BySubject orders the results by the subject field.
-func BySubject(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSubject, opts...).ToFunc()
+// ByMajor orders the results by the major field.
+func ByMajor(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMajor, opts...).ToFunc()
 }
 
 // ByClass orders the results by the class field.
@@ -102,9 +110,9 @@ func ByClass(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClass, opts...).ToFunc()
 }
 
-// ByIdentity orders the results by the identity field.
-func ByIdentity(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIdentity, opts...).ToFunc()
+// ByNumber orders the results by the number field.
+func ByNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNumber, opts...).ToFunc()
 }
 
 // ByUsersField orders the results by users field.

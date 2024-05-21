@@ -20,6 +20,12 @@ type TeachersCreate struct {
 	hooks    []Hook
 }
 
+// SetAvatar sets the "avatar" field.
+func (tc *TeachersCreate) SetAvatar(s string) *TeachersCreate {
+	tc.mutation.SetAvatar(s)
+	return tc
+}
+
 // SetName sets the "name" field.
 func (tc *TeachersCreate) SetName(s string) *TeachersCreate {
 	tc.mutation.SetName(s)
@@ -38,9 +44,9 @@ func (tc *TeachersCreate) SetPhone(s string) *TeachersCreate {
 	return tc
 }
 
-// SetIdentity sets the "identity" field.
-func (tc *TeachersCreate) SetIdentity(s string) *TeachersCreate {
-	tc.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (tc *TeachersCreate) SetNumber(s string) *TeachersCreate {
+	tc.mutation.SetNumber(s)
 	return tc
 }
 
@@ -89,6 +95,9 @@ func (tc *TeachersCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TeachersCreate) check() error {
+	if _, ok := tc.mutation.Avatar(); !ok {
+		return &ValidationError{Name: "avatar", err: errors.New(`ent: missing required field "Teachers.avatar"`)}
+	}
 	if _, ok := tc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Teachers.name"`)}
 	}
@@ -98,8 +107,8 @@ func (tc *TeachersCreate) check() error {
 	if _, ok := tc.mutation.Phone(); !ok {
 		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "Teachers.phone"`)}
 	}
-	if _, ok := tc.mutation.Identity(); !ok {
-		return &ValidationError{Name: "identity", err: errors.New(`ent: missing required field "Teachers.identity"`)}
+	if _, ok := tc.mutation.Number(); !ok {
+		return &ValidationError{Name: "number", err: errors.New(`ent: missing required field "Teachers.number"`)}
 	}
 	if _, ok := tc.mutation.UsersID(); !ok {
 		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Teachers.users"`)}
@@ -130,6 +139,10 @@ func (tc *TeachersCreate) createSpec() (*Teachers, *sqlgraph.CreateSpec) {
 		_node = &Teachers{config: tc.config}
 		_spec = sqlgraph.NewCreateSpec(teachers.Table, sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt))
 	)
+	if value, ok := tc.mutation.Avatar(); ok {
+		_spec.SetField(teachers.FieldAvatar, field.TypeString, value)
+		_node.Avatar = value
+	}
 	if value, ok := tc.mutation.Name(); ok {
 		_spec.SetField(teachers.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -142,9 +155,9 @@ func (tc *TeachersCreate) createSpec() (*Teachers, *sqlgraph.CreateSpec) {
 		_spec.SetField(teachers.FieldPhone, field.TypeString, value)
 		_node.Phone = value
 	}
-	if value, ok := tc.mutation.Identity(); ok {
-		_spec.SetField(teachers.FieldIdentity, field.TypeString, value)
-		_node.Identity = value
+	if value, ok := tc.mutation.Number(); ok {
+		_spec.SetField(teachers.FieldNumber, field.TypeString, value)
+		_node.Number = value
 	}
 	if nodes := tc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

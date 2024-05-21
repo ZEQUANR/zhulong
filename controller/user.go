@@ -13,7 +13,6 @@ import (
 
 func UserLogin(c *gin.Context) {
 	data := &api.Login{}
-
 	if err := c.BindJSON(&data); err != nil {
 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
 		return
@@ -31,87 +30,80 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-	})
+	c.JSON(http.StatusOK, &gin.H{"token": token})
 }
 
 func UserInfo(c *gin.Context) {
-	token, err := utils.ExtractToken(c)
-	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
-		return
-	}
-
-	id, err := utils.ParseAToken(token, "user_id")
+	userId, err := utils.ParseUserIDInToken(c)
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
 		return
 	}
 
-	user, err := services.QueryUserById(int(id.(float64)))
+	user, err := services.QueryUserById(userId)
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
 		return
 	}
 
 	if user.Role == model.Admin {
-		info, err := services.QueryAdministratorsById(int(id.(float64)))
+		info, err := services.QueryAdministratorsById(userId)
 		if err != nil {
 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"user_id":  user.ID,
-			"account":  user.Account,
-			"role":     user.Role,
-			"name":     info.Name,
-			"identity": info.Identity,
-			"college":  info.College,
-			"phone":    info.Phone,
+			"userId":  user.ID,
+			"account": user.Account,
+			"avatar":  info.Avatar,
+			"role":    user.Role,
+			"name":    info.Name,
+			"college": info.College,
+			"phone":   info.Phone,
+			"number":  info.Number,
 		})
 
 		return
 	}
 
 	if user.Role == model.Teacher {
-		info, err := services.QueryTeachersById(int(id.(float64)))
+		info, err := services.QueryTeachersById(userId)
 		if err != nil {
 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"user_id":  user.ID,
-			"account":  user.Account,
-			"role":     user.Role,
-			"name":     info.Name,
-			"college":  info.College,
-			"phone":    info.Phone,
-			"identity": info.Identity,
+			"userId":  user.ID,
+			"account": user.Account,
+			"avatar":  info.Avatar,
+			"role":    user.Role,
+			"name":    info.Name,
+			"college": info.College,
+			"phone":   info.Phone,
+			"number":  info.Number,
 		})
 
 		return
 	}
 
 	if user.Role == model.Student {
-		info, err := services.QueryStudentsById(int(id.(float64)))
+		info, err := services.QueryStudentsById(userId)
 		if err != nil {
 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"user_id":  user.ID,
-			"account":  user.Account,
-			"role":     user.Role,
-			"name":     info.Name,
-			"college":  info.College,
-			"phone":    info.Phone,
-			"subject":  info.Subject,
-			"class":    info.Class,
-			"identity": info.Identity,
+			"userId":  user.ID,
+			"account": user.Account,
+			"avatar":  info.Avatar,
+			"role":    user.Role,
+			"name":    info.Name,
+			"college": info.College,
+			"phone":   info.Phone,
+			"number":  info.Number,
 		})
 
 		return
@@ -120,110 +112,110 @@ func UserInfo(c *gin.Context) {
 	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
 }
 
-func UserEditor(c *gin.Context) {
-	token, err := utils.ExtractToken(c)
-	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
-		return
-	}
+// func UserEditor(c *gin.Context) {
+// 	token, err := utils.ExtractToken(c)
+// 	if err != nil {
+// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
+// 		return
+// 	}
 
-	id, err := utils.ParseAToken(token, "user_id")
-	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
-		return
-	}
+// 	id, err := utils.ParseAToken(token, "user_id")
+// 	if err != nil {
+// 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+// 		return
+// 	}
 
-	user, err := services.QueryUserById(int(id.(float64)))
-	if err != nil {
-		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-		return
-	}
+// 	user, err := services.QueryUserById(int(id.(float64)))
+// 	if err != nil {
+// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 		return
+// 	}
 
-	if user.Role == model.Admin {
-		data := api.Administrator{}
+// 	if user.Role == model.Admin {
+// 		data := api.Administrator{}
 
-		if err := c.BindJSON(&data); err != nil {
-			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-			return
-		}
+// 		if err := c.BindJSON(&data); err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+// 			return
+// 		}
 
-		result, err := services.UpdateAdministratorsById(user.ID, data)
-		if err != nil {
-			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-			return
-		}
+// 		result, err := services.UpdateAdministratorsById(user.ID, data)
+// 		if err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 			return
+// 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"user_id":  user.ID,
-			"account":  user.Account,
-			"role":     user.Role,
-			"name":     result.Name,
-			"identity": result.Identity,
-			"college":  result.College,
-			"phone":    result.Phone,
-		})
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"user_id":  user.ID,
+// 			"account":  user.Account,
+// 			"role":     user.Role,
+// 			"name":     result.Name,
+// 			"identity": result.Identity,
+// 			"college":  result.College,
+// 			"phone":    result.Phone,
+// 		})
 
-		return
-	}
+// 		return
+// 	}
 
-	if user.Role == model.Teacher {
-		data := api.Teacher{}
+// 	if user.Role == model.Teacher {
+// 		data := api.Teacher{}
 
-		if err := c.BindJSON(&data); err != nil {
-			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-			return
-		}
+// 		if err := c.BindJSON(&data); err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+// 			return
+// 		}
 
-		result, err := services.UpdateTeachersById(user.ID, data)
-		if err != nil {
-			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-			return
-		}
+// 		result, err := services.UpdateTeachersById(user.ID, data)
+// 		if err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 			return
+// 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"user_id":  user.ID,
-			"account":  user.Account,
-			"role":     user.Role,
-			"name":     result.Name,
-			"identity": result.Identity,
-			"college":  result.College,
-			"phone":    result.Phone,
-		})
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"user_id":  user.ID,
+// 			"account":  user.Account,
+// 			"role":     user.Role,
+// 			"name":     result.Name,
+// 			"identity": result.Identity,
+// 			"college":  result.College,
+// 			"phone":    result.Phone,
+// 		})
 
-		return
-	}
+// 		return
+// 	}
 
-	if user.Role == model.Student {
-		data := api.Student{}
+// 	if user.Role == model.Student {
+// 		data := api.Student{}
 
-		if err := c.BindJSON(&data); err != nil {
-			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-			return
-		}
+// 		if err := c.BindJSON(&data); err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+// 			return
+// 		}
 
-		result, err := services.UpdateStudentsById(user.ID, data)
-		if err != nil {
-			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-			return
-		}
+// 		result, err := services.UpdateStudentsById(user.ID, data)
+// 		if err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 			return
+// 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"user_id":  user.ID,
-			"account":  user.Account,
-			"role":     user.Role,
-			"name":     result.Name,
-			"college":  result.College,
-			"phone":    result.Phone,
-			"subject":  result.Subject,
-			"class":    result.Class,
-			"identity": result.Identity,
-		})
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"user_id":  user.ID,
+// 			"account":  user.Account,
+// 			"role":     user.Role,
+// 			"name":     result.Name,
+// 			"college":  result.College,
+// 			"phone":    result.Phone,
+// 			"subject":  result.Subject,
+// 			"class":    result.Class,
+// 			"identity": result.Identity,
+// 		})
 
-		return
-	}
+// 		return
+// 	}
 
-	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-}
+// 	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// }
 
 func UserRegister(c *gin.Context) {
 	c.JSON(200, gin.H{

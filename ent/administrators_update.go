@@ -28,6 +28,20 @@ func (au *AdministratorsUpdate) Where(ps ...predicate.Administrators) *Administr
 	return au
 }
 
+// SetAvatar sets the "avatar" field.
+func (au *AdministratorsUpdate) SetAvatar(s string) *AdministratorsUpdate {
+	au.mutation.SetAvatar(s)
+	return au
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (au *AdministratorsUpdate) SetNillableAvatar(s *string) *AdministratorsUpdate {
+	if s != nil {
+		au.SetAvatar(*s)
+	}
+	return au
+}
+
 // SetName sets the "name" field.
 func (au *AdministratorsUpdate) SetName(s string) *AdministratorsUpdate {
 	au.mutation.SetName(s)
@@ -70,16 +84,16 @@ func (au *AdministratorsUpdate) SetNillablePhone(s *string) *AdministratorsUpdat
 	return au
 }
 
-// SetIdentity sets the "identity" field.
-func (au *AdministratorsUpdate) SetIdentity(s string) *AdministratorsUpdate {
-	au.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (au *AdministratorsUpdate) SetNumber(s string) *AdministratorsUpdate {
+	au.mutation.SetNumber(s)
 	return au
 }
 
-// SetNillableIdentity sets the "identity" field if the given value is not nil.
-func (au *AdministratorsUpdate) SetNillableIdentity(s *string) *AdministratorsUpdate {
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (au *AdministratorsUpdate) SetNillableNumber(s *string) *AdministratorsUpdate {
 	if s != nil {
-		au.SetIdentity(*s)
+		au.SetNumber(*s)
 	}
 	return au
 }
@@ -153,6 +167,9 @@ func (au *AdministratorsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			}
 		}
 	}
+	if value, ok := au.mutation.Avatar(); ok {
+		_spec.SetField(administrators.FieldAvatar, field.TypeString, value)
+	}
 	if value, ok := au.mutation.Name(); ok {
 		_spec.SetField(administrators.FieldName, field.TypeString, value)
 	}
@@ -162,8 +179,8 @@ func (au *AdministratorsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if value, ok := au.mutation.Phone(); ok {
 		_spec.SetField(administrators.FieldPhone, field.TypeString, value)
 	}
-	if value, ok := au.mutation.Identity(); ok {
-		_spec.SetField(administrators.FieldIdentity, field.TypeString, value)
+	if value, ok := au.mutation.Number(); ok {
+		_spec.SetField(administrators.FieldNumber, field.TypeString, value)
 	}
 	if au.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -214,6 +231,20 @@ type AdministratorsUpdateOne struct {
 	mutation *AdministratorsMutation
 }
 
+// SetAvatar sets the "avatar" field.
+func (auo *AdministratorsUpdateOne) SetAvatar(s string) *AdministratorsUpdateOne {
+	auo.mutation.SetAvatar(s)
+	return auo
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (auo *AdministratorsUpdateOne) SetNillableAvatar(s *string) *AdministratorsUpdateOne {
+	if s != nil {
+		auo.SetAvatar(*s)
+	}
+	return auo
+}
+
 // SetName sets the "name" field.
 func (auo *AdministratorsUpdateOne) SetName(s string) *AdministratorsUpdateOne {
 	auo.mutation.SetName(s)
@@ -256,16 +287,16 @@ func (auo *AdministratorsUpdateOne) SetNillablePhone(s *string) *AdministratorsU
 	return auo
 }
 
-// SetIdentity sets the "identity" field.
-func (auo *AdministratorsUpdateOne) SetIdentity(s string) *AdministratorsUpdateOne {
-	auo.mutation.SetIdentity(s)
+// SetNumber sets the "number" field.
+func (auo *AdministratorsUpdateOne) SetNumber(s string) *AdministratorsUpdateOne {
+	auo.mutation.SetNumber(s)
 	return auo
 }
 
-// SetNillableIdentity sets the "identity" field if the given value is not nil.
-func (auo *AdministratorsUpdateOne) SetNillableIdentity(s *string) *AdministratorsUpdateOne {
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (auo *AdministratorsUpdateOne) SetNillableNumber(s *string) *AdministratorsUpdateOne {
 	if s != nil {
-		auo.SetIdentity(*s)
+		auo.SetNumber(*s)
 	}
 	return auo
 }
@@ -369,6 +400,9 @@ func (auo *AdministratorsUpdateOne) sqlSave(ctx context.Context) (_node *Adminis
 			}
 		}
 	}
+	if value, ok := auo.mutation.Avatar(); ok {
+		_spec.SetField(administrators.FieldAvatar, field.TypeString, value)
+	}
 	if value, ok := auo.mutation.Name(); ok {
 		_spec.SetField(administrators.FieldName, field.TypeString, value)
 	}
@@ -378,8 +412,8 @@ func (auo *AdministratorsUpdateOne) sqlSave(ctx context.Context) (_node *Adminis
 	if value, ok := auo.mutation.Phone(); ok {
 		_spec.SetField(administrators.FieldPhone, field.TypeString, value)
 	}
-	if value, ok := auo.mutation.Identity(); ok {
-		_spec.SetField(administrators.FieldIdentity, field.TypeString, value)
+	if value, ok := auo.mutation.Number(); ok {
+		_spec.SetField(administrators.FieldNumber, field.TypeString, value)
 	}
 	if auo.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{

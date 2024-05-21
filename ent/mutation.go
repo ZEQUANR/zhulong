@@ -43,10 +43,11 @@ type AdministratorsMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	avatar        *string
 	name          *string
 	college       *string
 	phone         *string
-	identity      *string
+	number        *string
 	clearedFields map[string]struct{}
 	users         *int
 	clearedusers  bool
@@ -151,6 +152,42 @@ func (m *AdministratorsMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetAvatar sets the "avatar" field.
+func (m *AdministratorsMutation) SetAvatar(s string) {
+	m.avatar = &s
+}
+
+// Avatar returns the value of the "avatar" field in the mutation.
+func (m *AdministratorsMutation) Avatar() (r string, exists bool) {
+	v := m.avatar
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatar returns the old "avatar" field's value of the Administrators entity.
+// If the Administrators object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdministratorsMutation) OldAvatar(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatar is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatar requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatar: %w", err)
+	}
+	return oldValue.Avatar, nil
+}
+
+// ResetAvatar resets all changes to the "avatar" field.
+func (m *AdministratorsMutation) ResetAvatar() {
+	m.avatar = nil
 }
 
 // SetName sets the "name" field.
@@ -261,40 +298,40 @@ func (m *AdministratorsMutation) ResetPhone() {
 	m.phone = nil
 }
 
-// SetIdentity sets the "identity" field.
-func (m *AdministratorsMutation) SetIdentity(s string) {
-	m.identity = &s
+// SetNumber sets the "number" field.
+func (m *AdministratorsMutation) SetNumber(s string) {
+	m.number = &s
 }
 
-// Identity returns the value of the "identity" field in the mutation.
-func (m *AdministratorsMutation) Identity() (r string, exists bool) {
-	v := m.identity
+// Number returns the value of the "number" field in the mutation.
+func (m *AdministratorsMutation) Number() (r string, exists bool) {
+	v := m.number
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIdentity returns the old "identity" field's value of the Administrators entity.
+// OldNumber returns the old "number" field's value of the Administrators entity.
 // If the Administrators object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdministratorsMutation) OldIdentity(ctx context.Context) (v string, err error) {
+func (m *AdministratorsMutation) OldNumber(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIdentity is only allowed on UpdateOne operations")
+		return v, errors.New("OldNumber is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIdentity requires an ID field in the mutation")
+		return v, errors.New("OldNumber requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIdentity: %w", err)
+		return v, fmt.Errorf("querying old value for OldNumber: %w", err)
 	}
-	return oldValue.Identity, nil
+	return oldValue.Number, nil
 }
 
-// ResetIdentity resets all changes to the "identity" field.
-func (m *AdministratorsMutation) ResetIdentity() {
-	m.identity = nil
+// ResetNumber resets all changes to the "number" field.
+func (m *AdministratorsMutation) ResetNumber() {
+	m.number = nil
 }
 
 // SetUsersID sets the "users" edge to the User entity by id.
@@ -370,7 +407,10 @@ func (m *AdministratorsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AdministratorsMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
+	if m.avatar != nil {
+		fields = append(fields, administrators.FieldAvatar)
+	}
 	if m.name != nil {
 		fields = append(fields, administrators.FieldName)
 	}
@@ -380,8 +420,8 @@ func (m *AdministratorsMutation) Fields() []string {
 	if m.phone != nil {
 		fields = append(fields, administrators.FieldPhone)
 	}
-	if m.identity != nil {
-		fields = append(fields, administrators.FieldIdentity)
+	if m.number != nil {
+		fields = append(fields, administrators.FieldNumber)
 	}
 	return fields
 }
@@ -391,14 +431,16 @@ func (m *AdministratorsMutation) Fields() []string {
 // schema.
 func (m *AdministratorsMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case administrators.FieldAvatar:
+		return m.Avatar()
 	case administrators.FieldName:
 		return m.Name()
 	case administrators.FieldCollege:
 		return m.College()
 	case administrators.FieldPhone:
 		return m.Phone()
-	case administrators.FieldIdentity:
-		return m.Identity()
+	case administrators.FieldNumber:
+		return m.Number()
 	}
 	return nil, false
 }
@@ -408,14 +450,16 @@ func (m *AdministratorsMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *AdministratorsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case administrators.FieldAvatar:
+		return m.OldAvatar(ctx)
 	case administrators.FieldName:
 		return m.OldName(ctx)
 	case administrators.FieldCollege:
 		return m.OldCollege(ctx)
 	case administrators.FieldPhone:
 		return m.OldPhone(ctx)
-	case administrators.FieldIdentity:
-		return m.OldIdentity(ctx)
+	case administrators.FieldNumber:
+		return m.OldNumber(ctx)
 	}
 	return nil, fmt.Errorf("unknown Administrators field %s", name)
 }
@@ -425,6 +469,13 @@ func (m *AdministratorsMutation) OldField(ctx context.Context, name string) (ent
 // type.
 func (m *AdministratorsMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case administrators.FieldAvatar:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatar(v)
+		return nil
 	case administrators.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -446,12 +497,12 @@ func (m *AdministratorsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPhone(v)
 		return nil
-	case administrators.FieldIdentity:
+	case administrators.FieldNumber:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIdentity(v)
+		m.SetNumber(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Administrators field %s", name)
@@ -502,6 +553,9 @@ func (m *AdministratorsMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *AdministratorsMutation) ResetField(name string) error {
 	switch name {
+	case administrators.FieldAvatar:
+		m.ResetAvatar()
+		return nil
 	case administrators.FieldName:
 		m.ResetName()
 		return nil
@@ -511,8 +565,8 @@ func (m *AdministratorsMutation) ResetField(name string) error {
 	case administrators.FieldPhone:
 		m.ResetPhone()
 		return nil
-	case administrators.FieldIdentity:
-		m.ResetIdentity()
+	case administrators.FieldNumber:
+		m.ResetNumber()
 		return nil
 	}
 	return fmt.Errorf("unknown Administrators field %s", name)
@@ -1267,12 +1321,13 @@ type StudentsMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	avatar        *string
 	name          *string
 	college       *string
 	phone         *string
-	subject       *string
+	major         *string
 	class         *string
-	identity      *string
+	number        *string
 	clearedFields map[string]struct{}
 	users         *int
 	clearedusers  bool
@@ -1377,6 +1432,42 @@ func (m *StudentsMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetAvatar sets the "avatar" field.
+func (m *StudentsMutation) SetAvatar(s string) {
+	m.avatar = &s
+}
+
+// Avatar returns the value of the "avatar" field in the mutation.
+func (m *StudentsMutation) Avatar() (r string, exists bool) {
+	v := m.avatar
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatar returns the old "avatar" field's value of the Students entity.
+// If the Students object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StudentsMutation) OldAvatar(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatar is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatar requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatar: %w", err)
+	}
+	return oldValue.Avatar, nil
+}
+
+// ResetAvatar resets all changes to the "avatar" field.
+func (m *StudentsMutation) ResetAvatar() {
+	m.avatar = nil
 }
 
 // SetName sets the "name" field.
@@ -1487,40 +1578,40 @@ func (m *StudentsMutation) ResetPhone() {
 	m.phone = nil
 }
 
-// SetSubject sets the "subject" field.
-func (m *StudentsMutation) SetSubject(s string) {
-	m.subject = &s
+// SetMajor sets the "major" field.
+func (m *StudentsMutation) SetMajor(s string) {
+	m.major = &s
 }
 
-// Subject returns the value of the "subject" field in the mutation.
-func (m *StudentsMutation) Subject() (r string, exists bool) {
-	v := m.subject
+// Major returns the value of the "major" field in the mutation.
+func (m *StudentsMutation) Major() (r string, exists bool) {
+	v := m.major
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSubject returns the old "subject" field's value of the Students entity.
+// OldMajor returns the old "major" field's value of the Students entity.
 // If the Students object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StudentsMutation) OldSubject(ctx context.Context) (v string, err error) {
+func (m *StudentsMutation) OldMajor(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSubject is only allowed on UpdateOne operations")
+		return v, errors.New("OldMajor is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSubject requires an ID field in the mutation")
+		return v, errors.New("OldMajor requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSubject: %w", err)
+		return v, fmt.Errorf("querying old value for OldMajor: %w", err)
 	}
-	return oldValue.Subject, nil
+	return oldValue.Major, nil
 }
 
-// ResetSubject resets all changes to the "subject" field.
-func (m *StudentsMutation) ResetSubject() {
-	m.subject = nil
+// ResetMajor resets all changes to the "major" field.
+func (m *StudentsMutation) ResetMajor() {
+	m.major = nil
 }
 
 // SetClass sets the "class" field.
@@ -1559,40 +1650,40 @@ func (m *StudentsMutation) ResetClass() {
 	m.class = nil
 }
 
-// SetIdentity sets the "identity" field.
-func (m *StudentsMutation) SetIdentity(s string) {
-	m.identity = &s
+// SetNumber sets the "number" field.
+func (m *StudentsMutation) SetNumber(s string) {
+	m.number = &s
 }
 
-// Identity returns the value of the "identity" field in the mutation.
-func (m *StudentsMutation) Identity() (r string, exists bool) {
-	v := m.identity
+// Number returns the value of the "number" field in the mutation.
+func (m *StudentsMutation) Number() (r string, exists bool) {
+	v := m.number
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIdentity returns the old "identity" field's value of the Students entity.
+// OldNumber returns the old "number" field's value of the Students entity.
 // If the Students object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StudentsMutation) OldIdentity(ctx context.Context) (v string, err error) {
+func (m *StudentsMutation) OldNumber(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIdentity is only allowed on UpdateOne operations")
+		return v, errors.New("OldNumber is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIdentity requires an ID field in the mutation")
+		return v, errors.New("OldNumber requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIdentity: %w", err)
+		return v, fmt.Errorf("querying old value for OldNumber: %w", err)
 	}
-	return oldValue.Identity, nil
+	return oldValue.Number, nil
 }
 
-// ResetIdentity resets all changes to the "identity" field.
-func (m *StudentsMutation) ResetIdentity() {
-	m.identity = nil
+// ResetNumber resets all changes to the "number" field.
+func (m *StudentsMutation) ResetNumber() {
+	m.number = nil
 }
 
 // SetUsersID sets the "users" edge to the User entity by id.
@@ -1668,7 +1759,10 @@ func (m *StudentsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *StudentsMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
+	if m.avatar != nil {
+		fields = append(fields, students.FieldAvatar)
+	}
 	if m.name != nil {
 		fields = append(fields, students.FieldName)
 	}
@@ -1678,14 +1772,14 @@ func (m *StudentsMutation) Fields() []string {
 	if m.phone != nil {
 		fields = append(fields, students.FieldPhone)
 	}
-	if m.subject != nil {
-		fields = append(fields, students.FieldSubject)
+	if m.major != nil {
+		fields = append(fields, students.FieldMajor)
 	}
 	if m.class != nil {
 		fields = append(fields, students.FieldClass)
 	}
-	if m.identity != nil {
-		fields = append(fields, students.FieldIdentity)
+	if m.number != nil {
+		fields = append(fields, students.FieldNumber)
 	}
 	return fields
 }
@@ -1695,18 +1789,20 @@ func (m *StudentsMutation) Fields() []string {
 // schema.
 func (m *StudentsMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case students.FieldAvatar:
+		return m.Avatar()
 	case students.FieldName:
 		return m.Name()
 	case students.FieldCollege:
 		return m.College()
 	case students.FieldPhone:
 		return m.Phone()
-	case students.FieldSubject:
-		return m.Subject()
+	case students.FieldMajor:
+		return m.Major()
 	case students.FieldClass:
 		return m.Class()
-	case students.FieldIdentity:
-		return m.Identity()
+	case students.FieldNumber:
+		return m.Number()
 	}
 	return nil, false
 }
@@ -1716,18 +1812,20 @@ func (m *StudentsMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *StudentsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case students.FieldAvatar:
+		return m.OldAvatar(ctx)
 	case students.FieldName:
 		return m.OldName(ctx)
 	case students.FieldCollege:
 		return m.OldCollege(ctx)
 	case students.FieldPhone:
 		return m.OldPhone(ctx)
-	case students.FieldSubject:
-		return m.OldSubject(ctx)
+	case students.FieldMajor:
+		return m.OldMajor(ctx)
 	case students.FieldClass:
 		return m.OldClass(ctx)
-	case students.FieldIdentity:
-		return m.OldIdentity(ctx)
+	case students.FieldNumber:
+		return m.OldNumber(ctx)
 	}
 	return nil, fmt.Errorf("unknown Students field %s", name)
 }
@@ -1737,6 +1835,13 @@ func (m *StudentsMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *StudentsMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case students.FieldAvatar:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatar(v)
+		return nil
 	case students.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -1758,12 +1863,12 @@ func (m *StudentsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPhone(v)
 		return nil
-	case students.FieldSubject:
+	case students.FieldMajor:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSubject(v)
+		m.SetMajor(v)
 		return nil
 	case students.FieldClass:
 		v, ok := value.(string)
@@ -1772,12 +1877,12 @@ func (m *StudentsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetClass(v)
 		return nil
-	case students.FieldIdentity:
+	case students.FieldNumber:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIdentity(v)
+		m.SetNumber(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Students field %s", name)
@@ -1828,6 +1933,9 @@ func (m *StudentsMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *StudentsMutation) ResetField(name string) error {
 	switch name {
+	case students.FieldAvatar:
+		m.ResetAvatar()
+		return nil
 	case students.FieldName:
 		m.ResetName()
 		return nil
@@ -1837,14 +1945,14 @@ func (m *StudentsMutation) ResetField(name string) error {
 	case students.FieldPhone:
 		m.ResetPhone()
 		return nil
-	case students.FieldSubject:
-		m.ResetSubject()
+	case students.FieldMajor:
+		m.ResetMajor()
 		return nil
 	case students.FieldClass:
 		m.ResetClass()
 		return nil
-	case students.FieldIdentity:
-		m.ResetIdentity()
+	case students.FieldNumber:
+		m.ResetNumber()
 		return nil
 	}
 	return fmt.Errorf("unknown Students field %s", name)
@@ -1930,10 +2038,11 @@ type TeachersMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	avatar        *string
 	name          *string
 	college       *string
 	phone         *string
-	identity      *string
+	number        *string
 	clearedFields map[string]struct{}
 	users         *int
 	clearedusers  bool
@@ -2038,6 +2147,42 @@ func (m *TeachersMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetAvatar sets the "avatar" field.
+func (m *TeachersMutation) SetAvatar(s string) {
+	m.avatar = &s
+}
+
+// Avatar returns the value of the "avatar" field in the mutation.
+func (m *TeachersMutation) Avatar() (r string, exists bool) {
+	v := m.avatar
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatar returns the old "avatar" field's value of the Teachers entity.
+// If the Teachers object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TeachersMutation) OldAvatar(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatar is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatar requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatar: %w", err)
+	}
+	return oldValue.Avatar, nil
+}
+
+// ResetAvatar resets all changes to the "avatar" field.
+func (m *TeachersMutation) ResetAvatar() {
+	m.avatar = nil
 }
 
 // SetName sets the "name" field.
@@ -2148,40 +2293,40 @@ func (m *TeachersMutation) ResetPhone() {
 	m.phone = nil
 }
 
-// SetIdentity sets the "identity" field.
-func (m *TeachersMutation) SetIdentity(s string) {
-	m.identity = &s
+// SetNumber sets the "number" field.
+func (m *TeachersMutation) SetNumber(s string) {
+	m.number = &s
 }
 
-// Identity returns the value of the "identity" field in the mutation.
-func (m *TeachersMutation) Identity() (r string, exists bool) {
-	v := m.identity
+// Number returns the value of the "number" field in the mutation.
+func (m *TeachersMutation) Number() (r string, exists bool) {
+	v := m.number
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIdentity returns the old "identity" field's value of the Teachers entity.
+// OldNumber returns the old "number" field's value of the Teachers entity.
 // If the Teachers object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TeachersMutation) OldIdentity(ctx context.Context) (v string, err error) {
+func (m *TeachersMutation) OldNumber(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIdentity is only allowed on UpdateOne operations")
+		return v, errors.New("OldNumber is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIdentity requires an ID field in the mutation")
+		return v, errors.New("OldNumber requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIdentity: %w", err)
+		return v, fmt.Errorf("querying old value for OldNumber: %w", err)
 	}
-	return oldValue.Identity, nil
+	return oldValue.Number, nil
 }
 
-// ResetIdentity resets all changes to the "identity" field.
-func (m *TeachersMutation) ResetIdentity() {
-	m.identity = nil
+// ResetNumber resets all changes to the "number" field.
+func (m *TeachersMutation) ResetNumber() {
+	m.number = nil
 }
 
 // SetUsersID sets the "users" edge to the User entity by id.
@@ -2257,7 +2402,10 @@ func (m *TeachersMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TeachersMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
+	if m.avatar != nil {
+		fields = append(fields, teachers.FieldAvatar)
+	}
 	if m.name != nil {
 		fields = append(fields, teachers.FieldName)
 	}
@@ -2267,8 +2415,8 @@ func (m *TeachersMutation) Fields() []string {
 	if m.phone != nil {
 		fields = append(fields, teachers.FieldPhone)
 	}
-	if m.identity != nil {
-		fields = append(fields, teachers.FieldIdentity)
+	if m.number != nil {
+		fields = append(fields, teachers.FieldNumber)
 	}
 	return fields
 }
@@ -2278,14 +2426,16 @@ func (m *TeachersMutation) Fields() []string {
 // schema.
 func (m *TeachersMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case teachers.FieldAvatar:
+		return m.Avatar()
 	case teachers.FieldName:
 		return m.Name()
 	case teachers.FieldCollege:
 		return m.College()
 	case teachers.FieldPhone:
 		return m.Phone()
-	case teachers.FieldIdentity:
-		return m.Identity()
+	case teachers.FieldNumber:
+		return m.Number()
 	}
 	return nil, false
 }
@@ -2295,14 +2445,16 @@ func (m *TeachersMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TeachersMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case teachers.FieldAvatar:
+		return m.OldAvatar(ctx)
 	case teachers.FieldName:
 		return m.OldName(ctx)
 	case teachers.FieldCollege:
 		return m.OldCollege(ctx)
 	case teachers.FieldPhone:
 		return m.OldPhone(ctx)
-	case teachers.FieldIdentity:
-		return m.OldIdentity(ctx)
+	case teachers.FieldNumber:
+		return m.OldNumber(ctx)
 	}
 	return nil, fmt.Errorf("unknown Teachers field %s", name)
 }
@@ -2312,6 +2464,13 @@ func (m *TeachersMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *TeachersMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case teachers.FieldAvatar:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatar(v)
+		return nil
 	case teachers.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -2333,12 +2492,12 @@ func (m *TeachersMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPhone(v)
 		return nil
-	case teachers.FieldIdentity:
+	case teachers.FieldNumber:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIdentity(v)
+		m.SetNumber(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Teachers field %s", name)
@@ -2389,6 +2548,9 @@ func (m *TeachersMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TeachersMutation) ResetField(name string) error {
 	switch name {
+	case teachers.FieldAvatar:
+		m.ResetAvatar()
+		return nil
 	case teachers.FieldName:
 		m.ResetName()
 		return nil
@@ -2398,8 +2560,8 @@ func (m *TeachersMutation) ResetField(name string) error {
 	case teachers.FieldPhone:
 		m.ResetPhone()
 		return nil
-	case teachers.FieldIdentity:
-		m.ResetIdentity()
+	case teachers.FieldNumber:
+		m.ResetNumber()
 		return nil
 	}
 	return fmt.Errorf("unknown Teachers field %s", name)

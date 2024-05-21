@@ -32,7 +32,7 @@ func ThesisCreate(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"thesis_id": thesis.ID,
+		"thesisId": thesis.ID,
 	})
 }
 
@@ -188,4 +188,31 @@ func ThesisDownload(c *gin.Context) {
 	}
 
 	c.File(result.FileURL)
+}
+
+func ThesisRandomAllocation(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	if user.Role != model.Admin {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyPermissions, fmt.Errorf(""))
+		return
+	}
+
+	data := api.RandomAllocationThesis{}
+	if err := c.BindJSON(&data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+		return
+	}
+
+	services.UpdateThesisRandomAllocation(data)
 }

@@ -17,18 +17,20 @@ type Students struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Avatar holds the value of the "avatar" field.
+	Avatar string `json:"avatar,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// College holds the value of the "college" field.
 	College string `json:"college,omitempty"`
 	// Phone holds the value of the "phone" field.
 	Phone string `json:"phone,omitempty"`
-	// Subject holds the value of the "subject" field.
-	Subject string `json:"subject,omitempty"`
+	// Major holds the value of the "major" field.
+	Major string `json:"major,omitempty"`
 	// Class holds the value of the "class" field.
 	Class string `json:"class,omitempty"`
-	// Identity holds the value of the "identity" field.
-	Identity string `json:"identity,omitempty"`
+	// Number holds the value of the "number" field.
+	Number string `json:"number,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the StudentsQuery when eager-loading is set.
 	Edges         StudentsEdges `json:"edges"`
@@ -63,7 +65,7 @@ func (*Students) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case students.FieldID:
 			values[i] = new(sql.NullInt64)
-		case students.FieldName, students.FieldCollege, students.FieldPhone, students.FieldSubject, students.FieldClass, students.FieldIdentity:
+		case students.FieldAvatar, students.FieldName, students.FieldCollege, students.FieldPhone, students.FieldMajor, students.FieldClass, students.FieldNumber:
 			values[i] = new(sql.NullString)
 		case students.ForeignKeys[0]: // user_students
 			values[i] = new(sql.NullInt64)
@@ -88,6 +90,12 @@ func (s *Students) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			s.ID = int(value.Int64)
+		case students.FieldAvatar:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar", values[i])
+			} else if value.Valid {
+				s.Avatar = value.String
+			}
 		case students.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -106,11 +114,11 @@ func (s *Students) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.Phone = value.String
 			}
-		case students.FieldSubject:
+		case students.FieldMajor:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field subject", values[i])
+				return fmt.Errorf("unexpected type %T for field major", values[i])
 			} else if value.Valid {
-				s.Subject = value.String
+				s.Major = value.String
 			}
 		case students.FieldClass:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -118,11 +126,11 @@ func (s *Students) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.Class = value.String
 			}
-		case students.FieldIdentity:
+		case students.FieldNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field identity", values[i])
+				return fmt.Errorf("unexpected type %T for field number", values[i])
 			} else if value.Valid {
-				s.Identity = value.String
+				s.Number = value.String
 			}
 		case students.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -172,6 +180,9 @@ func (s *Students) String() string {
 	var builder strings.Builder
 	builder.WriteString("Students(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", s.ID))
+	builder.WriteString("avatar=")
+	builder.WriteString(s.Avatar)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(s.Name)
 	builder.WriteString(", ")
@@ -181,14 +192,14 @@ func (s *Students) String() string {
 	builder.WriteString("phone=")
 	builder.WriteString(s.Phone)
 	builder.WriteString(", ")
-	builder.WriteString("subject=")
-	builder.WriteString(s.Subject)
+	builder.WriteString("major=")
+	builder.WriteString(s.Major)
 	builder.WriteString(", ")
 	builder.WriteString("class=")
 	builder.WriteString(s.Class)
 	builder.WriteString(", ")
-	builder.WriteString("identity=")
-	builder.WriteString(s.Identity)
+	builder.WriteString("number=")
+	builder.WriteString(s.Number)
 	builder.WriteByte(')')
 	return builder.String()
 }

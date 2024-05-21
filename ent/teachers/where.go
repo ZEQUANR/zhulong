@@ -53,6 +53,11 @@ func IDLTE(id int) predicate.Teachers {
 	return predicate.Teachers(sql.FieldLTE(FieldID, id))
 }
 
+// Avatar applies equality check predicate on the "avatar" field. It's identical to AvatarEQ.
+func Avatar(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldEQ(FieldAvatar, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Teachers {
 	return predicate.Teachers(sql.FieldEQ(FieldName, v))
@@ -68,9 +73,74 @@ func Phone(v string) predicate.Teachers {
 	return predicate.Teachers(sql.FieldEQ(FieldPhone, v))
 }
 
-// Identity applies equality check predicate on the "identity" field. It's identical to IdentityEQ.
-func Identity(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldEQ(FieldIdentity, v))
+// Number applies equality check predicate on the "number" field. It's identical to NumberEQ.
+func Number(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldEQ(FieldNumber, v))
+}
+
+// AvatarEQ applies the EQ predicate on the "avatar" field.
+func AvatarEQ(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldEQ(FieldAvatar, v))
+}
+
+// AvatarNEQ applies the NEQ predicate on the "avatar" field.
+func AvatarNEQ(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldNEQ(FieldAvatar, v))
+}
+
+// AvatarIn applies the In predicate on the "avatar" field.
+func AvatarIn(vs ...string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldIn(FieldAvatar, vs...))
+}
+
+// AvatarNotIn applies the NotIn predicate on the "avatar" field.
+func AvatarNotIn(vs ...string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldNotIn(FieldAvatar, vs...))
+}
+
+// AvatarGT applies the GT predicate on the "avatar" field.
+func AvatarGT(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldGT(FieldAvatar, v))
+}
+
+// AvatarGTE applies the GTE predicate on the "avatar" field.
+func AvatarGTE(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldGTE(FieldAvatar, v))
+}
+
+// AvatarLT applies the LT predicate on the "avatar" field.
+func AvatarLT(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldLT(FieldAvatar, v))
+}
+
+// AvatarLTE applies the LTE predicate on the "avatar" field.
+func AvatarLTE(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldLTE(FieldAvatar, v))
+}
+
+// AvatarContains applies the Contains predicate on the "avatar" field.
+func AvatarContains(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldContains(FieldAvatar, v))
+}
+
+// AvatarHasPrefix applies the HasPrefix predicate on the "avatar" field.
+func AvatarHasPrefix(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldHasPrefix(FieldAvatar, v))
+}
+
+// AvatarHasSuffix applies the HasSuffix predicate on the "avatar" field.
+func AvatarHasSuffix(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldHasSuffix(FieldAvatar, v))
+}
+
+// AvatarEqualFold applies the EqualFold predicate on the "avatar" field.
+func AvatarEqualFold(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldEqualFold(FieldAvatar, v))
+}
+
+// AvatarContainsFold applies the ContainsFold predicate on the "avatar" field.
+func AvatarContainsFold(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldContainsFold(FieldAvatar, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -268,69 +338,69 @@ func PhoneContainsFold(v string) predicate.Teachers {
 	return predicate.Teachers(sql.FieldContainsFold(FieldPhone, v))
 }
 
-// IdentityEQ applies the EQ predicate on the "identity" field.
-func IdentityEQ(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldEQ(FieldIdentity, v))
+// NumberEQ applies the EQ predicate on the "number" field.
+func NumberEQ(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldEQ(FieldNumber, v))
 }
 
-// IdentityNEQ applies the NEQ predicate on the "identity" field.
-func IdentityNEQ(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldNEQ(FieldIdentity, v))
+// NumberNEQ applies the NEQ predicate on the "number" field.
+func NumberNEQ(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldNEQ(FieldNumber, v))
 }
 
-// IdentityIn applies the In predicate on the "identity" field.
-func IdentityIn(vs ...string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldIn(FieldIdentity, vs...))
+// NumberIn applies the In predicate on the "number" field.
+func NumberIn(vs ...string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldIn(FieldNumber, vs...))
 }
 
-// IdentityNotIn applies the NotIn predicate on the "identity" field.
-func IdentityNotIn(vs ...string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldNotIn(FieldIdentity, vs...))
+// NumberNotIn applies the NotIn predicate on the "number" field.
+func NumberNotIn(vs ...string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldNotIn(FieldNumber, vs...))
 }
 
-// IdentityGT applies the GT predicate on the "identity" field.
-func IdentityGT(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldGT(FieldIdentity, v))
+// NumberGT applies the GT predicate on the "number" field.
+func NumberGT(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldGT(FieldNumber, v))
 }
 
-// IdentityGTE applies the GTE predicate on the "identity" field.
-func IdentityGTE(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldGTE(FieldIdentity, v))
+// NumberGTE applies the GTE predicate on the "number" field.
+func NumberGTE(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldGTE(FieldNumber, v))
 }
 
-// IdentityLT applies the LT predicate on the "identity" field.
-func IdentityLT(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldLT(FieldIdentity, v))
+// NumberLT applies the LT predicate on the "number" field.
+func NumberLT(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldLT(FieldNumber, v))
 }
 
-// IdentityLTE applies the LTE predicate on the "identity" field.
-func IdentityLTE(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldLTE(FieldIdentity, v))
+// NumberLTE applies the LTE predicate on the "number" field.
+func NumberLTE(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldLTE(FieldNumber, v))
 }
 
-// IdentityContains applies the Contains predicate on the "identity" field.
-func IdentityContains(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldContains(FieldIdentity, v))
+// NumberContains applies the Contains predicate on the "number" field.
+func NumberContains(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldContains(FieldNumber, v))
 }
 
-// IdentityHasPrefix applies the HasPrefix predicate on the "identity" field.
-func IdentityHasPrefix(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldHasPrefix(FieldIdentity, v))
+// NumberHasPrefix applies the HasPrefix predicate on the "number" field.
+func NumberHasPrefix(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldHasPrefix(FieldNumber, v))
 }
 
-// IdentityHasSuffix applies the HasSuffix predicate on the "identity" field.
-func IdentityHasSuffix(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldHasSuffix(FieldIdentity, v))
+// NumberHasSuffix applies the HasSuffix predicate on the "number" field.
+func NumberHasSuffix(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldHasSuffix(FieldNumber, v))
 }
 
-// IdentityEqualFold applies the EqualFold predicate on the "identity" field.
-func IdentityEqualFold(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldEqualFold(FieldIdentity, v))
+// NumberEqualFold applies the EqualFold predicate on the "number" field.
+func NumberEqualFold(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldEqualFold(FieldNumber, v))
 }
 
-// IdentityContainsFold applies the ContainsFold predicate on the "identity" field.
-func IdentityContainsFold(v string) predicate.Teachers {
-	return predicate.Teachers(sql.FieldContainsFold(FieldIdentity, v))
+// NumberContainsFold applies the ContainsFold predicate on the "number" field.
+func NumberContainsFold(v string) predicate.Teachers {
+	return predicate.Teachers(sql.FieldContainsFold(FieldNumber, v))
 }
 
 // HasUsers applies the HasEdge predicate on the "users" edge.

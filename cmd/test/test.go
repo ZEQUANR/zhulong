@@ -23,10 +23,11 @@ func createAdministrators(ctx context.Context, client *ent.Client) error {
 
 	card1, err := client.Administrators.
 		Create().
+		SetAvatar("").
 		SetName("李宏伟").
 		SetCollege("计算机系").
-		SetIdentity("06500").
 		SetPhone("17315485452").
+		SetNumber("065000").
 		SetUsers(a8m).
 		Save(ctx)
 	if err != nil {
@@ -51,10 +52,11 @@ func createTeachers(ctx context.Context, client *ent.Client) error {
 
 	card1, err := client.Teachers.
 		Create().
+		SetAvatar("").
 		SetName("李向明").
 		SetCollege("精工系").
 		SetPhone("151458459566").
-		SetIdentity("041500").
+		SetNumber("041500").
 		SetUsers(a8m).
 		Save(ctx)
 	if err != nil {
@@ -79,12 +81,13 @@ func createStudents(ctx context.Context, client *ent.Client) error {
 
 	card1, err := client.Students.
 		Create().
+		SetAvatar("").
 		SetName("罗冲围").
 		SetCollege("通信系").
 		SetPhone("19854551254").
-		SetSubject("母猪产后护理").
+		SetMajor("母猪产后护理").
 		SetClass("本科八班").
-		SetIdentity("845100").
+		SetNumber("041500").
 		SetUsers(a8m).
 		Save(ctx)
 	if err != nil {

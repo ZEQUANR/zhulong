@@ -14,10 +14,11 @@ type Teachers struct {
 // Fields of the Teachers.
 func (Teachers) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("avatar"),
 		field.String("name"),
 		field.String("college"),
 		field.String("phone"),
-		field.String("identity"),
+		field.String("number"),
 	}
 }
 
