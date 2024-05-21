@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"path"
 	"time"
@@ -24,12 +25,22 @@ func CreateThesis(id int, data api.CreateThesis) (*ent.Thesis, error) {
 		return nil, fmt.Errorf("func: CreateThesis | index: 0 | err: %w", err)
 	}
 
+	authors, err := json.Marshal(data.Authors)
+	if err != nil {
+		return nil, fmt.Errorf("func: CreateThesis | index: 1 | err: %w", err)
+	}
+
+	teachers, err := json.Marshal(data.Teachers)
+	if err != nil {
+		return nil, fmt.Errorf("func: CreateThesis | index: 2 | err: %w", err)
+	}
+
 	thesis, err := client.Thesis.
 		Create().
 		SetChineseTitle(data.ChineseTitle).
 		SetEnglishTitle(data.EnglishTitle).
-		SetAuthors(data.Authors).
-		SetTeachers(data.Teachers).
+		SetAuthors(string(authors)).
+		SetTeachers(string(teachers)).
 		SetFirstAdvance(data.FirstAdvance).
 		SetSecondAdvance(data.SecondAdvance).
 		SetThirdAdvance(data.ThirdAdvance).
@@ -37,7 +48,7 @@ func CreateThesis(id int, data api.CreateThesis) (*ent.Thesis, error) {
 		SetUploaders(user).
 		Save(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("func: CreateThesis | index: 1 | err: %w", err)
+		return nil, fmt.Errorf("func: CreateThesis | index: 3 | err: %w", err)
 	}
 
 	return thesis, nil

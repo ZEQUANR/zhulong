@@ -14,11 +14,11 @@ type CreateThesis struct {
 }
 
 type UploadThesis struct {
-	ThesisId int `bson:"thesis_id" form:"thesis_id"` // 论文 ID
+	ThesisId int `form:"thesisId" binding:"required"` // 论文 ID
 }
 
 type DownloadThesis struct {
-	ThesisId int `json:"Thesis_id" binding:"required"` // 论文 ID
+	ThesisId int `json:"thesisId" binding:"required"` // 论文 ID
 }
 
 type ToBeReviewedThesisList struct {
