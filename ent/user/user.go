@@ -28,6 +28,8 @@ const (
 	EdgeThesis = "thesis"
 	// EdgeReviews holds the string denoting the reviews edge name in mutations.
 	EdgeReviews = "reviews"
+	// EdgeOperatingRecord holds the string denoting the operatingrecord edge name in mutations.
+	EdgeOperatingRecord = "operatingRecord"
 	// EdgeExamineThesis holds the string denoting the examinethesis edge name in mutations.
 	EdgeExamineThesis = "examineThesis"
 	// Table holds the table name of the user in the database.
@@ -67,6 +69,13 @@ const (
 	ReviewsInverseTable = "reviews"
 	// ReviewsColumn is the table column denoting the reviews relation/edge.
 	ReviewsColumn = "user_reviews"
+	// OperatingRecordTable is the table that holds the operatingRecord relation/edge.
+	OperatingRecordTable = "operation_logs"
+	// OperatingRecordInverseTable is the table name for the OperationLog entity.
+	// It exists in this package in order to avoid circular dependency with the "operationlog" package.
+	OperatingRecordInverseTable = "operation_logs"
+	// OperatingRecordColumn is the table column denoting the operatingRecord relation/edge.
+	OperatingRecordColumn = "user_operating_record"
 	// ExamineThesisTable is the table that holds the examineThesis relation/edge.
 	ExamineThesisTable = "theses"
 	// ExamineThesisInverseTable is the table name for the Thesis entity.
@@ -166,6 +175,20 @@ func ByReviews(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByOperatingRecordCount orders the results by operatingRecord count.
+func ByOperatingRecordCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOperatingRecordStep(), opts...)
+	}
+}
+
+// ByOperatingRecord orders the results by operatingRecord terms.
+func ByOperatingRecord(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOperatingRecordStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByExamineThesisCount orders the results by examineThesis count.
 func ByExamineThesisCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -212,6 +235,13 @@ func newReviewsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ReviewsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ReviewsTable, ReviewsColumn),
+	)
+}
+func newOperatingRecordStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OperatingRecordInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OperatingRecordTable, OperatingRecordColumn),
 	)
 }
 func newExamineThesisStep() *sqlgraph.Step {

@@ -353,6 +353,29 @@ func HasReviewsWith(preds ...predicate.Reviews) predicate.User {
 	})
 }
 
+// HasOperatingRecord applies the HasEdge predicate on the "operatingRecord" edge.
+func HasOperatingRecord() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, OperatingRecordTable, OperatingRecordColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOperatingRecordWith applies the HasEdge predicate on the "operatingRecord" edge with a given conditions (other predicates).
+func HasOperatingRecordWith(preds ...predicate.OperationLog) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newOperatingRecordStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasExamineThesis applies the HasEdge predicate on the "examineThesis" edge.
 func HasExamineThesis() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

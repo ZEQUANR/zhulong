@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
-	"github.com/ZEQUANR/zhulong/driver"
 	"github.com/ZEQUANR/zhulong/ent"
-	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 func createAdministrators(ctx context.Context, client *ent.Client) error {
@@ -99,33 +98,13 @@ func createStudents(ctx context.Context, client *ent.Client) error {
 	return nil
 }
 
-func querytheise(ctx context.Context, client *ent.Client) error {
-	a8m, err := client.User.
-		Query().
-		Where(user.ID(3)).
-		Only(ctx)
-	if err != nil {
-		log.Println("Error: %w", err)
-	}
-
-	thesis, err := a8m.
-		QueryThesis().
-		All(ctx)
-	if err != nil {
-		log.Println("Error: %w", err)
-	}
-	log.Println("user:", thesis)
-
-	return nil
-}
-
 func main() {
-	ctx := context.Background()
-	client := driver.MysqlClient
+	// ctx := context.Background()
+	// client := driver.MysqlClient
 
-	createAdministrators(ctx, client)
-	createTeachers(ctx, client)
-	createStudents(ctx, client)
+	// createAdministrators(ctx, client)
+	// createTeachers(ctx, client)
+	// createStudents(ctx, client)
 
-	// querytheise(ctx, client)
+	fmt.Println(time.Now())
 }

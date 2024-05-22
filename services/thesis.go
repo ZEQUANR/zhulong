@@ -90,7 +90,7 @@ func CreateThesis(id int, data api.CreateThesis) (*ent.Thesis, error) {
 func UploadThesis(userId int, thesisID int, file model.File) (*ent.Thesis, error) {
 	ctx := context.Background()
 
-	paper, err := client.Thesis.
+	t, err := client.Thesis.
 		Query().
 		Where(thesis.ID(thesisID)).
 		Only(ctx)
@@ -98,14 +98,14 @@ func UploadThesis(userId int, thesisID int, file model.File) (*ent.Thesis, error
 		return nil, fmt.Errorf("func: UploadThesis | index: 0 | err: %w", err)
 	}
 
-	user, err := paper.
+	user, err := t.
 		QueryUploaders().
 		Only(ctx)
 	if err != nil || user.ID != userId {
 		return nil, fmt.Errorf("func: UploadThesis | index: 1 | err: %w", err)
 	}
 
-	result, err := paper.
+	result, err := t.
 		Update().
 		SetFileName(file.Name).
 		SetFileURL(path.Join(file.Path, file.Name)).
@@ -114,6 +114,11 @@ func UploadThesis(userId int, thesisID int, file model.File) (*ent.Thesis, error
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("func: UploadThesis | index: 2 | err: %w", err)
+	}
+
+	_, err = RecordThesisUpload(user)
+	if err != nil {
+		return nil, fmt.Errorf("func: UploadThesis | index: 3 | err: %w", err)
 	}
 
 	return result, nil

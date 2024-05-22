@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/operationlog"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
@@ -23,16 +24,17 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                *QueryContext
-	order              []user.OrderOption
-	inters             []Interceptor
-	predicates         []predicate.User
-	withAdministrators *AdministratorsQuery
-	withStudents       *StudentsQuery
-	withTeachers       *TeachersQuery
-	withThesis         *ThesisQuery
-	withReviews        *ReviewsQuery
-	withExamineThesis  *ThesisQuery
+	ctx                 *QueryContext
+	order               []user.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.User
+	withAdministrators  *AdministratorsQuery
+	withStudents        *StudentsQuery
+	withTeachers        *TeachersQuery
+	withThesis          *ThesisQuery
+	withReviews         *ReviewsQuery
+	withOperatingRecord *OperationLogQuery
+	withExamineThesis   *ThesisQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -172,6 +174,28 @@ func (uq *UserQuery) QueryReviews() *ReviewsQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(reviews.Table, reviews.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.ReviewsTable, user.ReviewsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOperatingRecord chains the current query on the "operatingRecord" edge.
+func (uq *UserQuery) QueryOperatingRecord() *OperationLogQuery {
+	query := (&OperationLogClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(operationlog.Table, operationlog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OperatingRecordTable, user.OperatingRecordColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -388,17 +412,18 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:             uq.config,
-		ctx:                uq.ctx.Clone(),
-		order:              append([]user.OrderOption{}, uq.order...),
-		inters:             append([]Interceptor{}, uq.inters...),
-		predicates:         append([]predicate.User{}, uq.predicates...),
-		withAdministrators: uq.withAdministrators.Clone(),
-		withStudents:       uq.withStudents.Clone(),
-		withTeachers:       uq.withTeachers.Clone(),
-		withThesis:         uq.withThesis.Clone(),
-		withReviews:        uq.withReviews.Clone(),
-		withExamineThesis:  uq.withExamineThesis.Clone(),
+		config:              uq.config,
+		ctx:                 uq.ctx.Clone(),
+		order:               append([]user.OrderOption{}, uq.order...),
+		inters:              append([]Interceptor{}, uq.inters...),
+		predicates:          append([]predicate.User{}, uq.predicates...),
+		withAdministrators:  uq.withAdministrators.Clone(),
+		withStudents:        uq.withStudents.Clone(),
+		withTeachers:        uq.withTeachers.Clone(),
+		withThesis:          uq.withThesis.Clone(),
+		withReviews:         uq.withReviews.Clone(),
+		withOperatingRecord: uq.withOperatingRecord.Clone(),
+		withExamineThesis:   uq.withExamineThesis.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -457,6 +482,17 @@ func (uq *UserQuery) WithReviews(opts ...func(*ReviewsQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withReviews = query
+	return uq
+}
+
+// WithOperatingRecord tells the query-builder to eager-load the nodes that are connected to
+// the "operatingRecord" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithOperatingRecord(opts ...func(*OperationLogQuery)) *UserQuery {
+	query := (&OperationLogClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withOperatingRecord = query
 	return uq
 }
 
@@ -549,12 +585,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			uq.withAdministrators != nil,
 			uq.withStudents != nil,
 			uq.withTeachers != nil,
 			uq.withThesis != nil,
 			uq.withReviews != nil,
+			uq.withOperatingRecord != nil,
 			uq.withExamineThesis != nil,
 		}
 	)
@@ -605,6 +642,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadReviews(ctx, query, nodes,
 			func(n *User) { n.Edges.Reviews = []*Reviews{} },
 			func(n *User, e *Reviews) { n.Edges.Reviews = append(n.Edges.Reviews, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withOperatingRecord; query != nil {
+		if err := uq.loadOperatingRecord(ctx, query, nodes,
+			func(n *User) { n.Edges.OperatingRecord = []*OperationLog{} },
+			func(n *User, e *OperationLog) { n.Edges.OperatingRecord = append(n.Edges.OperatingRecord, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -759,6 +803,37 @@ func (uq *UserQuery) loadReviews(ctx context.Context, query *ReviewsQuery, nodes
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_reviews" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadOperatingRecord(ctx context.Context, query *OperationLogQuery, nodes []*User, init func(*User), assign func(*User, *OperationLog)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.OperationLog(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.OperatingRecordColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_operating_record
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_operating_record" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_operating_record" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

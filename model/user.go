@@ -1,7 +1,8 @@
 package model
 
 const (
-	Admin = iota
+	_ = iota
+	Admin
 	Teacher
 	Student
 )

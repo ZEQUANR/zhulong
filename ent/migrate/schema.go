@@ -32,6 +32,29 @@ var (
 			},
 		},
 	}
+	// OperationLogsColumns holds the columns for the "operation_logs" table.
+	OperationLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "context", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeInt},
+		{Name: "time", Type: field.TypeTime},
+		{Name: "user_operating_record", Type: field.TypeInt, Nullable: true},
+	}
+	// OperationLogsTable holds the schema information for the "operation_logs" table.
+	OperationLogsTable = &schema.Table{
+		Name:       "operation_logs",
+		Columns:    OperationLogsColumns,
+		PrimaryKey: []*schema.Column{OperationLogsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "operation_logs_users_operatingRecord",
+				Columns:    []*schema.Column{OperationLogsColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// ReviewsColumns holds the columns for the "reviews" table.
 	ReviewsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -161,6 +184,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AdministratorsTable,
+		OperationLogsTable,
 		ReviewsTable,
 		StudentsTable,
 		TeachersTable,
@@ -171,6 +195,7 @@ var (
 
 func init() {
 	AdministratorsTable.ForeignKeys[0].RefTable = UsersTable
+	OperationLogsTable.ForeignKeys[0].RefTable = UsersTable
 	ReviewsTable.ForeignKeys[0].RefTable = UsersTable
 	StudentsTable.ForeignKeys[0].RefTable = UsersTable
 	TeachersTable.ForeignKeys[0].RefTable = UsersTable

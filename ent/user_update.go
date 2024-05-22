@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/operationlog"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
@@ -168,6 +169,21 @@ func (uu *UserUpdate) AddReviews(r ...*Reviews) *UserUpdate {
 	return uu.AddReviewIDs(ids...)
 }
 
+// AddOperatingRecordIDs adds the "operatingRecord" edge to the OperationLog entity by IDs.
+func (uu *UserUpdate) AddOperatingRecordIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddOperatingRecordIDs(ids...)
+	return uu
+}
+
+// AddOperatingRecord adds the "operatingRecord" edges to the OperationLog entity.
+func (uu *UserUpdate) AddOperatingRecord(o ...*OperationLog) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.AddOperatingRecordIDs(ids...)
+}
+
 // AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
 func (uu *UserUpdate) AddExamineThesiIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddExamineThesiIDs(ids...)
@@ -246,6 +262,27 @@ func (uu *UserUpdate) RemoveReviews(r ...*Reviews) *UserUpdate {
 		ids[i] = r[i].ID
 	}
 	return uu.RemoveReviewIDs(ids...)
+}
+
+// ClearOperatingRecord clears all "operatingRecord" edges to the OperationLog entity.
+func (uu *UserUpdate) ClearOperatingRecord() *UserUpdate {
+	uu.mutation.ClearOperatingRecord()
+	return uu
+}
+
+// RemoveOperatingRecordIDs removes the "operatingRecord" edge to OperationLog entities by IDs.
+func (uu *UserUpdate) RemoveOperatingRecordIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveOperatingRecordIDs(ids...)
+	return uu
+}
+
+// RemoveOperatingRecord removes "operatingRecord" edges to OperationLog entities.
+func (uu *UserUpdate) RemoveOperatingRecord(o ...*OperationLog) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.RemoveOperatingRecordIDs(ids...)
 }
 
 // ClearExamineThesis clears all "examineThesis" edges to the Thesis entity.
@@ -494,6 +531,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.OperatingRecordCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperatingRecordTable,
+			Columns: []string{user.OperatingRecordColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(operationlog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOperatingRecordIDs(); len(nodes) > 0 && !uu.mutation.OperatingRecordCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperatingRecordTable,
+			Columns: []string{user.OperatingRecordColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(operationlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OperatingRecordIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperatingRecordTable,
+			Columns: []string{user.OperatingRecordColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(operationlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if uu.mutation.ExamineThesisCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -695,6 +777,21 @@ func (uuo *UserUpdateOne) AddReviews(r ...*Reviews) *UserUpdateOne {
 	return uuo.AddReviewIDs(ids...)
 }
 
+// AddOperatingRecordIDs adds the "operatingRecord" edge to the OperationLog entity by IDs.
+func (uuo *UserUpdateOne) AddOperatingRecordIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddOperatingRecordIDs(ids...)
+	return uuo
+}
+
+// AddOperatingRecord adds the "operatingRecord" edges to the OperationLog entity.
+func (uuo *UserUpdateOne) AddOperatingRecord(o ...*OperationLog) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.AddOperatingRecordIDs(ids...)
+}
+
 // AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
 func (uuo *UserUpdateOne) AddExamineThesiIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddExamineThesiIDs(ids...)
@@ -773,6 +870,27 @@ func (uuo *UserUpdateOne) RemoveReviews(r ...*Reviews) *UserUpdateOne {
 		ids[i] = r[i].ID
 	}
 	return uuo.RemoveReviewIDs(ids...)
+}
+
+// ClearOperatingRecord clears all "operatingRecord" edges to the OperationLog entity.
+func (uuo *UserUpdateOne) ClearOperatingRecord() *UserUpdateOne {
+	uuo.mutation.ClearOperatingRecord()
+	return uuo
+}
+
+// RemoveOperatingRecordIDs removes the "operatingRecord" edge to OperationLog entities by IDs.
+func (uuo *UserUpdateOne) RemoveOperatingRecordIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveOperatingRecordIDs(ids...)
+	return uuo
+}
+
+// RemoveOperatingRecord removes "operatingRecord" edges to OperationLog entities.
+func (uuo *UserUpdateOne) RemoveOperatingRecord(o ...*OperationLog) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.RemoveOperatingRecordIDs(ids...)
 }
 
 // ClearExamineThesis clears all "examineThesis" edges to the Thesis entity.
@@ -1044,6 +1162,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OperatingRecordCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperatingRecordTable,
+			Columns: []string{user.OperatingRecordColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(operationlog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOperatingRecordIDs(); len(nodes) > 0 && !uuo.mutation.OperatingRecordCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperatingRecordTable,
+			Columns: []string{user.OperatingRecordColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(operationlog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OperatingRecordIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperatingRecordTable,
+			Columns: []string{user.OperatingRecordColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(operationlog.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

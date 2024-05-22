@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/ZEQUANR/zhulong/ent/operationlog"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/schema"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
@@ -14,6 +15,12 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	operationlogFields := schema.OperationLog{}.Fields()
+	_ = operationlogFields
+	// operationlogDescTime is the schema descriptor for time field.
+	operationlogDescTime := operationlogFields[3].Descriptor()
+	// operationlog.DefaultTime holds the default value on creation for the time field.
+	operationlog.DefaultTime = operationlogDescTime.Default.(func() time.Time)
 	reviewsFields := schema.Reviews{}.Fields()
 	_ = reviewsFields
 	// reviewsDescCreateTime is the schema descriptor for create_time field.

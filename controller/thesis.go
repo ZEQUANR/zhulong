@@ -77,7 +77,7 @@ func ThesisUpload(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"thesis_id": thesis.ID,
+		"thesisId": thesis.ID,
 	})
 }
 

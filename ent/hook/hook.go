@@ -21,6 +21,18 @@ func (f AdministratorsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AdministratorsMutation", m)
 }
 
+// The OperationLogFunc type is an adapter to allow the use of ordinary
+// function as OperationLog mutator.
+type OperationLogFunc func(context.Context, *ent.OperationLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OperationLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.OperationLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OperationLogMutation", m)
+}
+
 // The ReviewsFunc type is an adapter to allow the use of ordinary
 // function as Reviews mutator.
 type ReviewsFunc func(context.Context, *ent.ReviewsMutation) (ent.Value, error)

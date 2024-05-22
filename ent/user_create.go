@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/operationlog"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
 	"github.com/ZEQUANR/zhulong/ent/teachers"
@@ -127,6 +128,21 @@ func (uc *UserCreate) AddReviews(r ...*Reviews) *UserCreate {
 		ids[i] = r[i].ID
 	}
 	return uc.AddReviewIDs(ids...)
+}
+
+// AddOperatingRecordIDs adds the "operatingRecord" edge to the OperationLog entity by IDs.
+func (uc *UserCreate) AddOperatingRecordIDs(ids ...int) *UserCreate {
+	uc.mutation.AddOperatingRecordIDs(ids...)
+	return uc
+}
+
+// AddOperatingRecord adds the "operatingRecord" edges to the OperationLog entity.
+func (uc *UserCreate) AddOperatingRecord(o ...*OperationLog) *UserCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uc.AddOperatingRecordIDs(ids...)
 }
 
 // AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
@@ -298,6 +314,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OperatingRecordIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperatingRecordTable,
+			Columns: []string{user.OperatingRecordColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(operationlog.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

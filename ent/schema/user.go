@@ -29,8 +29,12 @@ func (User) Edges() []ent.Edge {
 			Unique(),
 		edge.To("teachers", Teachers.Type).
 			Unique(),
+
 		edge.To("thesis", Thesis.Type),
 		edge.To("reviews", Reviews.Type),
+
+		edge.To("operatingRecord", OperationLog.Type),
+
 		edge.From("examineThesis", Thesis.Type).
 			Ref("examine"),
 	}

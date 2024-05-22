@@ -43,11 +43,13 @@ type UserEdges struct {
 	Thesis []*Thesis `json:"thesis,omitempty"`
 	// Reviews holds the value of the reviews edge.
 	Reviews []*Reviews `json:"reviews,omitempty"`
+	// OperatingRecord holds the value of the operatingRecord edge.
+	OperatingRecord []*OperationLog `json:"operatingRecord,omitempty"`
 	// ExamineThesis holds the value of the examineThesis edge.
 	ExamineThesis []*Thesis `json:"examineThesis,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // AdministratorsOrErr returns the Administrators value or an error if the edge
@@ -101,10 +103,19 @@ func (e UserEdges) ReviewsOrErr() ([]*Reviews, error) {
 	return nil, &NotLoadedError{edge: "reviews"}
 }
 
+// OperatingRecordOrErr returns the OperatingRecord value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OperatingRecordOrErr() ([]*OperationLog, error) {
+	if e.loadedTypes[5] {
+		return e.OperatingRecord, nil
+	}
+	return nil, &NotLoadedError{edge: "operatingRecord"}
+}
+
 // ExamineThesisOrErr returns the ExamineThesis value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ExamineThesisOrErr() ([]*Thesis, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.ExamineThesis, nil
 	}
 	return nil, &NotLoadedError{edge: "examineThesis"}
@@ -194,6 +205,11 @@ func (u *User) QueryThesis() *ThesisQuery {
 // QueryReviews queries the "reviews" edge of the User entity.
 func (u *User) QueryReviews() *ReviewsQuery {
 	return NewUserClient(u.config).QueryReviews(u)
+}
+
+// QueryOperatingRecord queries the "operatingRecord" edge of the User entity.
+func (u *User) QueryOperatingRecord() *OperationLogQuery {
+	return NewUserClient(u.config).QueryOperatingRecord(u)
 }
 
 // QueryExamineThesis queries the "examineThesis" edge of the User entity.

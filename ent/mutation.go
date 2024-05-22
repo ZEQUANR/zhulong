@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/operationlog"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/students"
@@ -30,6 +31,7 @@ const (
 
 	// Node types.
 	TypeAdministrators = "Administrators"
+	TypeOperationLog   = "OperationLog"
 	TypeReviews        = "Reviews"
 	TypeStudents       = "Students"
 	TypeTeachers       = "Teachers"
@@ -644,6 +646,630 @@ func (m *AdministratorsMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Administrators edge %s", name)
+}
+
+// OperationLogMutation represents an operation that mutates the OperationLog nodes in the graph.
+type OperationLogMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	context         *int
+	addcontext      *int
+	status          *int
+	addstatus       *int
+	time            *time.Time
+	clearedFields   map[string]struct{}
+	operator        *int
+	clearedoperator bool
+	done            bool
+	oldValue        func(context.Context) (*OperationLog, error)
+	predicates      []predicate.OperationLog
+}
+
+var _ ent.Mutation = (*OperationLogMutation)(nil)
+
+// operationlogOption allows management of the mutation configuration using functional options.
+type operationlogOption func(*OperationLogMutation)
+
+// newOperationLogMutation creates new mutation for the OperationLog entity.
+func newOperationLogMutation(c config, op Op, opts ...operationlogOption) *OperationLogMutation {
+	m := &OperationLogMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeOperationLog,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withOperationLogID sets the ID field of the mutation.
+func withOperationLogID(id int) operationlogOption {
+	return func(m *OperationLogMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *OperationLog
+		)
+		m.oldValue = func(ctx context.Context) (*OperationLog, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().OperationLog.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withOperationLog sets the old OperationLog of the mutation.
+func withOperationLog(node *OperationLog) operationlogOption {
+	return func(m *OperationLogMutation) {
+		m.oldValue = func(context.Context) (*OperationLog, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m OperationLogMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m OperationLogMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *OperationLogMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *OperationLogMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().OperationLog.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *OperationLogMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *OperationLogMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the OperationLog entity.
+// If the OperationLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperationLogMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *OperationLogMutation) ResetName() {
+	m.name = nil
+}
+
+// SetContext sets the "context" field.
+func (m *OperationLogMutation) SetContext(i int) {
+	m.context = &i
+	m.addcontext = nil
+}
+
+// Context returns the value of the "context" field in the mutation.
+func (m *OperationLogMutation) Context() (r int, exists bool) {
+	v := m.context
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContext returns the old "context" field's value of the OperationLog entity.
+// If the OperationLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperationLogMutation) OldContext(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContext is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContext requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContext: %w", err)
+	}
+	return oldValue.Context, nil
+}
+
+// AddContext adds i to the "context" field.
+func (m *OperationLogMutation) AddContext(i int) {
+	if m.addcontext != nil {
+		*m.addcontext += i
+	} else {
+		m.addcontext = &i
+	}
+}
+
+// AddedContext returns the value that was added to the "context" field in this mutation.
+func (m *OperationLogMutation) AddedContext() (r int, exists bool) {
+	v := m.addcontext
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetContext resets all changes to the "context" field.
+func (m *OperationLogMutation) ResetContext() {
+	m.context = nil
+	m.addcontext = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *OperationLogMutation) SetStatus(i int) {
+	m.status = &i
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *OperationLogMutation) Status() (r int, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the OperationLog entity.
+// If the OperationLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperationLogMutation) OldStatus(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds i to the "status" field.
+func (m *OperationLogMutation) AddStatus(i int) {
+	if m.addstatus != nil {
+		*m.addstatus += i
+	} else {
+		m.addstatus = &i
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *OperationLogMutation) AddedStatus() (r int, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *OperationLogMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetTime sets the "time" field.
+func (m *OperationLogMutation) SetTime(t time.Time) {
+	m.time = &t
+}
+
+// Time returns the value of the "time" field in the mutation.
+func (m *OperationLogMutation) Time() (r time.Time, exists bool) {
+	v := m.time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTime returns the old "time" field's value of the OperationLog entity.
+// If the OperationLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperationLogMutation) OldTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTime: %w", err)
+	}
+	return oldValue.Time, nil
+}
+
+// ResetTime resets all changes to the "time" field.
+func (m *OperationLogMutation) ResetTime() {
+	m.time = nil
+}
+
+// SetOperatorID sets the "operator" edge to the User entity by id.
+func (m *OperationLogMutation) SetOperatorID(id int) {
+	m.operator = &id
+}
+
+// ClearOperator clears the "operator" edge to the User entity.
+func (m *OperationLogMutation) ClearOperator() {
+	m.clearedoperator = true
+}
+
+// OperatorCleared reports if the "operator" edge to the User entity was cleared.
+func (m *OperationLogMutation) OperatorCleared() bool {
+	return m.clearedoperator
+}
+
+// OperatorID returns the "operator" edge ID in the mutation.
+func (m *OperationLogMutation) OperatorID() (id int, exists bool) {
+	if m.operator != nil {
+		return *m.operator, true
+	}
+	return
+}
+
+// OperatorIDs returns the "operator" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OperatorID instead. It exists only for internal usage by the builders.
+func (m *OperationLogMutation) OperatorIDs() (ids []int) {
+	if id := m.operator; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOperator resets all changes to the "operator" edge.
+func (m *OperationLogMutation) ResetOperator() {
+	m.operator = nil
+	m.clearedoperator = false
+}
+
+// Where appends a list predicates to the OperationLogMutation builder.
+func (m *OperationLogMutation) Where(ps ...predicate.OperationLog) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the OperationLogMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *OperationLogMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.OperationLog, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *OperationLogMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *OperationLogMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (OperationLog).
+func (m *OperationLogMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *OperationLogMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.name != nil {
+		fields = append(fields, operationlog.FieldName)
+	}
+	if m.context != nil {
+		fields = append(fields, operationlog.FieldContext)
+	}
+	if m.status != nil {
+		fields = append(fields, operationlog.FieldStatus)
+	}
+	if m.time != nil {
+		fields = append(fields, operationlog.FieldTime)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *OperationLogMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case operationlog.FieldName:
+		return m.Name()
+	case operationlog.FieldContext:
+		return m.Context()
+	case operationlog.FieldStatus:
+		return m.Status()
+	case operationlog.FieldTime:
+		return m.Time()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *OperationLogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case operationlog.FieldName:
+		return m.OldName(ctx)
+	case operationlog.FieldContext:
+		return m.OldContext(ctx)
+	case operationlog.FieldStatus:
+		return m.OldStatus(ctx)
+	case operationlog.FieldTime:
+		return m.OldTime(ctx)
+	}
+	return nil, fmt.Errorf("unknown OperationLog field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *OperationLogMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case operationlog.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case operationlog.FieldContext:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContext(v)
+		return nil
+	case operationlog.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case operationlog.FieldTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTime(v)
+		return nil
+	}
+	return fmt.Errorf("unknown OperationLog field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *OperationLogMutation) AddedFields() []string {
+	var fields []string
+	if m.addcontext != nil {
+		fields = append(fields, operationlog.FieldContext)
+	}
+	if m.addstatus != nil {
+		fields = append(fields, operationlog.FieldStatus)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *OperationLogMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case operationlog.FieldContext:
+		return m.AddedContext()
+	case operationlog.FieldStatus:
+		return m.AddedStatus()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *OperationLogMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case operationlog.FieldContext:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddContext(v)
+		return nil
+	case operationlog.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown OperationLog numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *OperationLogMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *OperationLogMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *OperationLogMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown OperationLog nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *OperationLogMutation) ResetField(name string) error {
+	switch name {
+	case operationlog.FieldName:
+		m.ResetName()
+		return nil
+	case operationlog.FieldContext:
+		m.ResetContext()
+		return nil
+	case operationlog.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case operationlog.FieldTime:
+		m.ResetTime()
+		return nil
+	}
+	return fmt.Errorf("unknown OperationLog field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *OperationLogMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.operator != nil {
+		edges = append(edges, operationlog.EdgeOperator)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *OperationLogMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case operationlog.EdgeOperator:
+		if id := m.operator; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *OperationLogMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *OperationLogMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *OperationLogMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedoperator {
+		edges = append(edges, operationlog.EdgeOperator)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *OperationLogMutation) EdgeCleared(name string) bool {
+	switch name {
+	case operationlog.EdgeOperator:
+		return m.clearedoperator
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *OperationLogMutation) ClearEdge(name string) error {
+	switch name {
+	case operationlog.EdgeOperator:
+		m.ClearOperator()
+		return nil
+	}
+	return fmt.Errorf("unknown OperationLog unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *OperationLogMutation) ResetEdge(name string) error {
+	switch name {
+	case operationlog.EdgeOperator:
+		m.ResetOperator()
+		return nil
+	}
+	return fmt.Errorf("unknown OperationLog edge %s", name)
 }
 
 // ReviewsMutation represents an operation that mutates the Reviews nodes in the graph.
@@ -3840,32 +4466,35 @@ func (m *ThesisMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                    Op
-	typ                   string
-	id                    *int
-	account               *string
-	password              *string
-	role                  *int
-	addrole               *int
-	clearedFields         map[string]struct{}
-	administrators        *int
-	clearedadministrators bool
-	students              *int
-	clearedstudents       bool
-	teachers              *int
-	clearedteachers       bool
-	thesis                map[int]struct{}
-	removedthesis         map[int]struct{}
-	clearedthesis         bool
-	reviews               map[int]struct{}
-	removedreviews        map[int]struct{}
-	clearedreviews        bool
-	examineThesis         map[int]struct{}
-	removedexamineThesis  map[int]struct{}
-	clearedexamineThesis  bool
-	done                  bool
-	oldValue              func(context.Context) (*User, error)
-	predicates            []predicate.User
+	op                     Op
+	typ                    string
+	id                     *int
+	account                *string
+	password               *string
+	role                   *int
+	addrole                *int
+	clearedFields          map[string]struct{}
+	administrators         *int
+	clearedadministrators  bool
+	students               *int
+	clearedstudents        bool
+	teachers               *int
+	clearedteachers        bool
+	thesis                 map[int]struct{}
+	removedthesis          map[int]struct{}
+	clearedthesis          bool
+	reviews                map[int]struct{}
+	removedreviews         map[int]struct{}
+	clearedreviews         bool
+	operatingRecord        map[int]struct{}
+	removedoperatingRecord map[int]struct{}
+	clearedoperatingRecord bool
+	examineThesis          map[int]struct{}
+	removedexamineThesis   map[int]struct{}
+	clearedexamineThesis   bool
+	done                   bool
+	oldValue               func(context.Context) (*User, error)
+	predicates             []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -4319,6 +4948,60 @@ func (m *UserMutation) ResetReviews() {
 	m.removedreviews = nil
 }
 
+// AddOperatingRecordIDs adds the "operatingRecord" edge to the OperationLog entity by ids.
+func (m *UserMutation) AddOperatingRecordIDs(ids ...int) {
+	if m.operatingRecord == nil {
+		m.operatingRecord = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.operatingRecord[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOperatingRecord clears the "operatingRecord" edge to the OperationLog entity.
+func (m *UserMutation) ClearOperatingRecord() {
+	m.clearedoperatingRecord = true
+}
+
+// OperatingRecordCleared reports if the "operatingRecord" edge to the OperationLog entity was cleared.
+func (m *UserMutation) OperatingRecordCleared() bool {
+	return m.clearedoperatingRecord
+}
+
+// RemoveOperatingRecordIDs removes the "operatingRecord" edge to the OperationLog entity by IDs.
+func (m *UserMutation) RemoveOperatingRecordIDs(ids ...int) {
+	if m.removedoperatingRecord == nil {
+		m.removedoperatingRecord = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.operatingRecord, ids[i])
+		m.removedoperatingRecord[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOperatingRecord returns the removed IDs of the "operatingRecord" edge to the OperationLog entity.
+func (m *UserMutation) RemovedOperatingRecordIDs() (ids []int) {
+	for id := range m.removedoperatingRecord {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OperatingRecordIDs returns the "operatingRecord" edge IDs in the mutation.
+func (m *UserMutation) OperatingRecordIDs() (ids []int) {
+	for id := range m.operatingRecord {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOperatingRecord resets all changes to the "operatingRecord" edge.
+func (m *UserMutation) ResetOperatingRecord() {
+	m.operatingRecord = nil
+	m.clearedoperatingRecord = false
+	m.removedoperatingRecord = nil
+}
+
 // AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by ids.
 func (m *UserMutation) AddExamineThesiIDs(ids ...int) {
 	if m.examineThesis == nil {
@@ -4555,7 +5238,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.administrators != nil {
 		edges = append(edges, user.EdgeAdministrators)
 	}
@@ -4570,6 +5253,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.reviews != nil {
 		edges = append(edges, user.EdgeReviews)
+	}
+	if m.operatingRecord != nil {
+		edges = append(edges, user.EdgeOperatingRecord)
 	}
 	if m.examineThesis != nil {
 		edges = append(edges, user.EdgeExamineThesis)
@@ -4605,6 +5291,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeOperatingRecord:
+		ids := make([]ent.Value, 0, len(m.operatingRecord))
+		for id := range m.operatingRecord {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeExamineThesis:
 		ids := make([]ent.Value, 0, len(m.examineThesis))
 		for id := range m.examineThesis {
@@ -4617,12 +5309,15 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removedthesis != nil {
 		edges = append(edges, user.EdgeThesis)
 	}
 	if m.removedreviews != nil {
 		edges = append(edges, user.EdgeReviews)
+	}
+	if m.removedoperatingRecord != nil {
+		edges = append(edges, user.EdgeOperatingRecord)
 	}
 	if m.removedexamineThesis != nil {
 		edges = append(edges, user.EdgeExamineThesis)
@@ -4646,6 +5341,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeOperatingRecord:
+		ids := make([]ent.Value, 0, len(m.removedoperatingRecord))
+		for id := range m.removedoperatingRecord {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeExamineThesis:
 		ids := make([]ent.Value, 0, len(m.removedexamineThesis))
 		for id := range m.removedexamineThesis {
@@ -4658,7 +5359,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.clearedadministrators {
 		edges = append(edges, user.EdgeAdministrators)
 	}
@@ -4673,6 +5374,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedreviews {
 		edges = append(edges, user.EdgeReviews)
+	}
+	if m.clearedoperatingRecord {
+		edges = append(edges, user.EdgeOperatingRecord)
 	}
 	if m.clearedexamineThesis {
 		edges = append(edges, user.EdgeExamineThesis)
@@ -4694,6 +5398,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedthesis
 	case user.EdgeReviews:
 		return m.clearedreviews
+	case user.EdgeOperatingRecord:
+		return m.clearedoperatingRecord
 	case user.EdgeExamineThesis:
 		return m.clearedexamineThesis
 	}
@@ -4735,6 +5441,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeReviews:
 		m.ResetReviews()
+		return nil
+	case user.EdgeOperatingRecord:
+		m.ResetOperatingRecord()
 		return nil
 	case user.EdgeExamineThesis:
 		m.ResetExamineThesis()

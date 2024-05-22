@@ -9,6 +9,9 @@ import (
 // Administrators is the predicate function for administrators builders.
 type Administrators func(*sql.Selector)
 
+// OperationLog is the predicate function for operationlog builders.
+type OperationLog func(*sql.Selector)
+
 // Reviews is the predicate function for reviews builders.
 type Reviews func(*sql.Selector)
 
