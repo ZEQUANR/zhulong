@@ -111,7 +111,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "file_name", Type: field.TypeString, Nullable: true},
 		{Name: "file_url", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "file_state", Type: field.TypeInt, Nullable: true},
+		{Name: "file_state", Type: field.TypeInt},
 		{Name: "upload_time", Type: field.TypeTime, Nullable: true},
 		{Name: "chinese_title", Type: field.TypeString},
 		{Name: "english_title", Type: field.TypeString},

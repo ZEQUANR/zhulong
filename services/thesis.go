@@ -17,26 +17,59 @@ import (
 func CreateThesis(id int, data api.CreateThesis) (*ent.Thesis, error) {
 	ctx := context.Background()
 
+	authors, err := json.Marshal(data.Authors)
+	if err != nil {
+		return nil, fmt.Errorf("func: CreateThesis | index: 0 | err: %w", err)
+	}
+
+	teachers, err := json.Marshal(data.Teachers)
+	if err != nil {
+		return nil, fmt.Errorf("func: CreateThesis | index: 1 | err: %w", err)
+	}
+
 	user, err := client.User.
 		Query().
 		Where(user.ID(id)).
 		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("func: CreateThesis | index: 0 | err: %w", err)
-	}
-
-	authors, err := json.Marshal(data.Authors)
-	if err != nil {
-		return nil, fmt.Errorf("func: CreateThesis | index: 1 | err: %w", err)
-	}
-
-	teachers, err := json.Marshal(data.Teachers)
-	if err != nil {
 		return nil, fmt.Errorf("func: CreateThesis | index: 2 | err: %w", err)
 	}
 
-	thesis, err := client.Thesis.
+	arr, err := user.
+		QueryThesis().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: CreateThesis | index: 3 | err: %w", err)
+	}
+
+	if len(arr) != 0 {
+		for _, elem := range arr {
+			if elem.FileState == model.FileState.ToBeUploaded {
+				result, err := elem.
+					Update().
+					SetFileState(model.FileState.ToBeUploaded).
+					SetChineseTitle(data.ChineseTitle).
+					SetEnglishTitle(data.EnglishTitle).
+					SetAuthors(string(authors)).
+					SetTeachers(string(teachers)).
+					SetFirstAdvance(data.FirstAdvance).
+					SetSecondAdvance(data.SecondAdvance).
+					SetThirdAdvance(data.ThirdAdvance).
+					SetDrawback(data.Drawback).
+					SetUploaders(user).
+					Save(ctx)
+				if err != nil {
+					return nil, fmt.Errorf("func: CreateThesis | index: 4 | err: %w", err)
+				}
+
+				return result, nil
+			}
+		}
+	}
+
+	result, err := client.Thesis.
 		Create().
+		SetFileState(model.FileState.ToBeUploaded).
 		SetChineseTitle(data.ChineseTitle).
 		SetEnglishTitle(data.EnglishTitle).
 		SetAuthors(string(authors)).
@@ -48,10 +81,10 @@ func CreateThesis(id int, data api.CreateThesis) (*ent.Thesis, error) {
 		SetUploaders(user).
 		Save(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("func: CreateThesis | index: 3 | err: %w", err)
+		return nil, fmt.Errorf("func: CreateThesis | index: 5 | err: %w", err)
 	}
 
-	return thesis, nil
+	return result, nil
 }
 
 func UploadThesis(userId int, thesisID int, file model.File) (*ent.Thesis, error) {

@@ -310,16 +310,6 @@ func FileStateLTE(v int) predicate.Thesis {
 	return predicate.Thesis(sql.FieldLTE(FieldFileState, v))
 }
 
-// FileStateIsNil applies the IsNil predicate on the "file_state" field.
-func FileStateIsNil() predicate.Thesis {
-	return predicate.Thesis(sql.FieldIsNull(FieldFileState))
-}
-
-// FileStateNotNil applies the NotNil predicate on the "file_state" field.
-func FileStateNotNil() predicate.Thesis {
-	return predicate.Thesis(sql.FieldNotNull(FieldFileState))
-}
-
 // UploadTimeEQ applies the EQ predicate on the "upload_time" field.
 func UploadTimeEQ(v time.Time) predicate.Thesis {
 	return predicate.Thesis(sql.FieldEQ(FieldUploadTime, v))

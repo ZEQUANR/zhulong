@@ -21,8 +21,7 @@ func (Thesis) Fields() []ent.Field {
 		field.String("file_url").
 			Optional().
 			Unique(),
-		field.Int("file_state").
-			Optional(),
+		field.Int("file_state"),
 		field.Time("upload_time").
 			Optional(),
 		field.String("chinese_title"),

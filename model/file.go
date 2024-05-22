@@ -12,15 +12,19 @@ import (
 )
 
 var FileState = struct {
+	ToBeUploaded    int // 待上传
 	ToBeReviewed    int // 待评审
 	UnderReview     int // 评审中
 	ReviewCompleted int // 评审完成
 	Repulse         int // 打回
+	Deprecation     int // 弃用
 }{
-	ToBeReviewed:    0,
-	UnderReview:     1,
-	ReviewCompleted: 2,
-	Repulse:         3,
+	ToBeUploaded:    0,
+	ToBeReviewed:    1,
+	UnderReview:     2,
+	ReviewCompleted: 3,
+	Repulse:         4,
+	Deprecation:     5,
 }
 
 type File struct {

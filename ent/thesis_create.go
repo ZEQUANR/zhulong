@@ -55,14 +55,6 @@ func (tc *ThesisCreate) SetFileState(i int) *ThesisCreate {
 	return tc
 }
 
-// SetNillableFileState sets the "file_state" field if the given value is not nil.
-func (tc *ThesisCreate) SetNillableFileState(i *int) *ThesisCreate {
-	if i != nil {
-		tc.SetFileState(*i)
-	}
-	return tc
-}
-
 // SetUploadTime sets the "upload_time" field.
 func (tc *ThesisCreate) SetUploadTime(t time.Time) *ThesisCreate {
 	tc.mutation.SetUploadTime(t)
@@ -220,6 +212,9 @@ func (tc *ThesisCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *ThesisCreate) check() error {
+	if _, ok := tc.mutation.FileState(); !ok {
+		return &ValidationError{Name: "file_state", err: errors.New(`ent: missing required field "Thesis.file_state"`)}
+	}
 	if _, ok := tc.mutation.ChineseTitle(); !ok {
 		return &ValidationError{Name: "chinese_title", err: errors.New(`ent: missing required field "Thesis.chinese_title"`)}
 	}

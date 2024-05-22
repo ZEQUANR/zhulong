@@ -7,6 +7,7 @@ import (
 
 	"github.com/ZEQUANR/zhulong/driver"
 	"github.com/ZEQUANR/zhulong/ent"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 func createAdministrators(ctx context.Context, client *ent.Client) error {
@@ -98,46 +99,25 @@ func createStudents(ctx context.Context, client *ent.Client) error {
 	return nil
 }
 
-// func createThesiss(ctx context.Context, client *ent.Client) error {
+func querytheise(ctx context.Context, client *ent.Client) error {
+	a8m, err := client.User.
+		Query().
+		Where(user.ID(3)).
+		Only(ctx)
+	if err != nil {
+		log.Println("Error: %w", err)
+	}
 
-// 	a8m, err := client.User.
-// 		Query().
-// 		Where(user.ID(1)).
-// 		Only(ctx)
-// 	if err != nil {
-// 		fmt.Println("%w", err)
-// 		return fmt.Errorf("%w", err)
-// 	}
+	thesis, err := a8m.
+		QueryThesis().
+		All(ctx)
+	if err != nil {
+		log.Println("Error: %w", err)
+	}
+	log.Println("user:", thesis)
 
-// 	pedro, err := client.Thesis.
-// 		Create().
-// 		SetName("pedro").
-// 		SetURL("/uirl/sdi/saortt/124ve.mp4").
-// 		SetType(0).
-// 		SetStatus(0).
-// 		SetUploaders(a8m).
-// 		Save(ctx)
-// 	if err != nil {
-// 		fmt.Println("%w", err)
-// 		return fmt.Errorf("%w", err)
-// 	}
-
-// 	lola, err := client.Thesis.
-// 		Create().
-// 		SetName("lola").
-// 		SetURL("/uirl/sdi/safrr/adw5.mp4").
-// 		SetType(0).
-// 		SetStatus(0).
-// 		SetUploaders(a8m).
-// 		Save(ctx)
-// 	if err != nil {
-// 		fmt.Println("%w", err)
-// 		return fmt.Errorf("%w", err)
-// 	}
-
-// 	log.Println(pedro, lola)
-// 	return nil
-// }
+	return nil
+}
 
 func main() {
 	ctx := context.Background()
@@ -147,5 +127,5 @@ func main() {
 	createTeachers(ctx, client)
 	createStudents(ctx, client)
 
-	// createThesiss(ctx, client)
+	// querytheise(ctx, client)
 }

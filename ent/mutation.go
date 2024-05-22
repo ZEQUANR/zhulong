@@ -2917,24 +2917,10 @@ func (m *ThesisMutation) AddedFileState() (r int, exists bool) {
 	return *v, true
 }
 
-// ClearFileState clears the value of the "file_state" field.
-func (m *ThesisMutation) ClearFileState() {
-	m.file_state = nil
-	m.addfile_state = nil
-	m.clearedFields[thesis.FieldFileState] = struct{}{}
-}
-
-// FileStateCleared returns if the "file_state" field was cleared in this mutation.
-func (m *ThesisMutation) FileStateCleared() bool {
-	_, ok := m.clearedFields[thesis.FieldFileState]
-	return ok
-}
-
 // ResetFileState resets all changes to the "file_state" field.
 func (m *ThesisMutation) ResetFileState() {
 	m.file_state = nil
 	m.addfile_state = nil
-	delete(m.clearedFields, thesis.FieldFileState)
 }
 
 // SetUploadTime sets the "upload_time" field.
@@ -3682,9 +3668,6 @@ func (m *ThesisMutation) ClearedFields() []string {
 	if m.FieldCleared(thesis.FieldFileURL) {
 		fields = append(fields, thesis.FieldFileURL)
 	}
-	if m.FieldCleared(thesis.FieldFileState) {
-		fields = append(fields, thesis.FieldFileState)
-	}
 	if m.FieldCleared(thesis.FieldUploadTime) {
 		fields = append(fields, thesis.FieldUploadTime)
 	}
@@ -3707,9 +3690,6 @@ func (m *ThesisMutation) ClearField(name string) error {
 		return nil
 	case thesis.FieldFileURL:
 		m.ClearFileURL()
-		return nil
-	case thesis.FieldFileState:
-		m.ClearFileState()
 		return nil
 	case thesis.FieldUploadTime:
 		m.ClearUploadTime()

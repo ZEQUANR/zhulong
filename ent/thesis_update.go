@@ -90,12 +90,6 @@ func (tu *ThesisUpdate) AddFileState(i int) *ThesisUpdate {
 	return tu
 }
 
-// ClearFileState clears the value of the "file_state" field.
-func (tu *ThesisUpdate) ClearFileState() *ThesisUpdate {
-	tu.mutation.ClearFileState()
-	return tu
-}
-
 // SetUploadTime sets the "upload_time" field.
 func (tu *ThesisUpdate) SetUploadTime(t time.Time) *ThesisUpdate {
 	tu.mutation.SetUploadTime(t)
@@ -351,9 +345,6 @@ func (tu *ThesisUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedFileState(); ok {
 		_spec.AddField(thesis.FieldFileState, field.TypeInt, value)
 	}
-	if tu.mutation.FileStateCleared() {
-		_spec.ClearField(thesis.FieldFileState, field.TypeInt)
-	}
 	if value, ok := tu.mutation.UploadTime(); ok {
 		_spec.SetField(thesis.FieldUploadTime, field.TypeTime, value)
 	}
@@ -523,12 +514,6 @@ func (tuo *ThesisUpdateOne) SetNillableFileState(i *int) *ThesisUpdateOne {
 // AddFileState adds i to the "file_state" field.
 func (tuo *ThesisUpdateOne) AddFileState(i int) *ThesisUpdateOne {
 	tuo.mutation.AddFileState(i)
-	return tuo
-}
-
-// ClearFileState clears the value of the "file_state" field.
-func (tuo *ThesisUpdateOne) ClearFileState() *ThesisUpdateOne {
-	tuo.mutation.ClearFileState()
 	return tuo
 }
 
@@ -816,9 +801,6 @@ func (tuo *ThesisUpdateOne) sqlSave(ctx context.Context) (_node *Thesis, err err
 	}
 	if value, ok := tuo.mutation.AddedFileState(); ok {
 		_spec.AddField(thesis.FieldFileState, field.TypeInt, value)
-	}
-	if tuo.mutation.FileStateCleared() {
-		_spec.ClearField(thesis.FieldFileState, field.TypeInt)
 	}
 	if value, ok := tuo.mutation.UploadTime(); ok {
 		_spec.SetField(thesis.FieldUploadTime, field.TypeTime, value)
