@@ -124,6 +124,27 @@ func UploadThesis(userId int, thesisID int, file model.File) (*ent.Thesis, error
 	return result, nil
 }
 
+func QueryReviewRecord(userId int) ([]*ent.OperationLog, error) {
+	ctx := context.Background()
+
+	user, err := client.User.
+		Query().
+		Where(user.ID(userId)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryReviewRecord | index: 0 | err: %w", err)
+	}
+
+	result, err := user.
+		QueryOperatingRecord().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryReviewRecord | index: 1 | err: %w", err)
+	}
+
+	return result, nil
+}
+
 func QueryToBeReviewedThesisList() ([]api.ToBeReviewedThesisList, error) {
 	ctx := context.Background()
 

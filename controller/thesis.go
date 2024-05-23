@@ -81,6 +81,25 @@ func ThesisUpload(c *gin.Context) {
 	})
 }
 
+func ThesisReviewRecord(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	operationLog, err := services.QueryReviewRecord(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": operationLog,
+	})
+
+}
+
 func ThesisToBeReviewedList(c *gin.Context) {
 	userId, err := utils.ParseUserIDInToken(c)
 	if err != nil {
