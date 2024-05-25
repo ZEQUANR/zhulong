@@ -22,18 +22,15 @@ type DownloadThesis struct {
 }
 
 type ToBeReviewedThesisList struct {
-	ID            int       `json:"id"`             // 论文 ID
-	FileName      string    `json:"file_name"`      // 论文的文件名称
-	FileState     int       `json:"file_state"`     // 论文状态
-	UploadTime    time.Time `json:"upload_time"`    // 论文上传时间
-	ChineseTitle  string    `json:"chinese_title"`  // 论文中文标题
-	EnglishTitle  string    `json:"english_title"`  // 论文英文标题
-	Authors       string    `json:"authors"`        // 论文作者
-	Teachers      string    `json:"teachers"`       // 论文指导老师
-	FirstAdvance  string    `json:"first_advance"`  // 论文第一创新点
-	SecondAdvance string    `json:"second_advance"` // 论文第二创新点
-	ThirdAdvance  string    `json:"third_advance"`  // 论文第三创新点
-	Drawback      string    `json:"drawback"`       // 论文不足
+	Id           int       `json:"id" binding:"required"`           // 论文 ID
+	Role         int       `json:"role" binding:"required"`         // 权限
+	Name         string    `json:"name" binding:"required"`         // 姓名
+	Number       string    `json:"number" binding:"required"`       // 学号
+	College      string    `json:"college" binding:"required"`      // 院系
+	FileState    int       `json:"fileState" binding:"required"`    // 论文状态
+	ChineseTitle string    `json:"chineseTitle" binding:"required"` // 论文中文标题
+	EnglishTitle string    `json:"englishTitle" binding:"required"` // 论文英文标题
+	UploadTime   time.Time `json:"uploadTime" binding:"required"`   // 论文上传时间
 }
 
 type AllocationThesis struct {

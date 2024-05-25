@@ -148,29 +148,69 @@ func QueryReviewRecord(userId int) ([]*ent.OperationLog, error) {
 func QueryToBeReviewedThesisList() ([]api.ToBeReviewedThesisList, error) {
 	ctx := context.Background()
 
-	var result []api.ToBeReviewedThesisList
-	err := client.Thesis.
+	arr, err := client.Thesis.
 		Query().
-		Select(
-			thesis.FieldID,
-			thesis.FieldFileName,
-			thesis.FieldFileState,
-			thesis.FieldUploadTime,
-			thesis.FieldChineseTitle,
-			thesis.FieldEnglishTitle,
-			thesis.FieldAuthors,
-			thesis.FieldTeachers,
-			thesis.FieldFirstAdvance,
-			thesis.FieldSecondAdvance,
-			thesis.FieldThirdAdvance,
-			thesis.FieldDrawback,
-		).
-		Scan(ctx, &result)
+		All(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("func: QueryToBeReviewedThesisList | index: 0 | err: %w", err)
 	}
 
-	return result, nil
+	var array []api.ToBeReviewedThesisList
+	for _, elem := range arr {
+		u, err := elem.QueryUploaders().Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("func: QueryToBeReviewedThesisList | index: 1 | err: %w", err)
+		}
+
+		var (
+			name    string
+			number  string
+			college string
+		)
+		if u.Role == model.Admin {
+			info, err := u.QueryAdministrators().Only(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("func: QueryToBeReviewedThesisList | index: 2 | err: %w", err)
+			}
+
+			name = info.Name
+			number = info.Number
+			college = info.College
+		}
+		if u.Role == model.Student {
+			info, err := u.QueryStudents().Only(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("func: QueryToBeReviewedThesisList | index: 3 | err: %w", err)
+			}
+
+			name = info.Name
+			number = info.Number
+			college = info.College
+		}
+		if u.Role == model.Teacher {
+			info, err := u.QueryTeachers().Only(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("func: QueryToBeReviewedThesisList | index: 4 | err: %w", err)
+			}
+
+			name = info.Name
+			number = info.Number
+			college = info.College
+		}
+
+		array = append(array, api.ToBeReviewedThesisList{
+			Id:           elem.ID,
+			Name:         name,
+			Number:       number,
+			College:      college,
+			FileState:    elem.FileState,
+			ChineseTitle: elem.ChineseTitle,
+			EnglishTitle: elem.EnglishTitle,
+			UploadTime:   elem.UploadTime,
+		})
+	}
+
+	return array, nil
 }
 
 func UpdateAllocationThesis(data api.AllocationThesis) error {

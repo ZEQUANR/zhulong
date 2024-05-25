@@ -7,6 +7,8 @@ import (
 	"github.com/ZEQUANR/zhulong/driver"
 	"github.com/ZEQUANR/zhulong/ent"
 	"github.com/ZEQUANR/zhulong/ent/user"
+	"github.com/ZEQUANR/zhulong/model"
+	"github.com/ZEQUANR/zhulong/model/api"
 )
 
 var client = driver.MysqlClient
@@ -105,6 +107,38 @@ func QueryAdministratorsById(id int) (*ent.Administrators, error) {
 	}
 
 	return info, nil
+}
+
+func QueryTeacherList() ([]api.TeacherList, error) {
+	ctx := context.Background()
+
+	users, err := client.User.
+		Query().
+		Where(user.Role(model.Teacher)).
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("func: QueryTeacherList %w", err)
+	}
+
+	var arr []api.TeacherList
+	for _, elem := range users {
+		info, err := elem.
+			QueryTeachers().
+			Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("func: QueryTeacherList %w", err)
+		}
+
+		arr = append(arr, api.TeacherList{
+			Id:      elem.ID,
+			Name:    info.Name,
+			Phone:   info.Phone,
+			Number:  info.Number,
+			College: info.College,
+		})
+	}
+
+	return arr, nil
 }
 
 // func UpdateAdministratorsById(id int, admin api.Administrator) (*ent.Administrators, error) {

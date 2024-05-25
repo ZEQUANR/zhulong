@@ -35,6 +35,7 @@ const (
 	ErrorBodySaveThesis         ErrorBody = "Failed To Save The Thesis File"                     // 保存论文文件失败
 	ErrorBodyPermissions        ErrorBody = "The Current User Has Insufficient Permissions"      // 当前用户权限不足
 	ErrorBodyAssignmentThesis   ErrorBody = "Assignment Thesis Failure"                          // 分配论文失败
+	ErrorBodyTeacherList        ErrorBody = "Failed To Get The Teacher List"                     // 获取教师列表失败
 	ErrorBodyToBeReviewedList   ErrorBody = "Failed To Obtain The List Of Thesis To Be Reviewed" // 获取待评阅论文列表失败
 	ErrorBodyUnderReviewList    ErrorBody = "Failed To Obtain A List Of Thesis Under Review"     // 获取评阅中论文列表失败
 	ErrorBodyThesisDownloadLink ErrorBody = "Failed To Obtain The Thesis Download Link"          // 获取论文下载链接失败

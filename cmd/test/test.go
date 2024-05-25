@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ZEQUANR/zhulong/ent"
+	"github.com/ZEQUANR/zhulong/model"
 )
 
 func createAdministrators(ctx context.Context, client *ent.Client) error {
@@ -14,7 +15,7 @@ func createAdministrators(ctx context.Context, client *ent.Client) error {
 		Create().
 		SetAccount("admin").
 		SetPassword("e10adc3949ba59abbe56e057f20f883e").
-		SetRole(0).
+		SetRole(model.Admin).
 		Save(ctx)
 	if err != nil {
 		return fmt.Errorf("creating user: %w", err)
@@ -43,7 +44,7 @@ func createTeachers(ctx context.Context, client *ent.Client) error {
 		Create().
 		SetAccount("teacher").
 		SetPassword("e10adc3949ba59abbe56e057f20f883e").
-		SetRole(1).
+		SetRole(model.Teacher).
 		Save(ctx)
 	if err != nil {
 		return fmt.Errorf("creating user: %w", err)
@@ -72,7 +73,7 @@ func createStudents(ctx context.Context, client *ent.Client) error {
 		Create().
 		SetAccount("student").
 		SetPassword("e10adc3949ba59abbe56e057f20f883e").
-		SetRole(2).
+		SetRole(model.Student).
 		Save(ctx)
 	if err != nil {
 		return fmt.Errorf("creating user: %w", err)
