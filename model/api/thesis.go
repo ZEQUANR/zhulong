@@ -33,6 +33,26 @@ type ToBeReviewedThesisList struct {
 	UploadTime   time.Time `json:"uploadTime" binding:"required"`   // 论文上传时间
 }
 
+type UnderReviewThesisList struct {
+	Id            int       `json:"id" binding:"required"`            // 论文 ID
+	Name          string    `json:"name" binding:"required"`          // 姓名
+	Number        string    `json:"number" binding:"required"`        // 学号
+	College       string    `json:"college" binding:"required"`       // 院系
+	Phone         string    `json:"phone" binding:"required"`         // 手机
+	FileName      string    `json:"fileName" binding:"required"`      // 文件名
+	FileState     int       `json:"fileState" binding:"required"`     // 文件状态
+	ChineseTitle  string    `json:"chineseTitle" binding:"required"`  // 论文中文标题
+	EnglishTitle  string    `json:"englishTitle" binding:"required"`  // 论文英文标题
+	Authors       []string  `json:"authors" binding:"required"`       // 论文作者
+	Teachers      []string  `json:"teachers" binding:"required"`      // 论文指导教师
+	FirstAdvance  string    `json:"firstAdvance" binding:"required"`  // 第一创新点
+	SecondAdvance string    `json:"secondAdvance" binding:"required"` // 第二创新点
+	ThirdAdvance  string    `json:"thirdAdvance" binding:"required"`  // 第三创新点
+	Drawback      string    `json:"drawback" binding:"required"`      // 论文不足
+	UploadTime    time.Time `json:"uploadTime" binding:"required"`    // 上传时间
+	CreateTime    time.Time `json:"createTime" binding:"required"`    // 创建时间
+}
+
 type AllocationThesis struct {
 	ThesisID  []int `json:"thesisIds" binding:"required"` // 论文 ID
 	TeacherID int   `json:"teacherId" binding:"required"` // 老师 ID

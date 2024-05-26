@@ -249,41 +249,88 @@ func UpdateAllocationThesis(data api.AllocationThesis) error {
 	return nil
 }
 
-func QueryUnderReviewThesisList(id int) ([]api.ToBeReviewedThesisList, error) {
+func QueryUnderReviewThesisList(user *ent.User) ([]api.UnderReviewThesisList, error) {
 	ctx := context.Background()
 
-	user, err := client.User.
-		Query().
-		Select().
-		Where(user.ID(id)).
-		Only(ctx)
-	if err != nil || user.Role == model.Student {
+	var arr []api.UnderReviewThesisList
+	t, err := user.
+		QueryExamineThesis().
+		All(ctx)
+	if err != nil {
 		return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 0 | err: %w", err)
 	}
 
-	var result []api.ToBeReviewedThesisList
-	err = user.
-		QueryExamineThesis().
-		Select(
-			thesis.FieldID,
-			thesis.FieldFileName,
-			thesis.FieldFileState,
-			thesis.FieldUploadTime,
-			thesis.FieldChineseTitle,
-			thesis.FieldEnglishTitle,
-			thesis.FieldAuthors,
-			thesis.FieldTeachers,
-			thesis.FieldFirstAdvance,
-			thesis.FieldSecondAdvance,
-			thesis.FieldThirdAdvance,
-			thesis.FieldDrawback,
-		).
-		Scan(ctx, &result)
-	if err != nil {
-		return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 1 | err: %w", err)
+	for _, elem := range t {
+		info, err := elem.QueryExamine().Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 1 | err: %w", err)
+		}
+
+		var (
+			name    string
+			number  string
+			college string
+			phone   string
+		)
+
+		if info.Role == model.Admin {
+			u, err := info.QueryAdministrators().Only(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 2 | err: %w", err)
+			}
+
+			name = u.Name
+			number = u.Number
+			college = u.College
+			phone = u.Phone
+		}
+
+		if info.Role == model.Teacher {
+			u, err := info.QueryTeachers().Only(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 3 | err: %w", err)
+			}
+
+			name = u.Name
+			number = u.Number
+			college = u.College
+			phone = u.Phone
+		}
+
+		var authors []string
+		err = json.Unmarshal([]byte(elem.Authors), &authors)
+		if err != nil {
+			return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 4 | err: %w", err)
+		}
+
+		var teachers []string
+		err = json.Unmarshal([]byte(elem.Teachers), &teachers)
+		if err != nil {
+			return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 5 | err: %w", err)
+		}
+
+		arr = append(arr, api.UnderReviewThesisList{
+			Id:            elem.ID,
+			Name:          name,
+			Number:        number,
+			College:       college,
+			Phone:         phone,
+			FileName:      elem.FileName,
+			FileState:     elem.FileState,
+			ChineseTitle:  elem.ChineseTitle,
+			EnglishTitle:  elem.EnglishTitle,
+			Authors:       authors,
+			Teachers:      teachers,
+			FirstAdvance:  elem.FirstAdvance,
+			SecondAdvance: elem.SecondAdvance,
+			ThirdAdvance:  elem.ThirdAdvance,
+			Drawback:      elem.Drawback,
+			UploadTime:    elem.UploadTime,
+			CreateTime:    elem.CreateTime,
+		})
 	}
 
-	return result, nil
+	return arr, nil
 }
 
 func QueryThesisDownloadPath(id int, data api.DownloadThesis) (*ent.Thesis, error) {

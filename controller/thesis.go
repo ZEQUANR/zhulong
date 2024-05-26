@@ -202,7 +202,12 @@ func ThesisUnderReviewList(c *gin.Context) {
 		return
 	}
 
-	result, err := services.QueryUnderReviewThesisList(user.ID)
+	if user.Role == model.Student {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyUnderReviewList, fmt.Errorf(""))
+		return
+	}
+
+	result, err := services.QueryUnderReviewThesisList(user)
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyUnderReviewList, err)
 		return
