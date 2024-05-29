@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/ZEQUANR/zhulong/driver"
 	"github.com/ZEQUANR/zhulong/ent"
 	"github.com/ZEQUANR/zhulong/model"
 )
@@ -39,10 +40,10 @@ func createAdministrators(ctx context.Context, client *ent.Client) error {
 	return nil
 }
 
-func createTeachers(ctx context.Context, client *ent.Client) error {
+func createTeachers(ctx context.Context, client *ent.Client, account string, name string, college string) error {
 	a8m, err := client.User.
 		Create().
-		SetAccount("teacher").
+		SetAccount(account).
 		SetPassword("e10adc3949ba59abbe56e057f20f883e").
 		SetRole(model.Teacher).
 		Save(ctx)
@@ -54,8 +55,8 @@ func createTeachers(ctx context.Context, client *ent.Client) error {
 	card1, err := client.Teachers.
 		Create().
 		SetAvatar("").
-		SetName("李向明").
-		SetCollege("精工系").
+		SetName(name).
+		SetCollege(college).
 		SetPhone("151458459566").
 		SetNumber("041500").
 		SetUsers(a8m).
@@ -100,11 +101,14 @@ func createStudents(ctx context.Context, client *ent.Client) error {
 }
 
 func main() {
-	// ctx := context.Background()
-	// client := driver.MysqlClient
+	ctx := context.Background()
+	client := driver.MysqlClient
 
 	// createAdministrators(ctx, client)
-	// createTeachers(ctx, client)
+	createTeachers(ctx, client, "bjx", "白嘉轩", "环工系")
+	createTeachers(ctx, client, "lzl", "鹿子霖", "计算机系")
+	createTeachers(ctx, client, "txe", "田小娥", "经济与管理系")
+	createTeachers(ctx, client, "lxw", "李晓文", "计算机系")
 	// createStudents(ctx, client)
 
 	fmt.Println(time.Now())

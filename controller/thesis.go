@@ -225,13 +225,24 @@ func ThesisDownload(c *gin.Context) {
 		return
 	}
 
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	if user.Role == model.Student {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyUnderReviewList, fmt.Errorf(""))
+		return
+	}
+
 	data := api.DownloadThesis{}
 	if err := c.BindJSON(&data); err != nil {
 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
 		return
 	}
 
-	result, err := services.QueryThesisDownloadPath(userId, data)
+	result, err := services.QueryThesisDownloadPath(data)
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyThesisDownloadLink, err)
 		return

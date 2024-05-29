@@ -261,7 +261,7 @@ func QueryUnderReviewThesisList(user *ent.User) ([]api.UnderReviewThesisList, er
 	}
 
 	for _, elem := range t {
-		info, err := elem.QueryExamine().Only(ctx)
+		info, err := elem.QueryUploaders().Only(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 1 | err: %w", err)
 		}
@@ -285,8 +285,8 @@ func QueryUnderReviewThesisList(user *ent.User) ([]api.UnderReviewThesisList, er
 			phone = u.Phone
 		}
 
-		if info.Role == model.Teacher {
-			u, err := info.QueryTeachers().Only(ctx)
+		if info.Role == model.Student {
+			u, err := info.QueryStudents().Only(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("func: QueryUnderReviewThesisList | index: 3 | err: %w", err)
 			}
@@ -333,17 +333,8 @@ func QueryUnderReviewThesisList(user *ent.User) ([]api.UnderReviewThesisList, er
 	return arr, nil
 }
 
-func QueryThesisDownloadPath(id int, data api.DownloadThesis) (*ent.Thesis, error) {
+func QueryThesisDownloadPath(data api.DownloadThesis) (*ent.Thesis, error) {
 	ctx := context.Background()
-
-	user, err := client.User.
-		Query().
-		Select().
-		Where(user.ID(id)).
-		Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 1 | err: %w", err)
-	}
 
 	t, err := client.Thesis.
 		Query().
@@ -352,24 +343,6 @@ func QueryThesisDownloadPath(id int, data api.DownloadThesis) (*ent.Thesis, erro
 		Only(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 2 | err: %w", err)
-	}
-
-	qid, err := t.
-		QueryExamine().
-		Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 3 | err: %w", err)
-	}
-
-	eid, err := t.
-		QueryUploaders().
-		Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 4 | err: %w", err)
-	}
-
-	if user.Role != model.Admin && (qid.ID != id && eid.ID != id) {
-		return nil, fmt.Errorf("func: QueryThesisDownloadPath | index: 5 | err: %w", err)
 	}
 
 	return t, nil
