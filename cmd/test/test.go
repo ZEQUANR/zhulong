@@ -104,12 +104,12 @@ func main() {
 	ctx := context.Background()
 	client := driver.MysqlClient
 
-	// createAdministrators(ctx, client)
+	createAdministrators(ctx, client)
 	createTeachers(ctx, client, "bjx", "白嘉轩", "环工系")
 	createTeachers(ctx, client, "lzl", "鹿子霖", "计算机系")
 	createTeachers(ctx, client, "txe", "田小娥", "经济与管理系")
 	createTeachers(ctx, client, "lxw", "李晓文", "计算机系")
-	// createStudents(ctx, client)
+	createStudents(ctx, client)
 
 	fmt.Println(time.Now())
 }

@@ -1,11 +1,11 @@
 package model
 
 var OperationLogStatus = struct {
-	UnderReview   int // 审核中
-	AlreadyPassed int // 已通过
+	UnderReview int // 待评阅
+	OnReview    int // 评阅中
 }{
-	UnderReview:   1,
-	AlreadyPassed: 2,
+	UnderReview: 1,
+	OnReview:    2,
 }
 
 var OperationLogContext = struct {

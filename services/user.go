@@ -203,32 +203,10 @@ func QueryTeacherList() ([]api.TeacherList, error) {
 // 	return result, nil
 // }
 
-// func UpdateStudentsById(id int, student api.Student) (*ent.Students, error) {
+// func UpdateStudentsById(u *ent.User) (*ent.Students, error) {
 // 	ctx := context.Background()
 
-// 	user, err := client.User.
-// 		UpdateOneID(id).
-// 		Save(ctx)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("func: UpdateStudentsById %w", err)
-// 	}
-
-// 	students, err := user.
-// 		QueryStudents().
-// 		Only(ctx)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("func: UpdateStudentsById %w", err)
-// 	}
-
-// 	result, err := students.
-// 		Update().
-// 		SetName(student.Name).
-// 		SetCollege(student.College).
-// 		SetPhone(student.Phone).
-// 		SetSubject(student.Subject).
-// 		SetClass(student.Class).
-// 		SetIdentity(student.Identity).
-// 		Save(ctx)
+// 	result, err := u.Update().SetAccount("").Save(ctx)
 // 	if err != nil {
 // 		return nil, fmt.Errorf("func: UpdateStudentsById %w", err)
 // 	}

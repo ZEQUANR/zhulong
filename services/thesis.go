@@ -244,6 +244,37 @@ func UpdateAllocationThesis(data api.AllocationThesis) error {
 		if err != nil {
 			return fmt.Errorf("func: UpdateAllocationThesis | index: 2 | err: %w", err)
 		}
+
+		r, err := client.Thesis.
+			Query().
+			Where(thesis.ID(value)).
+			Only(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateAllocationThesis | index: 3 | err: %w", err)
+		}
+
+		upUser, err := r.QueryUploaders().Only(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateAllocationThesis | index: 4 | err: %w", err)
+		}
+
+		upUserInfo, err := upUser.QueryStudents().Only(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateAllocationThesis | index: 4 | err: %w", err)
+		}
+
+		_, err = client.OperationLog.
+			Create().
+			SetName(upUserInfo.Name).
+			SetContext(model.OperationLogContext.ThesisReviewer).
+			SetStatus(model.OperationLogStatus.OnReview).
+			SetTime(time.Now()).
+			SetOperator(upUser).
+			Save(ctx)
+		if err != nil {
+			return fmt.Errorf("func: RecordThesisUpload | index: 3 | err: %w", err)
+		}
+
 	}
 
 	return nil

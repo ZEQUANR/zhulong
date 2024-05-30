@@ -142,110 +142,104 @@ func UserTeacherList(c *gin.Context) {
 	})
 }
 
-// func UserEditor(c *gin.Context) {
-// 	token, err := utils.ExtractToken(c)
-// 	if err != nil {
-// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
-// 		return
-// 	}
+func UserEditor(c *gin.Context) {
+	// userId, err := utils.ParseUserIDInToken(c)
+	// if err != nil {
+	// 	logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+	// 	return
+	// }
 
-// 	id, err := utils.ParseAToken(token, "user_id")
-// 	if err != nil {
-// 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
-// 		return
-// 	}
+	// user, err := services.QueryUserById(userId)
+	// if err != nil {
+	// 	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+	// 	return
+	// }
 
-// 	user, err := services.QueryUserById(int(id.(float64)))
-// 	if err != nil {
-// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-// 		return
-// 	}
+	// if user.Role == model.Admin {
+	// 	data := api.Administrator{}
 
-// 	if user.Role == model.Admin {
-// 		data := api.Administrator{}
+	// 	if err := c.BindJSON(&data); err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+	// 		return
+	// 	}
 
-// 		if err := c.BindJSON(&data); err != nil {
-// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-// 			return
-// 		}
+	// 	result, err := services.UpdateAdministratorsById(user.ID, data)
+	// 	if err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+	// 		return
+	// 	}
 
-// 		result, err := services.UpdateAdministratorsById(user.ID, data)
-// 		if err != nil {
-// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-// 			return
-// 		}
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"user_id":  user.ID,
+	// 		"account":  user.Account,
+	// 		"role":     user.Role,
+	// 		"name":     result.Name,
+	// 		"identity": result.Identity,
+	// 		"college":  result.College,
+	// 		"phone":    result.Phone,
+	// 	})
 
-// 		c.JSON(http.StatusOK, gin.H{
-// 			"user_id":  user.ID,
-// 			"account":  user.Account,
-// 			"role":     user.Role,
-// 			"name":     result.Name,
-// 			"identity": result.Identity,
-// 			"college":  result.College,
-// 			"phone":    result.Phone,
-// 		})
+	// 	return
+	// }
 
-// 		return
-// 	}
+	// if user.Role == model.Teacher {
+	// 	data := api.Teacher{}
 
-// 	if user.Role == model.Teacher {
-// 		data := api.Teacher{}
+	// 	if err := c.BindJSON(&data); err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+	// 		return
+	// 	}
 
-// 		if err := c.BindJSON(&data); err != nil {
-// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-// 			return
-// 		}
+	// 	result, err := services.UpdateTeachersById(user.ID, data)
+	// 	if err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+	// 		return
+	// 	}
 
-// 		result, err := services.UpdateTeachersById(user.ID, data)
-// 		if err != nil {
-// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-// 			return
-// 		}
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"user_id":  user.ID,
+	// 		"account":  user.Account,
+	// 		"role":     user.Role,
+	// 		"name":     result.Name,
+	// 		"identity": result.Identity,
+	// 		"college":  result.College,
+	// 		"phone":    result.Phone,
+	// 	})
 
-// 		c.JSON(http.StatusOK, gin.H{
-// 			"user_id":  user.ID,
-// 			"account":  user.Account,
-// 			"role":     user.Role,
-// 			"name":     result.Name,
-// 			"identity": result.Identity,
-// 			"college":  result.College,
-// 			"phone":    result.Phone,
-// 		})
+	// 	return
+	// }
 
-// 		return
-// 	}
+	// if user.Role == model.Student {
+	// 	data := api.Student{}
 
-// 	if user.Role == model.Student {
-// 		data := api.Student{}
+	// 	if err := c.BindJSON(&data); err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+	// 		return
+	// 	}
 
-// 		if err := c.BindJSON(&data); err != nil {
-// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-// 			return
-// 		}
+	// 	result, err := services.UpdateStudentsById(user.ID, data)
+	// 	if err != nil {
+	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+	// 		return
+	// 	}
 
-// 		result, err := services.UpdateStudentsById(user.ID, data)
-// 		if err != nil {
-// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-// 			return
-// 		}
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"user_id":  user.ID,
+	// 		"account":  user.Account,
+	// 		"role":     user.Role,
+	// 		"name":     result.Name,
+	// 		"college":  result.College,
+	// 		"phone":    result.Phone,
+	// 		"subject":  result.Subject,
+	// 		"class":    result.Class,
+	// 		"identity": result.Identity,
+	// 	})
 
-// 		c.JSON(http.StatusOK, gin.H{
-// 			"user_id":  user.ID,
-// 			"account":  user.Account,
-// 			"role":     user.Role,
-// 			"name":     result.Name,
-// 			"college":  result.College,
-// 			"phone":    result.Phone,
-// 			"subject":  result.Subject,
-// 			"class":    result.Class,
-// 			"identity": result.Identity,
-// 		})
+	// 	return
+	// }
 
-// 		return
-// 	}
-
-// 	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-// }
+	// logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+}
 
 func UserRegister(c *gin.Context) {
 	c.JSON(200, gin.H{
