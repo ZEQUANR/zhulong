@@ -18,14 +18,12 @@ const (
 	FieldFileName = "file_name"
 	// FieldFileURL holds the string denoting the file_url field in the database.
 	FieldFileURL = "file_url"
-	// FieldUploadTime holds the string denoting the upload_time field in the database.
-	FieldUploadTime = "upload_time"
 	// FieldCreateTime holds the string denoting the create_time field in the database.
 	FieldCreateTime = "create_time"
-	// FieldReviewsTitle holds the string denoting the reviews_title field in the database.
-	FieldReviewsTitle = "reviews_title"
 	// EdgeUploaders holds the string denoting the uploaders edge name in mutations.
 	EdgeUploaders = "uploaders"
+	// EdgeThesisResult holds the string denoting the thesisresult edge name in mutations.
+	EdgeThesisResult = "thesisResult"
 	// Table holds the table name of the reviews in the database.
 	Table = "reviews"
 	// UploadersTable is the table that holds the uploaders relation/edge.
@@ -35,6 +33,13 @@ const (
 	UploadersInverseTable = "users"
 	// UploadersColumn is the table column denoting the uploaders relation/edge.
 	UploadersColumn = "user_reviews"
+	// ThesisResultTable is the table that holds the thesisResult relation/edge.
+	ThesisResultTable = "reviews"
+	// ThesisResultInverseTable is the table name for the Thesis entity.
+	// It exists in this package in order to avoid circular dependency with the "thesis" package.
+	ThesisResultInverseTable = "theses"
+	// ThesisResultColumn is the table column denoting the thesisResult relation/edge.
+	ThesisResultColumn = "thesis_reviews"
 )
 
 // Columns holds all SQL columns for reviews fields.
@@ -42,14 +47,13 @@ var Columns = []string{
 	FieldID,
 	FieldFileName,
 	FieldFileURL,
-	FieldUploadTime,
 	FieldCreateTime,
-	FieldReviewsTitle,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "reviews"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"thesis_reviews",
 	"user_reviews",
 }
 
@@ -91,19 +95,9 @@ func ByFileURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFileURL, opts...).ToFunc()
 }
 
-// ByUploadTime orders the results by the upload_time field.
-func ByUploadTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUploadTime, opts...).ToFunc()
-}
-
 // ByCreateTime orders the results by the create_time field.
 func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
-}
-
-// ByReviewsTitle orders the results by the reviews_title field.
-func ByReviewsTitle(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldReviewsTitle, opts...).ToFunc()
 }
 
 // ByUploadersField orders the results by uploaders field.
@@ -112,10 +106,24 @@ func ByUploadersField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUploadersStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByThesisResultField orders the results by thesisResult field.
+func ByThesisResultField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newThesisResultStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUploadersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UploadersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UploadersTable, UploadersColumn),
+	)
+}
+func newThesisResultStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ThesisResultInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, ThesisResultTable, ThesisResultColumn),
 	)
 }

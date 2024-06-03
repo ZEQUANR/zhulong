@@ -65,19 +65,9 @@ func FileURL(v string) predicate.Reviews {
 	return predicate.Reviews(sql.FieldEQ(FieldFileURL, v))
 }
 
-// UploadTime applies equality check predicate on the "upload_time" field. It's identical to UploadTimeEQ.
-func UploadTime(v time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldEQ(FieldUploadTime, v))
-}
-
 // CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
 func CreateTime(v time.Time) predicate.Reviews {
 	return predicate.Reviews(sql.FieldEQ(FieldCreateTime, v))
-}
-
-// ReviewsTitle applies equality check predicate on the "reviews_title" field. It's identical to ReviewsTitleEQ.
-func ReviewsTitle(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldEQ(FieldReviewsTitle, v))
 }
 
 // FileNameEQ applies the EQ predicate on the "file_name" field.
@@ -230,56 +220,6 @@ func FileURLContainsFold(v string) predicate.Reviews {
 	return predicate.Reviews(sql.FieldContainsFold(FieldFileURL, v))
 }
 
-// UploadTimeEQ applies the EQ predicate on the "upload_time" field.
-func UploadTimeEQ(v time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldEQ(FieldUploadTime, v))
-}
-
-// UploadTimeNEQ applies the NEQ predicate on the "upload_time" field.
-func UploadTimeNEQ(v time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldNEQ(FieldUploadTime, v))
-}
-
-// UploadTimeIn applies the In predicate on the "upload_time" field.
-func UploadTimeIn(vs ...time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldIn(FieldUploadTime, vs...))
-}
-
-// UploadTimeNotIn applies the NotIn predicate on the "upload_time" field.
-func UploadTimeNotIn(vs ...time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldNotIn(FieldUploadTime, vs...))
-}
-
-// UploadTimeGT applies the GT predicate on the "upload_time" field.
-func UploadTimeGT(v time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldGT(FieldUploadTime, v))
-}
-
-// UploadTimeGTE applies the GTE predicate on the "upload_time" field.
-func UploadTimeGTE(v time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldGTE(FieldUploadTime, v))
-}
-
-// UploadTimeLT applies the LT predicate on the "upload_time" field.
-func UploadTimeLT(v time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldLT(FieldUploadTime, v))
-}
-
-// UploadTimeLTE applies the LTE predicate on the "upload_time" field.
-func UploadTimeLTE(v time.Time) predicate.Reviews {
-	return predicate.Reviews(sql.FieldLTE(FieldUploadTime, v))
-}
-
-// UploadTimeIsNil applies the IsNil predicate on the "upload_time" field.
-func UploadTimeIsNil() predicate.Reviews {
-	return predicate.Reviews(sql.FieldIsNull(FieldUploadTime))
-}
-
-// UploadTimeNotNil applies the NotNil predicate on the "upload_time" field.
-func UploadTimeNotNil() predicate.Reviews {
-	return predicate.Reviews(sql.FieldNotNull(FieldUploadTime))
-}
-
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Reviews {
 	return predicate.Reviews(sql.FieldEQ(FieldCreateTime, v))
@@ -320,71 +260,6 @@ func CreateTimeLTE(v time.Time) predicate.Reviews {
 	return predicate.Reviews(sql.FieldLTE(FieldCreateTime, v))
 }
 
-// ReviewsTitleEQ applies the EQ predicate on the "reviews_title" field.
-func ReviewsTitleEQ(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldEQ(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleNEQ applies the NEQ predicate on the "reviews_title" field.
-func ReviewsTitleNEQ(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldNEQ(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleIn applies the In predicate on the "reviews_title" field.
-func ReviewsTitleIn(vs ...string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldIn(FieldReviewsTitle, vs...))
-}
-
-// ReviewsTitleNotIn applies the NotIn predicate on the "reviews_title" field.
-func ReviewsTitleNotIn(vs ...string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldNotIn(FieldReviewsTitle, vs...))
-}
-
-// ReviewsTitleGT applies the GT predicate on the "reviews_title" field.
-func ReviewsTitleGT(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldGT(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleGTE applies the GTE predicate on the "reviews_title" field.
-func ReviewsTitleGTE(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldGTE(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleLT applies the LT predicate on the "reviews_title" field.
-func ReviewsTitleLT(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldLT(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleLTE applies the LTE predicate on the "reviews_title" field.
-func ReviewsTitleLTE(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldLTE(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleContains applies the Contains predicate on the "reviews_title" field.
-func ReviewsTitleContains(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldContains(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleHasPrefix applies the HasPrefix predicate on the "reviews_title" field.
-func ReviewsTitleHasPrefix(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldHasPrefix(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleHasSuffix applies the HasSuffix predicate on the "reviews_title" field.
-func ReviewsTitleHasSuffix(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldHasSuffix(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleEqualFold applies the EqualFold predicate on the "reviews_title" field.
-func ReviewsTitleEqualFold(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldEqualFold(FieldReviewsTitle, v))
-}
-
-// ReviewsTitleContainsFold applies the ContainsFold predicate on the "reviews_title" field.
-func ReviewsTitleContainsFold(v string) predicate.Reviews {
-	return predicate.Reviews(sql.FieldContainsFold(FieldReviewsTitle, v))
-}
-
 // HasUploaders applies the HasEdge predicate on the "uploaders" edge.
 func HasUploaders() predicate.Reviews {
 	return predicate.Reviews(func(s *sql.Selector) {
@@ -400,6 +275,29 @@ func HasUploaders() predicate.Reviews {
 func HasUploadersWith(preds ...predicate.User) predicate.Reviews {
 	return predicate.Reviews(func(s *sql.Selector) {
 		step := newUploadersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasThesisResult applies the HasEdge predicate on the "thesisResult" edge.
+func HasThesisResult() predicate.Reviews {
+	return predicate.Reviews(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, ThesisResultTable, ThesisResultColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasThesisResultWith applies the HasEdge predicate on the "thesisResult" edge with a given conditions (other predicates).
+func HasThesisResultWith(preds ...predicate.Thesis) predicate.Reviews {
+	return predicate.Reviews(func(s *sql.Selector) {
+		step := newThesisResultStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

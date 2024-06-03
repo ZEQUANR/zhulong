@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
@@ -69,26 +70,6 @@ func (ru *ReviewsUpdate) ClearFileURL() *ReviewsUpdate {
 	return ru
 }
 
-// SetUploadTime sets the "upload_time" field.
-func (ru *ReviewsUpdate) SetUploadTime(t time.Time) *ReviewsUpdate {
-	ru.mutation.SetUploadTime(t)
-	return ru
-}
-
-// SetNillableUploadTime sets the "upload_time" field if the given value is not nil.
-func (ru *ReviewsUpdate) SetNillableUploadTime(t *time.Time) *ReviewsUpdate {
-	if t != nil {
-		ru.SetUploadTime(*t)
-	}
-	return ru
-}
-
-// ClearUploadTime clears the value of the "upload_time" field.
-func (ru *ReviewsUpdate) ClearUploadTime() *ReviewsUpdate {
-	ru.mutation.ClearUploadTime()
-	return ru
-}
-
 // SetCreateTime sets the "create_time" field.
 func (ru *ReviewsUpdate) SetCreateTime(t time.Time) *ReviewsUpdate {
 	ru.mutation.SetCreateTime(t)
@@ -99,20 +80,6 @@ func (ru *ReviewsUpdate) SetCreateTime(t time.Time) *ReviewsUpdate {
 func (ru *ReviewsUpdate) SetNillableCreateTime(t *time.Time) *ReviewsUpdate {
 	if t != nil {
 		ru.SetCreateTime(*t)
-	}
-	return ru
-}
-
-// SetReviewsTitle sets the "reviews_title" field.
-func (ru *ReviewsUpdate) SetReviewsTitle(s string) *ReviewsUpdate {
-	ru.mutation.SetReviewsTitle(s)
-	return ru
-}
-
-// SetNillableReviewsTitle sets the "reviews_title" field if the given value is not nil.
-func (ru *ReviewsUpdate) SetNillableReviewsTitle(s *string) *ReviewsUpdate {
-	if s != nil {
-		ru.SetReviewsTitle(*s)
 	}
 	return ru
 }
@@ -136,6 +103,25 @@ func (ru *ReviewsUpdate) SetUploaders(u *User) *ReviewsUpdate {
 	return ru.SetUploadersID(u.ID)
 }
 
+// SetThesisResultID sets the "thesisResult" edge to the Thesis entity by ID.
+func (ru *ReviewsUpdate) SetThesisResultID(id int) *ReviewsUpdate {
+	ru.mutation.SetThesisResultID(id)
+	return ru
+}
+
+// SetNillableThesisResultID sets the "thesisResult" edge to the Thesis entity by ID if the given value is not nil.
+func (ru *ReviewsUpdate) SetNillableThesisResultID(id *int) *ReviewsUpdate {
+	if id != nil {
+		ru = ru.SetThesisResultID(*id)
+	}
+	return ru
+}
+
+// SetThesisResult sets the "thesisResult" edge to the Thesis entity.
+func (ru *ReviewsUpdate) SetThesisResult(t *Thesis) *ReviewsUpdate {
+	return ru.SetThesisResultID(t.ID)
+}
+
 // Mutation returns the ReviewsMutation object of the builder.
 func (ru *ReviewsUpdate) Mutation() *ReviewsMutation {
 	return ru.mutation
@@ -144,6 +130,12 @@ func (ru *ReviewsUpdate) Mutation() *ReviewsMutation {
 // ClearUploaders clears the "uploaders" edge to the User entity.
 func (ru *ReviewsUpdate) ClearUploaders() *ReviewsUpdate {
 	ru.mutation.ClearUploaders()
+	return ru
+}
+
+// ClearThesisResult clears the "thesisResult" edge to the Thesis entity.
+func (ru *ReviewsUpdate) ClearThesisResult() *ReviewsUpdate {
+	ru.mutation.ClearThesisResult()
 	return ru
 }
 
@@ -195,17 +187,8 @@ func (ru *ReviewsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ru.mutation.FileURLCleared() {
 		_spec.ClearField(reviews.FieldFileURL, field.TypeString)
 	}
-	if value, ok := ru.mutation.UploadTime(); ok {
-		_spec.SetField(reviews.FieldUploadTime, field.TypeTime, value)
-	}
-	if ru.mutation.UploadTimeCleared() {
-		_spec.ClearField(reviews.FieldUploadTime, field.TypeTime)
-	}
 	if value, ok := ru.mutation.CreateTime(); ok {
 		_spec.SetField(reviews.FieldCreateTime, field.TypeTime, value)
-	}
-	if value, ok := ru.mutation.ReviewsTitle(); ok {
-		_spec.SetField(reviews.FieldReviewsTitle, field.TypeString, value)
 	}
 	if ru.mutation.UploadersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -229,6 +212,35 @@ func (ru *ReviewsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ru.mutation.ThesisResultCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   reviews.ThesisResultTable,
+			Columns: []string{reviews.ThesisResultColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.ThesisResultIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   reviews.ThesisResultTable,
+			Columns: []string{reviews.ThesisResultColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -296,26 +308,6 @@ func (ruo *ReviewsUpdateOne) ClearFileURL() *ReviewsUpdateOne {
 	return ruo
 }
 
-// SetUploadTime sets the "upload_time" field.
-func (ruo *ReviewsUpdateOne) SetUploadTime(t time.Time) *ReviewsUpdateOne {
-	ruo.mutation.SetUploadTime(t)
-	return ruo
-}
-
-// SetNillableUploadTime sets the "upload_time" field if the given value is not nil.
-func (ruo *ReviewsUpdateOne) SetNillableUploadTime(t *time.Time) *ReviewsUpdateOne {
-	if t != nil {
-		ruo.SetUploadTime(*t)
-	}
-	return ruo
-}
-
-// ClearUploadTime clears the value of the "upload_time" field.
-func (ruo *ReviewsUpdateOne) ClearUploadTime() *ReviewsUpdateOne {
-	ruo.mutation.ClearUploadTime()
-	return ruo
-}
-
 // SetCreateTime sets the "create_time" field.
 func (ruo *ReviewsUpdateOne) SetCreateTime(t time.Time) *ReviewsUpdateOne {
 	ruo.mutation.SetCreateTime(t)
@@ -326,20 +318,6 @@ func (ruo *ReviewsUpdateOne) SetCreateTime(t time.Time) *ReviewsUpdateOne {
 func (ruo *ReviewsUpdateOne) SetNillableCreateTime(t *time.Time) *ReviewsUpdateOne {
 	if t != nil {
 		ruo.SetCreateTime(*t)
-	}
-	return ruo
-}
-
-// SetReviewsTitle sets the "reviews_title" field.
-func (ruo *ReviewsUpdateOne) SetReviewsTitle(s string) *ReviewsUpdateOne {
-	ruo.mutation.SetReviewsTitle(s)
-	return ruo
-}
-
-// SetNillableReviewsTitle sets the "reviews_title" field if the given value is not nil.
-func (ruo *ReviewsUpdateOne) SetNillableReviewsTitle(s *string) *ReviewsUpdateOne {
-	if s != nil {
-		ruo.SetReviewsTitle(*s)
 	}
 	return ruo
 }
@@ -363,6 +341,25 @@ func (ruo *ReviewsUpdateOne) SetUploaders(u *User) *ReviewsUpdateOne {
 	return ruo.SetUploadersID(u.ID)
 }
 
+// SetThesisResultID sets the "thesisResult" edge to the Thesis entity by ID.
+func (ruo *ReviewsUpdateOne) SetThesisResultID(id int) *ReviewsUpdateOne {
+	ruo.mutation.SetThesisResultID(id)
+	return ruo
+}
+
+// SetNillableThesisResultID sets the "thesisResult" edge to the Thesis entity by ID if the given value is not nil.
+func (ruo *ReviewsUpdateOne) SetNillableThesisResultID(id *int) *ReviewsUpdateOne {
+	if id != nil {
+		ruo = ruo.SetThesisResultID(*id)
+	}
+	return ruo
+}
+
+// SetThesisResult sets the "thesisResult" edge to the Thesis entity.
+func (ruo *ReviewsUpdateOne) SetThesisResult(t *Thesis) *ReviewsUpdateOne {
+	return ruo.SetThesisResultID(t.ID)
+}
+
 // Mutation returns the ReviewsMutation object of the builder.
 func (ruo *ReviewsUpdateOne) Mutation() *ReviewsMutation {
 	return ruo.mutation
@@ -371,6 +368,12 @@ func (ruo *ReviewsUpdateOne) Mutation() *ReviewsMutation {
 // ClearUploaders clears the "uploaders" edge to the User entity.
 func (ruo *ReviewsUpdateOne) ClearUploaders() *ReviewsUpdateOne {
 	ruo.mutation.ClearUploaders()
+	return ruo
+}
+
+// ClearThesisResult clears the "thesisResult" edge to the Thesis entity.
+func (ruo *ReviewsUpdateOne) ClearThesisResult() *ReviewsUpdateOne {
+	ruo.mutation.ClearThesisResult()
 	return ruo
 }
 
@@ -452,17 +455,8 @@ func (ruo *ReviewsUpdateOne) sqlSave(ctx context.Context) (_node *Reviews, err e
 	if ruo.mutation.FileURLCleared() {
 		_spec.ClearField(reviews.FieldFileURL, field.TypeString)
 	}
-	if value, ok := ruo.mutation.UploadTime(); ok {
-		_spec.SetField(reviews.FieldUploadTime, field.TypeTime, value)
-	}
-	if ruo.mutation.UploadTimeCleared() {
-		_spec.ClearField(reviews.FieldUploadTime, field.TypeTime)
-	}
 	if value, ok := ruo.mutation.CreateTime(); ok {
 		_spec.SetField(reviews.FieldCreateTime, field.TypeTime, value)
-	}
-	if value, ok := ruo.mutation.ReviewsTitle(); ok {
-		_spec.SetField(reviews.FieldReviewsTitle, field.TypeString, value)
 	}
 	if ruo.mutation.UploadersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -486,6 +480,35 @@ func (ruo *ReviewsUpdateOne) sqlSave(ctx context.Context) (_node *Reviews, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.ThesisResultCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   reviews.ThesisResultTable,
+			Columns: []string{reviews.ThesisResultColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.ThesisResultIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   reviews.ThesisResultTable,
+			Columns: []string{reviews.ThesisResultColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

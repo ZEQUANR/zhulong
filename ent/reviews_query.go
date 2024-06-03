@@ -12,18 +12,20 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // ReviewsQuery is the builder for querying Reviews entities.
 type ReviewsQuery struct {
 	config
-	ctx           *QueryContext
-	order         []reviews.OrderOption
-	inters        []Interceptor
-	predicates    []predicate.Reviews
-	withUploaders *UserQuery
-	withFKs       bool
+	ctx              *QueryContext
+	order            []reviews.OrderOption
+	inters           []Interceptor
+	predicates       []predicate.Reviews
+	withUploaders    *UserQuery
+	withThesisResult *ThesisQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (rq *ReviewsQuery) QueryUploaders() *UserQuery {
 			sqlgraph.From(reviews.Table, reviews.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, reviews.UploadersTable, reviews.UploadersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryThesisResult chains the current query on the "thesisResult" edge.
+func (rq *ReviewsQuery) QueryThesisResult() *ThesisQuery {
+	query := (&ThesisClient{config: rq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reviews.Table, reviews.FieldID, selector),
+			sqlgraph.To(thesis.Table, thesis.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, reviews.ThesisResultTable, reviews.ThesisResultColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -269,12 +293,13 @@ func (rq *ReviewsQuery) Clone() *ReviewsQuery {
 		return nil
 	}
 	return &ReviewsQuery{
-		config:        rq.config,
-		ctx:           rq.ctx.Clone(),
-		order:         append([]reviews.OrderOption{}, rq.order...),
-		inters:        append([]Interceptor{}, rq.inters...),
-		predicates:    append([]predicate.Reviews{}, rq.predicates...),
-		withUploaders: rq.withUploaders.Clone(),
+		config:           rq.config,
+		ctx:              rq.ctx.Clone(),
+		order:            append([]reviews.OrderOption{}, rq.order...),
+		inters:           append([]Interceptor{}, rq.inters...),
+		predicates:       append([]predicate.Reviews{}, rq.predicates...),
+		withUploaders:    rq.withUploaders.Clone(),
+		withThesisResult: rq.withThesisResult.Clone(),
 		// clone intermediate query.
 		sql:  rq.sql.Clone(),
 		path: rq.path,
@@ -289,6 +314,17 @@ func (rq *ReviewsQuery) WithUploaders(opts ...func(*UserQuery)) *ReviewsQuery {
 		opt(query)
 	}
 	rq.withUploaders = query
+	return rq
+}
+
+// WithThesisResult tells the query-builder to eager-load the nodes that are connected to
+// the "thesisResult" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *ReviewsQuery) WithThesisResult(opts ...func(*ThesisQuery)) *ReviewsQuery {
+	query := (&ThesisClient{config: rq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withThesisResult = query
 	return rq
 }
 
@@ -371,11 +407,12 @@ func (rq *ReviewsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Revi
 		nodes       = []*Reviews{}
 		withFKs     = rq.withFKs
 		_spec       = rq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			rq.withUploaders != nil,
+			rq.withThesisResult != nil,
 		}
 	)
-	if rq.withUploaders != nil {
+	if rq.withUploaders != nil || rq.withThesisResult != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -402,6 +439,12 @@ func (rq *ReviewsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Revi
 	if query := rq.withUploaders; query != nil {
 		if err := rq.loadUploaders(ctx, query, nodes, nil,
 			func(n *Reviews, e *User) { n.Edges.Uploaders = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := rq.withThesisResult; query != nil {
+		if err := rq.loadThesisResult(ctx, query, nodes, nil,
+			func(n *Reviews, e *Thesis) { n.Edges.ThesisResult = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -433,6 +476,38 @@ func (rq *ReviewsQuery) loadUploaders(ctx context.Context, query *UserQuery, nod
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "user_reviews" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (rq *ReviewsQuery) loadThesisResult(ctx context.Context, query *ThesisQuery, nodes []*Reviews, init func(*Reviews), assign func(*Reviews, *Thesis)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Reviews)
+	for i := range nodes {
+		if nodes[i].thesis_reviews == nil {
+			continue
+		}
+		fk := *nodes[i].thesis_reviews
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(thesis.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "thesis_reviews" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

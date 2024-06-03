@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
@@ -274,6 +275,25 @@ func (tu *ThesisUpdate) SetExamine(u *User) *ThesisUpdate {
 	return tu.SetExamineID(u.ID)
 }
 
+// SetReviewsID sets the "reviews" edge to the Reviews entity by ID.
+func (tu *ThesisUpdate) SetReviewsID(id int) *ThesisUpdate {
+	tu.mutation.SetReviewsID(id)
+	return tu
+}
+
+// SetNillableReviewsID sets the "reviews" edge to the Reviews entity by ID if the given value is not nil.
+func (tu *ThesisUpdate) SetNillableReviewsID(id *int) *ThesisUpdate {
+	if id != nil {
+		tu = tu.SetReviewsID(*id)
+	}
+	return tu
+}
+
+// SetReviews sets the "reviews" edge to the Reviews entity.
+func (tu *ThesisUpdate) SetReviews(r *Reviews) *ThesisUpdate {
+	return tu.SetReviewsID(r.ID)
+}
+
 // Mutation returns the ThesisMutation object of the builder.
 func (tu *ThesisUpdate) Mutation() *ThesisMutation {
 	return tu.mutation
@@ -288,6 +308,12 @@ func (tu *ThesisUpdate) ClearUploaders() *ThesisUpdate {
 // ClearExamine clears the "examine" edge to the User entity.
 func (tu *ThesisUpdate) ClearExamine() *ThesisUpdate {
 	tu.mutation.ClearExamine()
+	return tu
+}
+
+// ClearReviews clears the "reviews" edge to the Reviews entity.
+func (tu *ThesisUpdate) ClearReviews() *ThesisUpdate {
+	tu.mutation.ClearReviews()
 	return tu
 }
 
@@ -429,6 +455,35 @@ func (tu *ThesisUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   thesis.ReviewsTable,
+			Columns: []string{thesis.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   thesis.ReviewsTable,
+			Columns: []string{thesis.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -701,6 +756,25 @@ func (tuo *ThesisUpdateOne) SetExamine(u *User) *ThesisUpdateOne {
 	return tuo.SetExamineID(u.ID)
 }
 
+// SetReviewsID sets the "reviews" edge to the Reviews entity by ID.
+func (tuo *ThesisUpdateOne) SetReviewsID(id int) *ThesisUpdateOne {
+	tuo.mutation.SetReviewsID(id)
+	return tuo
+}
+
+// SetNillableReviewsID sets the "reviews" edge to the Reviews entity by ID if the given value is not nil.
+func (tuo *ThesisUpdateOne) SetNillableReviewsID(id *int) *ThesisUpdateOne {
+	if id != nil {
+		tuo = tuo.SetReviewsID(*id)
+	}
+	return tuo
+}
+
+// SetReviews sets the "reviews" edge to the Reviews entity.
+func (tuo *ThesisUpdateOne) SetReviews(r *Reviews) *ThesisUpdateOne {
+	return tuo.SetReviewsID(r.ID)
+}
+
 // Mutation returns the ThesisMutation object of the builder.
 func (tuo *ThesisUpdateOne) Mutation() *ThesisMutation {
 	return tuo.mutation
@@ -715,6 +789,12 @@ func (tuo *ThesisUpdateOne) ClearUploaders() *ThesisUpdateOne {
 // ClearExamine clears the "examine" edge to the User entity.
 func (tuo *ThesisUpdateOne) ClearExamine() *ThesisUpdateOne {
 	tuo.mutation.ClearExamine()
+	return tuo
+}
+
+// ClearReviews clears the "reviews" edge to the Reviews entity.
+func (tuo *ThesisUpdateOne) ClearReviews() *ThesisUpdateOne {
+	tuo.mutation.ClearReviews()
 	return tuo
 }
 
@@ -886,6 +966,35 @@ func (tuo *ThesisUpdateOne) sqlSave(ctx context.Context) (_node *Thesis, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   thesis.ReviewsTable,
+			Columns: []string{thesis.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   thesis.ReviewsTable,
+			Columns: []string{thesis.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

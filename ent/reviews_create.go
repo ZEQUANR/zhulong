@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
@@ -49,20 +50,6 @@ func (rc *ReviewsCreate) SetNillableFileURL(s *string) *ReviewsCreate {
 	return rc
 }
 
-// SetUploadTime sets the "upload_time" field.
-func (rc *ReviewsCreate) SetUploadTime(t time.Time) *ReviewsCreate {
-	rc.mutation.SetUploadTime(t)
-	return rc
-}
-
-// SetNillableUploadTime sets the "upload_time" field if the given value is not nil.
-func (rc *ReviewsCreate) SetNillableUploadTime(t *time.Time) *ReviewsCreate {
-	if t != nil {
-		rc.SetUploadTime(*t)
-	}
-	return rc
-}
-
 // SetCreateTime sets the "create_time" field.
 func (rc *ReviewsCreate) SetCreateTime(t time.Time) *ReviewsCreate {
 	rc.mutation.SetCreateTime(t)
@@ -74,12 +61,6 @@ func (rc *ReviewsCreate) SetNillableCreateTime(t *time.Time) *ReviewsCreate {
 	if t != nil {
 		rc.SetCreateTime(*t)
 	}
-	return rc
-}
-
-// SetReviewsTitle sets the "reviews_title" field.
-func (rc *ReviewsCreate) SetReviewsTitle(s string) *ReviewsCreate {
-	rc.mutation.SetReviewsTitle(s)
 	return rc
 }
 
@@ -100,6 +81,25 @@ func (rc *ReviewsCreate) SetNillableUploadersID(id *int) *ReviewsCreate {
 // SetUploaders sets the "uploaders" edge to the User entity.
 func (rc *ReviewsCreate) SetUploaders(u *User) *ReviewsCreate {
 	return rc.SetUploadersID(u.ID)
+}
+
+// SetThesisResultID sets the "thesisResult" edge to the Thesis entity by ID.
+func (rc *ReviewsCreate) SetThesisResultID(id int) *ReviewsCreate {
+	rc.mutation.SetThesisResultID(id)
+	return rc
+}
+
+// SetNillableThesisResultID sets the "thesisResult" edge to the Thesis entity by ID if the given value is not nil.
+func (rc *ReviewsCreate) SetNillableThesisResultID(id *int) *ReviewsCreate {
+	if id != nil {
+		rc = rc.SetThesisResultID(*id)
+	}
+	return rc
+}
+
+// SetThesisResult sets the "thesisResult" edge to the Thesis entity.
+func (rc *ReviewsCreate) SetThesisResult(t *Thesis) *ReviewsCreate {
+	return rc.SetThesisResultID(t.ID)
 }
 
 // Mutation returns the ReviewsMutation object of the builder.
@@ -148,9 +148,6 @@ func (rc *ReviewsCreate) check() error {
 	if _, ok := rc.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Reviews.create_time"`)}
 	}
-	if _, ok := rc.mutation.ReviewsTitle(); !ok {
-		return &ValidationError{Name: "reviews_title", err: errors.New(`ent: missing required field "Reviews.reviews_title"`)}
-	}
 	return nil
 }
 
@@ -185,17 +182,9 @@ func (rc *ReviewsCreate) createSpec() (*Reviews, *sqlgraph.CreateSpec) {
 		_spec.SetField(reviews.FieldFileURL, field.TypeString, value)
 		_node.FileURL = value
 	}
-	if value, ok := rc.mutation.UploadTime(); ok {
-		_spec.SetField(reviews.FieldUploadTime, field.TypeTime, value)
-		_node.UploadTime = value
-	}
 	if value, ok := rc.mutation.CreateTime(); ok {
 		_spec.SetField(reviews.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
-	}
-	if value, ok := rc.mutation.ReviewsTitle(); ok {
-		_spec.SetField(reviews.FieldReviewsTitle, field.TypeString, value)
-		_node.ReviewsTitle = value
 	}
 	if nodes := rc.mutation.UploadersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -212,6 +201,23 @@ func (rc *ReviewsCreate) createSpec() (*Reviews, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_reviews = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.ThesisResultIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   reviews.ThesisResultTable,
+			Columns: []string{reviews.ThesisResultColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.thesis_reviews = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

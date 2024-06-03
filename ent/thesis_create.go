@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
@@ -167,6 +168,25 @@ func (tc *ThesisCreate) SetNillableExamineID(id *int) *ThesisCreate {
 // SetExamine sets the "examine" edge to the User entity.
 func (tc *ThesisCreate) SetExamine(u *User) *ThesisCreate {
 	return tc.SetExamineID(u.ID)
+}
+
+// SetReviewsID sets the "reviews" edge to the Reviews entity by ID.
+func (tc *ThesisCreate) SetReviewsID(id int) *ThesisCreate {
+	tc.mutation.SetReviewsID(id)
+	return tc
+}
+
+// SetNillableReviewsID sets the "reviews" edge to the Reviews entity by ID if the given value is not nil.
+func (tc *ThesisCreate) SetNillableReviewsID(id *int) *ThesisCreate {
+	if id != nil {
+		tc = tc.SetReviewsID(*id)
+	}
+	return tc
+}
+
+// SetReviews sets the "reviews" edge to the Reviews entity.
+func (tc *ThesisCreate) SetReviews(r *Reviews) *ThesisCreate {
+	return tc.SetReviewsID(r.ID)
 }
 
 // Mutation returns the ThesisMutation object of the builder.
@@ -352,6 +372,22 @@ func (tc *ThesisCreate) createSpec() (*Thesis, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.thesis_examine = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   thesis.ReviewsTable,
+			Columns: []string{thesis.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

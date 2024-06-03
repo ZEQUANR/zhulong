@@ -44,6 +44,8 @@ const (
 	EdgeUploaders = "uploaders"
 	// EdgeExamine holds the string denoting the examine edge name in mutations.
 	EdgeExamine = "examine"
+	// EdgeReviews holds the string denoting the reviews edge name in mutations.
+	EdgeReviews = "reviews"
 	// Table holds the table name of the thesis in the database.
 	Table = "theses"
 	// UploadersTable is the table that holds the uploaders relation/edge.
@@ -60,6 +62,13 @@ const (
 	ExamineInverseTable = "users"
 	// ExamineColumn is the table column denoting the examine relation/edge.
 	ExamineColumn = "thesis_examine"
+	// ReviewsTable is the table that holds the reviews relation/edge.
+	ReviewsTable = "reviews"
+	// ReviewsInverseTable is the table name for the Reviews entity.
+	// It exists in this package in order to avoid circular dependency with the "reviews" package.
+	ReviewsInverseTable = "reviews"
+	// ReviewsColumn is the table column denoting the reviews relation/edge.
+	ReviewsColumn = "thesis_reviews"
 )
 
 // Columns holds all SQL columns for thesis fields.
@@ -193,6 +202,13 @@ func ByExamineField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newExamineStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByReviewsField orders the results by reviews field.
+func ByReviewsField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newReviewsStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUploadersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -205,5 +221,12 @@ func newExamineStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ExamineInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, ExamineTable, ExamineColumn),
+	)
+}
+func newReviewsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ReviewsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, ReviewsTable, ReviewsColumn),
 	)
 }

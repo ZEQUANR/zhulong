@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
@@ -22,26 +23,25 @@ type Reviews struct {
 	FileName string `json:"file_name,omitempty"`
 	// FileURL holds the value of the "file_url" field.
 	FileURL string `json:"file_url,omitempty"`
-	// UploadTime holds the value of the "upload_time" field.
-	UploadTime time.Time `json:"upload_time,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
-	// ReviewsTitle holds the value of the "reviews_title" field.
-	ReviewsTitle string `json:"reviews_title,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ReviewsQuery when eager-loading is set.
-	Edges        ReviewsEdges `json:"edges"`
-	user_reviews *int
-	selectValues sql.SelectValues
+	Edges          ReviewsEdges `json:"edges"`
+	thesis_reviews *int
+	user_reviews   *int
+	selectValues   sql.SelectValues
 }
 
 // ReviewsEdges holds the relations/edges for other nodes in the graph.
 type ReviewsEdges struct {
 	// Uploaders holds the value of the uploaders edge.
 	Uploaders *User `json:"uploaders,omitempty"`
+	// ThesisResult holds the value of the thesisResult edge.
+	ThesisResult *Thesis `json:"thesisResult,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UploadersOrErr returns the Uploaders value or an error if the edge
@@ -55,6 +55,17 @@ func (e ReviewsEdges) UploadersOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "uploaders"}
 }
 
+// ThesisResultOrErr returns the ThesisResult value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ReviewsEdges) ThesisResultOrErr() (*Thesis, error) {
+	if e.ThesisResult != nil {
+		return e.ThesisResult, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: thesis.Label}
+	}
+	return nil, &NotLoadedError{edge: "thesisResult"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Reviews) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -62,11 +73,13 @@ func (*Reviews) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case reviews.FieldID:
 			values[i] = new(sql.NullInt64)
-		case reviews.FieldFileName, reviews.FieldFileURL, reviews.FieldReviewsTitle:
+		case reviews.FieldFileName, reviews.FieldFileURL:
 			values[i] = new(sql.NullString)
-		case reviews.FieldUploadTime, reviews.FieldCreateTime:
+		case reviews.FieldCreateTime:
 			values[i] = new(sql.NullTime)
-		case reviews.ForeignKeys[0]: // user_reviews
+		case reviews.ForeignKeys[0]: // thesis_reviews
+			values[i] = new(sql.NullInt64)
+		case reviews.ForeignKeys[1]: // user_reviews
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -101,25 +114,20 @@ func (r *Reviews) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				r.FileURL = value.String
 			}
-		case reviews.FieldUploadTime:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field upload_time", values[i])
-			} else if value.Valid {
-				r.UploadTime = value.Time
-			}
 		case reviews.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
 				r.CreateTime = value.Time
 			}
-		case reviews.FieldReviewsTitle:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field reviews_title", values[i])
-			} else if value.Valid {
-				r.ReviewsTitle = value.String
-			}
 		case reviews.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field thesis_reviews", value)
+			} else if value.Valid {
+				r.thesis_reviews = new(int)
+				*r.thesis_reviews = int(value.Int64)
+			}
+		case reviews.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_reviews", value)
 			} else if value.Valid {
@@ -142,6 +150,11 @@ func (r *Reviews) Value(name string) (ent.Value, error) {
 // QueryUploaders queries the "uploaders" edge of the Reviews entity.
 func (r *Reviews) QueryUploaders() *UserQuery {
 	return NewReviewsClient(r.config).QueryUploaders(r)
+}
+
+// QueryThesisResult queries the "thesisResult" edge of the Reviews entity.
+func (r *Reviews) QueryThesisResult() *ThesisQuery {
+	return NewReviewsClient(r.config).QueryThesisResult(r)
 }
 
 // Update returns a builder for updating this Reviews.
@@ -173,14 +186,8 @@ func (r *Reviews) String() string {
 	builder.WriteString("file_url=")
 	builder.WriteString(r.FileURL)
 	builder.WriteString(", ")
-	builder.WriteString("upload_time=")
-	builder.WriteString(r.UploadTime.Format(time.ANSIC))
-	builder.WriteString(", ")
 	builder.WriteString("create_time=")
 	builder.WriteString(r.CreateTime.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("reviews_title=")
-	builder.WriteString(r.ReviewsTitle)
 	builder.WriteByte(')')
 	return builder.String()
 }

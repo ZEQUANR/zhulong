@@ -1275,20 +1275,20 @@ func (m *OperationLogMutation) ResetEdge(name string) error {
 // ReviewsMutation represents an operation that mutates the Reviews nodes in the graph.
 type ReviewsMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	file_name        *string
-	file_url         *string
-	upload_time      *time.Time
-	create_time      *time.Time
-	reviews_title    *string
-	clearedFields    map[string]struct{}
-	uploaders        *int
-	cleareduploaders bool
-	done             bool
-	oldValue         func(context.Context) (*Reviews, error)
-	predicates       []predicate.Reviews
+	op                  Op
+	typ                 string
+	id                  *int
+	file_name           *string
+	file_url            *string
+	create_time         *time.Time
+	clearedFields       map[string]struct{}
+	uploaders           *int
+	cleareduploaders    bool
+	thesisResult        *int
+	clearedthesisResult bool
+	done                bool
+	oldValue            func(context.Context) (*Reviews, error)
+	predicates          []predicate.Reviews
 }
 
 var _ ent.Mutation = (*ReviewsMutation)(nil)
@@ -1487,55 +1487,6 @@ func (m *ReviewsMutation) ResetFileURL() {
 	delete(m.clearedFields, reviews.FieldFileURL)
 }
 
-// SetUploadTime sets the "upload_time" field.
-func (m *ReviewsMutation) SetUploadTime(t time.Time) {
-	m.upload_time = &t
-}
-
-// UploadTime returns the value of the "upload_time" field in the mutation.
-func (m *ReviewsMutation) UploadTime() (r time.Time, exists bool) {
-	v := m.upload_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUploadTime returns the old "upload_time" field's value of the Reviews entity.
-// If the Reviews object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReviewsMutation) OldUploadTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUploadTime is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUploadTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUploadTime: %w", err)
-	}
-	return oldValue.UploadTime, nil
-}
-
-// ClearUploadTime clears the value of the "upload_time" field.
-func (m *ReviewsMutation) ClearUploadTime() {
-	m.upload_time = nil
-	m.clearedFields[reviews.FieldUploadTime] = struct{}{}
-}
-
-// UploadTimeCleared returns if the "upload_time" field was cleared in this mutation.
-func (m *ReviewsMutation) UploadTimeCleared() bool {
-	_, ok := m.clearedFields[reviews.FieldUploadTime]
-	return ok
-}
-
-// ResetUploadTime resets all changes to the "upload_time" field.
-func (m *ReviewsMutation) ResetUploadTime() {
-	m.upload_time = nil
-	delete(m.clearedFields, reviews.FieldUploadTime)
-}
-
 // SetCreateTime sets the "create_time" field.
 func (m *ReviewsMutation) SetCreateTime(t time.Time) {
 	m.create_time = &t
@@ -1570,42 +1521,6 @@ func (m *ReviewsMutation) OldCreateTime(ctx context.Context) (v time.Time, err e
 // ResetCreateTime resets all changes to the "create_time" field.
 func (m *ReviewsMutation) ResetCreateTime() {
 	m.create_time = nil
-}
-
-// SetReviewsTitle sets the "reviews_title" field.
-func (m *ReviewsMutation) SetReviewsTitle(s string) {
-	m.reviews_title = &s
-}
-
-// ReviewsTitle returns the value of the "reviews_title" field in the mutation.
-func (m *ReviewsMutation) ReviewsTitle() (r string, exists bool) {
-	v := m.reviews_title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldReviewsTitle returns the old "reviews_title" field's value of the Reviews entity.
-// If the Reviews object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ReviewsMutation) OldReviewsTitle(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldReviewsTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldReviewsTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldReviewsTitle: %w", err)
-	}
-	return oldValue.ReviewsTitle, nil
-}
-
-// ResetReviewsTitle resets all changes to the "reviews_title" field.
-func (m *ReviewsMutation) ResetReviewsTitle() {
-	m.reviews_title = nil
 }
 
 // SetUploadersID sets the "uploaders" edge to the User entity by id.
@@ -1647,6 +1562,45 @@ func (m *ReviewsMutation) ResetUploaders() {
 	m.cleareduploaders = false
 }
 
+// SetThesisResultID sets the "thesisResult" edge to the Thesis entity by id.
+func (m *ReviewsMutation) SetThesisResultID(id int) {
+	m.thesisResult = &id
+}
+
+// ClearThesisResult clears the "thesisResult" edge to the Thesis entity.
+func (m *ReviewsMutation) ClearThesisResult() {
+	m.clearedthesisResult = true
+}
+
+// ThesisResultCleared reports if the "thesisResult" edge to the Thesis entity was cleared.
+func (m *ReviewsMutation) ThesisResultCleared() bool {
+	return m.clearedthesisResult
+}
+
+// ThesisResultID returns the "thesisResult" edge ID in the mutation.
+func (m *ReviewsMutation) ThesisResultID() (id int, exists bool) {
+	if m.thesisResult != nil {
+		return *m.thesisResult, true
+	}
+	return
+}
+
+// ThesisResultIDs returns the "thesisResult" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ThesisResultID instead. It exists only for internal usage by the builders.
+func (m *ReviewsMutation) ThesisResultIDs() (ids []int) {
+	if id := m.thesisResult; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetThesisResult resets all changes to the "thesisResult" edge.
+func (m *ReviewsMutation) ResetThesisResult() {
+	m.thesisResult = nil
+	m.clearedthesisResult = false
+}
+
 // Where appends a list predicates to the ReviewsMutation builder.
 func (m *ReviewsMutation) Where(ps ...predicate.Reviews) {
 	m.predicates = append(m.predicates, ps...)
@@ -1681,21 +1635,15 @@ func (m *ReviewsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ReviewsMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 3)
 	if m.file_name != nil {
 		fields = append(fields, reviews.FieldFileName)
 	}
 	if m.file_url != nil {
 		fields = append(fields, reviews.FieldFileURL)
 	}
-	if m.upload_time != nil {
-		fields = append(fields, reviews.FieldUploadTime)
-	}
 	if m.create_time != nil {
 		fields = append(fields, reviews.FieldCreateTime)
-	}
-	if m.reviews_title != nil {
-		fields = append(fields, reviews.FieldReviewsTitle)
 	}
 	return fields
 }
@@ -1709,12 +1657,8 @@ func (m *ReviewsMutation) Field(name string) (ent.Value, bool) {
 		return m.FileName()
 	case reviews.FieldFileURL:
 		return m.FileURL()
-	case reviews.FieldUploadTime:
-		return m.UploadTime()
 	case reviews.FieldCreateTime:
 		return m.CreateTime()
-	case reviews.FieldReviewsTitle:
-		return m.ReviewsTitle()
 	}
 	return nil, false
 }
@@ -1728,12 +1672,8 @@ func (m *ReviewsMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldFileName(ctx)
 	case reviews.FieldFileURL:
 		return m.OldFileURL(ctx)
-	case reviews.FieldUploadTime:
-		return m.OldUploadTime(ctx)
 	case reviews.FieldCreateTime:
 		return m.OldCreateTime(ctx)
-	case reviews.FieldReviewsTitle:
-		return m.OldReviewsTitle(ctx)
 	}
 	return nil, fmt.Errorf("unknown Reviews field %s", name)
 }
@@ -1757,26 +1697,12 @@ func (m *ReviewsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetFileURL(v)
 		return nil
-	case reviews.FieldUploadTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUploadTime(v)
-		return nil
 	case reviews.FieldCreateTime:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreateTime(v)
-		return nil
-	case reviews.FieldReviewsTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetReviewsTitle(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Reviews field %s", name)
@@ -1814,9 +1740,6 @@ func (m *ReviewsMutation) ClearedFields() []string {
 	if m.FieldCleared(reviews.FieldFileURL) {
 		fields = append(fields, reviews.FieldFileURL)
 	}
-	if m.FieldCleared(reviews.FieldUploadTime) {
-		fields = append(fields, reviews.FieldUploadTime)
-	}
 	return fields
 }
 
@@ -1837,9 +1760,6 @@ func (m *ReviewsMutation) ClearField(name string) error {
 	case reviews.FieldFileURL:
 		m.ClearFileURL()
 		return nil
-	case reviews.FieldUploadTime:
-		m.ClearUploadTime()
-		return nil
 	}
 	return fmt.Errorf("unknown Reviews nullable field %s", name)
 }
@@ -1854,14 +1774,8 @@ func (m *ReviewsMutation) ResetField(name string) error {
 	case reviews.FieldFileURL:
 		m.ResetFileURL()
 		return nil
-	case reviews.FieldUploadTime:
-		m.ResetUploadTime()
-		return nil
 	case reviews.FieldCreateTime:
 		m.ResetCreateTime()
-		return nil
-	case reviews.FieldReviewsTitle:
-		m.ResetReviewsTitle()
 		return nil
 	}
 	return fmt.Errorf("unknown Reviews field %s", name)
@@ -1869,9 +1783,12 @@ func (m *ReviewsMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ReviewsMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.uploaders != nil {
 		edges = append(edges, reviews.EdgeUploaders)
+	}
+	if m.thesisResult != nil {
+		edges = append(edges, reviews.EdgeThesisResult)
 	}
 	return edges
 }
@@ -1884,13 +1801,17 @@ func (m *ReviewsMutation) AddedIDs(name string) []ent.Value {
 		if id := m.uploaders; id != nil {
 			return []ent.Value{*id}
 		}
+	case reviews.EdgeThesisResult:
+		if id := m.thesisResult; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ReviewsMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -1902,9 +1823,12 @@ func (m *ReviewsMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ReviewsMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareduploaders {
 		edges = append(edges, reviews.EdgeUploaders)
+	}
+	if m.clearedthesisResult {
+		edges = append(edges, reviews.EdgeThesisResult)
 	}
 	return edges
 }
@@ -1915,6 +1839,8 @@ func (m *ReviewsMutation) EdgeCleared(name string) bool {
 	switch name {
 	case reviews.EdgeUploaders:
 		return m.cleareduploaders
+	case reviews.EdgeThesisResult:
+		return m.clearedthesisResult
 	}
 	return false
 }
@@ -1926,6 +1852,9 @@ func (m *ReviewsMutation) ClearEdge(name string) error {
 	case reviews.EdgeUploaders:
 		m.ClearUploaders()
 		return nil
+	case reviews.EdgeThesisResult:
+		m.ClearThesisResult()
+		return nil
 	}
 	return fmt.Errorf("unknown Reviews unique edge %s", name)
 }
@@ -1936,6 +1865,9 @@ func (m *ReviewsMutation) ResetEdge(name string) error {
 	switch name {
 	case reviews.EdgeUploaders:
 		m.ResetUploaders()
+		return nil
+	case reviews.EdgeThesisResult:
+		m.ResetThesisResult()
 		return nil
 	}
 	return fmt.Errorf("unknown Reviews edge %s", name)
@@ -3292,6 +3224,8 @@ type ThesisMutation struct {
 	cleareduploaders bool
 	examine          *int
 	clearedexamine   bool
+	reviews          *int
+	clearedreviews   bool
 	done             bool
 	oldValue         func(context.Context) (*Thesis, error)
 	predicates       []predicate.Thesis
@@ -4000,6 +3934,45 @@ func (m *ThesisMutation) ResetExamine() {
 	m.clearedexamine = false
 }
 
+// SetReviewsID sets the "reviews" edge to the Reviews entity by id.
+func (m *ThesisMutation) SetReviewsID(id int) {
+	m.reviews = &id
+}
+
+// ClearReviews clears the "reviews" edge to the Reviews entity.
+func (m *ThesisMutation) ClearReviews() {
+	m.clearedreviews = true
+}
+
+// ReviewsCleared reports if the "reviews" edge to the Reviews entity was cleared.
+func (m *ThesisMutation) ReviewsCleared() bool {
+	return m.clearedreviews
+}
+
+// ReviewsID returns the "reviews" edge ID in the mutation.
+func (m *ThesisMutation) ReviewsID() (id int, exists bool) {
+	if m.reviews != nil {
+		return *m.reviews, true
+	}
+	return
+}
+
+// ReviewsIDs returns the "reviews" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ReviewsID instead. It exists only for internal usage by the builders.
+func (m *ThesisMutation) ReviewsIDs() (ids []int) {
+	if id := m.reviews; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetReviews resets all changes to the "reviews" edge.
+func (m *ThesisMutation) ResetReviews() {
+	m.reviews = nil
+	m.clearedreviews = false
+}
+
 // Where appends a list predicates to the ThesisMutation builder.
 func (m *ThesisMutation) Where(ps ...predicate.Thesis) {
 	m.predicates = append(m.predicates, ps...)
@@ -4373,12 +4346,15 @@ func (m *ThesisMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ThesisMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.uploaders != nil {
 		edges = append(edges, thesis.EdgeUploaders)
 	}
 	if m.examine != nil {
 		edges = append(edges, thesis.EdgeExamine)
+	}
+	if m.reviews != nil {
+		edges = append(edges, thesis.EdgeReviews)
 	}
 	return edges
 }
@@ -4395,13 +4371,17 @@ func (m *ThesisMutation) AddedIDs(name string) []ent.Value {
 		if id := m.examine; id != nil {
 			return []ent.Value{*id}
 		}
+	case thesis.EdgeReviews:
+		if id := m.reviews; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ThesisMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -4413,12 +4393,15 @@ func (m *ThesisMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ThesisMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduploaders {
 		edges = append(edges, thesis.EdgeUploaders)
 	}
 	if m.clearedexamine {
 		edges = append(edges, thesis.EdgeExamine)
+	}
+	if m.clearedreviews {
+		edges = append(edges, thesis.EdgeReviews)
 	}
 	return edges
 }
@@ -4431,6 +4414,8 @@ func (m *ThesisMutation) EdgeCleared(name string) bool {
 		return m.cleareduploaders
 	case thesis.EdgeExamine:
 		return m.clearedexamine
+	case thesis.EdgeReviews:
+		return m.clearedreviews
 	}
 	return false
 }
@@ -4445,6 +4430,9 @@ func (m *ThesisMutation) ClearEdge(name string) error {
 	case thesis.EdgeExamine:
 		m.ClearExamine()
 		return nil
+	case thesis.EdgeReviews:
+		m.ClearReviews()
+		return nil
 	}
 	return fmt.Errorf("unknown Thesis unique edge %s", name)
 }
@@ -4458,6 +4446,9 @@ func (m *ThesisMutation) ResetEdge(name string) error {
 		return nil
 	case thesis.EdgeExamine:
 		m.ResetExamine()
+		return nil
+	case thesis.EdgeReviews:
+		m.ResetReviews()
 		return nil
 	}
 	return fmt.Errorf("unknown Thesis edge %s", name)

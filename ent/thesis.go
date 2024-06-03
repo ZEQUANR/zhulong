@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
@@ -58,9 +59,11 @@ type ThesisEdges struct {
 	Uploaders *User `json:"uploaders,omitempty"`
 	// Examine holds the value of the examine edge.
 	Examine *User `json:"examine,omitempty"`
+	// Reviews holds the value of the reviews edge.
+	Reviews *Reviews `json:"reviews,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UploadersOrErr returns the Uploaders value or an error if the edge
@@ -83,6 +86,17 @@ func (e ThesisEdges) ExamineOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "examine"}
+}
+
+// ReviewsOrErr returns the Reviews value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ThesisEdges) ReviewsOrErr() (*Reviews, error) {
+	if e.Reviews != nil {
+		return e.Reviews, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: reviews.Label}
+	}
+	return nil, &NotLoadedError{edge: "reviews"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -234,6 +248,11 @@ func (t *Thesis) QueryUploaders() *UserQuery {
 // QueryExamine queries the "examine" edge of the Thesis entity.
 func (t *Thesis) QueryExamine() *UserQuery {
 	return NewThesisClient(t.config).QueryExamine(t)
+}
+
+// QueryReviews queries the "reviews" edge of the Thesis entity.
+func (t *Thesis) QueryReviews() *ReviewsQuery {
+	return NewThesisClient(t.config).QueryReviews(t)
 }
 
 // Update returns a builder for updating this Thesis.

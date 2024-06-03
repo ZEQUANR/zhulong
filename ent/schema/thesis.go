@@ -46,5 +46,8 @@ func (Thesis) Edges() []ent.Edge {
 
 		edge.To("examine", User.Type).
 			Unique(),
+
+		edge.To("reviews", Reviews.Type).
+			Unique(),
 	}
 }

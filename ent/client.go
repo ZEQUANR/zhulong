@@ -677,6 +677,22 @@ func (c *ReviewsClient) QueryUploaders(r *Reviews) *UserQuery {
 	return query
 }
 
+// QueryThesisResult queries the thesisResult edge of a Reviews.
+func (c *ReviewsClient) QueryThesisResult(r *Reviews) *ThesisQuery {
+	query := (&ThesisClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reviews.Table, reviews.FieldID, id),
+			sqlgraph.To(thesis.Table, thesis.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, reviews.ThesisResultTable, reviews.ThesisResultColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ReviewsClient) Hooks() []Hook {
 	return c.hooks.Reviews
@@ -1133,6 +1149,22 @@ func (c *ThesisClient) QueryExamine(t *Thesis) *UserQuery {
 			sqlgraph.From(thesis.Table, thesis.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, thesis.ExamineTable, thesis.ExamineColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryReviews queries the reviews edge of a Thesis.
+func (c *ThesisClient) QueryReviews(t *Thesis) *ReviewsQuery {
+	query := (&ReviewsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(thesis.Table, thesis.FieldID, id),
+			sqlgraph.To(reviews.Table, reviews.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, thesis.ReviewsTable, thesis.ReviewsColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil

@@ -60,9 +60,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "file_name", Type: field.TypeString, Nullable: true},
 		{Name: "file_url", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "upload_time", Type: field.TypeTime, Nullable: true},
 		{Name: "create_time", Type: field.TypeTime},
-		{Name: "reviews_title", Type: field.TypeString},
+		{Name: "thesis_reviews", Type: field.TypeInt, Unique: true, Nullable: true},
 		{Name: "user_reviews", Type: field.TypeInt, Nullable: true},
 	}
 	// ReviewsTable holds the schema information for the "reviews" table.
@@ -72,8 +71,14 @@ var (
 		PrimaryKey: []*schema.Column{ReviewsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
+				Symbol:     "reviews_theses_reviews",
+				Columns:    []*schema.Column{ReviewsColumns[4]},
+				RefColumns: []*schema.Column{ThesesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:     "reviews_users_reviews",
-				Columns:    []*schema.Column{ReviewsColumns[6]},
+				Columns:    []*schema.Column{ReviewsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -196,7 +201,8 @@ var (
 func init() {
 	AdministratorsTable.ForeignKeys[0].RefTable = UsersTable
 	OperationLogsTable.ForeignKeys[0].RefTable = UsersTable
-	ReviewsTable.ForeignKeys[0].RefTable = UsersTable
+	ReviewsTable.ForeignKeys[0].RefTable = ThesesTable
+	ReviewsTable.ForeignKeys[1].RefTable = UsersTable
 	StudentsTable.ForeignKeys[0].RefTable = UsersTable
 	TeachersTable.ForeignKeys[0].RefTable = UsersTable
 	ThesesTable.ForeignKeys[0].RefTable = UsersTable

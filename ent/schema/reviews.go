@@ -21,11 +21,8 @@ func (Reviews) Fields() []ent.Field {
 		field.String("file_url").
 			Optional().
 			Unique(),
-		field.Time("upload_time").
-			Optional(),
 		field.Time("create_time").
 			Default(time.Now),
-		field.String("reviews_title"),
 	}
 }
 
@@ -33,6 +30,9 @@ func (Reviews) Fields() []ent.Field {
 func (Reviews) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("uploaders", User.Type).
+			Ref("reviews").
+			Unique(),
+		edge.From("thesisResult", Thesis.Type).
 			Ref("reviews").
 			Unique(),
 	}

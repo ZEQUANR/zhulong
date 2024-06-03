@@ -966,6 +966,29 @@ func HasExamineWith(preds ...predicate.User) predicate.Thesis {
 	})
 }
 
+// HasReviews applies the HasEdge predicate on the "reviews" edge.
+func HasReviews() predicate.Thesis {
+	return predicate.Thesis(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, ReviewsTable, ReviewsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasReviewsWith applies the HasEdge predicate on the "reviews" edge with a given conditions (other predicates).
+func HasReviewsWith(preds ...predicate.Reviews) predicate.Thesis {
+	return predicate.Thesis(func(s *sql.Selector) {
+		step := newReviewsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Thesis) predicate.Thesis {
 	return predicate.Thesis(sql.AndPredicates(predicates...))

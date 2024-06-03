@@ -24,7 +24,7 @@ func init() {
 	reviewsFields := schema.Reviews{}.Fields()
 	_ = reviewsFields
 	// reviewsDescCreateTime is the schema descriptor for create_time field.
-	reviewsDescCreateTime := reviewsFields[3].Descriptor()
+	reviewsDescCreateTime := reviewsFields[2].Descriptor()
 	// reviews.DefaultCreateTime holds the default value on creation for the create_time field.
 	reviews.DefaultCreateTime = reviewsDescCreateTime.Default.(func() time.Time)
 	thesisFields := schema.Thesis{}.Fields()

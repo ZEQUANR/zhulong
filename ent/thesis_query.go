@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
 	"github.com/ZEQUANR/zhulong/ent/thesis"
 	"github.com/ZEQUANR/zhulong/ent/user"
 )
@@ -24,6 +26,7 @@ type ThesisQuery struct {
 	predicates    []predicate.Thesis
 	withUploaders *UserQuery
 	withExamine   *UserQuery
+	withReviews   *ReviewsQuery
 	withFKs       bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -98,6 +101,28 @@ func (tq *ThesisQuery) QueryExamine() *UserQuery {
 			sqlgraph.From(thesis.Table, thesis.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, thesis.ExamineTable, thesis.ExamineColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryReviews chains the current query on the "reviews" edge.
+func (tq *ThesisQuery) QueryReviews() *ReviewsQuery {
+	query := (&ReviewsClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(thesis.Table, thesis.FieldID, selector),
+			sqlgraph.To(reviews.Table, reviews.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, thesis.ReviewsTable, thesis.ReviewsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -299,6 +324,7 @@ func (tq *ThesisQuery) Clone() *ThesisQuery {
 		predicates:    append([]predicate.Thesis{}, tq.predicates...),
 		withUploaders: tq.withUploaders.Clone(),
 		withExamine:   tq.withExamine.Clone(),
+		withReviews:   tq.withReviews.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -324,6 +350,17 @@ func (tq *ThesisQuery) WithExamine(opts ...func(*UserQuery)) *ThesisQuery {
 		opt(query)
 	}
 	tq.withExamine = query
+	return tq
+}
+
+// WithReviews tells the query-builder to eager-load the nodes that are connected to
+// the "reviews" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *ThesisQuery) WithReviews(opts ...func(*ReviewsQuery)) *ThesisQuery {
+	query := (&ReviewsClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withReviews = query
 	return tq
 }
 
@@ -406,9 +443,10 @@ func (tq *ThesisQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Thesi
 		nodes       = []*Thesis{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			tq.withUploaders != nil,
 			tq.withExamine != nil,
+			tq.withReviews != nil,
 		}
 	)
 	if tq.withUploaders != nil || tq.withExamine != nil {
@@ -444,6 +482,12 @@ func (tq *ThesisQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Thesi
 	if query := tq.withExamine; query != nil {
 		if err := tq.loadExamine(ctx, query, nodes, nil,
 			func(n *Thesis, e *User) { n.Edges.Examine = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withReviews; query != nil {
+		if err := tq.loadReviews(ctx, query, nodes, nil,
+			func(n *Thesis, e *Reviews) { n.Edges.Reviews = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -511,6 +555,34 @@ func (tq *ThesisQuery) loadExamine(ctx context.Context, query *UserQuery, nodes 
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (tq *ThesisQuery) loadReviews(ctx context.Context, query *ReviewsQuery, nodes []*Thesis, init func(*Thesis), assign func(*Thesis, *Reviews)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Thesis)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.Reviews(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(thesis.ReviewsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.thesis_reviews
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "thesis_reviews" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "thesis_reviews" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
