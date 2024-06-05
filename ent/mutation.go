@@ -655,10 +655,9 @@ type OperationLogMutation struct {
 	typ             string
 	id              *int
 	name            *string
-	context         *int
-	addcontext      *int
 	status          *int
 	addstatus       *int
+	context         *string
 	time            *time.Time
 	clearedFields   map[string]struct{}
 	operator        *int
@@ -802,62 +801,6 @@ func (m *OperationLogMutation) ResetName() {
 	m.name = nil
 }
 
-// SetContext sets the "context" field.
-func (m *OperationLogMutation) SetContext(i int) {
-	m.context = &i
-	m.addcontext = nil
-}
-
-// Context returns the value of the "context" field in the mutation.
-func (m *OperationLogMutation) Context() (r int, exists bool) {
-	v := m.context
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldContext returns the old "context" field's value of the OperationLog entity.
-// If the OperationLog object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OperationLogMutation) OldContext(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldContext is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldContext requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldContext: %w", err)
-	}
-	return oldValue.Context, nil
-}
-
-// AddContext adds i to the "context" field.
-func (m *OperationLogMutation) AddContext(i int) {
-	if m.addcontext != nil {
-		*m.addcontext += i
-	} else {
-		m.addcontext = &i
-	}
-}
-
-// AddedContext returns the value that was added to the "context" field in this mutation.
-func (m *OperationLogMutation) AddedContext() (r int, exists bool) {
-	v := m.addcontext
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetContext resets all changes to the "context" field.
-func (m *OperationLogMutation) ResetContext() {
-	m.context = nil
-	m.addcontext = nil
-}
-
 // SetStatus sets the "status" field.
 func (m *OperationLogMutation) SetStatus(i int) {
 	m.status = &i
@@ -912,6 +855,55 @@ func (m *OperationLogMutation) AddedStatus() (r int, exists bool) {
 func (m *OperationLogMutation) ResetStatus() {
 	m.status = nil
 	m.addstatus = nil
+}
+
+// SetContext sets the "context" field.
+func (m *OperationLogMutation) SetContext(s string) {
+	m.context = &s
+}
+
+// Context returns the value of the "context" field in the mutation.
+func (m *OperationLogMutation) Context() (r string, exists bool) {
+	v := m.context
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContext returns the old "context" field's value of the OperationLog entity.
+// If the OperationLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperationLogMutation) OldContext(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContext is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContext requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContext: %w", err)
+	}
+	return oldValue.Context, nil
+}
+
+// ClearContext clears the value of the "context" field.
+func (m *OperationLogMutation) ClearContext() {
+	m.context = nil
+	m.clearedFields[operationlog.FieldContext] = struct{}{}
+}
+
+// ContextCleared returns if the "context" field was cleared in this mutation.
+func (m *OperationLogMutation) ContextCleared() bool {
+	_, ok := m.clearedFields[operationlog.FieldContext]
+	return ok
+}
+
+// ResetContext resets all changes to the "context" field.
+func (m *OperationLogMutation) ResetContext() {
+	m.context = nil
+	delete(m.clearedFields, operationlog.FieldContext)
 }
 
 // SetTime sets the "time" field.
@@ -1027,11 +1019,11 @@ func (m *OperationLogMutation) Fields() []string {
 	if m.name != nil {
 		fields = append(fields, operationlog.FieldName)
 	}
-	if m.context != nil {
-		fields = append(fields, operationlog.FieldContext)
-	}
 	if m.status != nil {
 		fields = append(fields, operationlog.FieldStatus)
+	}
+	if m.context != nil {
+		fields = append(fields, operationlog.FieldContext)
 	}
 	if m.time != nil {
 		fields = append(fields, operationlog.FieldTime)
@@ -1046,10 +1038,10 @@ func (m *OperationLogMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case operationlog.FieldName:
 		return m.Name()
-	case operationlog.FieldContext:
-		return m.Context()
 	case operationlog.FieldStatus:
 		return m.Status()
+	case operationlog.FieldContext:
+		return m.Context()
 	case operationlog.FieldTime:
 		return m.Time()
 	}
@@ -1063,10 +1055,10 @@ func (m *OperationLogMutation) OldField(ctx context.Context, name string) (ent.V
 	switch name {
 	case operationlog.FieldName:
 		return m.OldName(ctx)
-	case operationlog.FieldContext:
-		return m.OldContext(ctx)
 	case operationlog.FieldStatus:
 		return m.OldStatus(ctx)
+	case operationlog.FieldContext:
+		return m.OldContext(ctx)
 	case operationlog.FieldTime:
 		return m.OldTime(ctx)
 	}
@@ -1085,19 +1077,19 @@ func (m *OperationLogMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
-	case operationlog.FieldContext:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetContext(v)
-		return nil
 	case operationlog.FieldStatus:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case operationlog.FieldContext:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContext(v)
 		return nil
 	case operationlog.FieldTime:
 		v, ok := value.(time.Time)
@@ -1114,9 +1106,6 @@ func (m *OperationLogMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *OperationLogMutation) AddedFields() []string {
 	var fields []string
-	if m.addcontext != nil {
-		fields = append(fields, operationlog.FieldContext)
-	}
 	if m.addstatus != nil {
 		fields = append(fields, operationlog.FieldStatus)
 	}
@@ -1128,8 +1117,6 @@ func (m *OperationLogMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *OperationLogMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case operationlog.FieldContext:
-		return m.AddedContext()
 	case operationlog.FieldStatus:
 		return m.AddedStatus()
 	}
@@ -1141,13 +1128,6 @@ func (m *OperationLogMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *OperationLogMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case operationlog.FieldContext:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddContext(v)
-		return nil
 	case operationlog.FieldStatus:
 		v, ok := value.(int)
 		if !ok {
@@ -1162,7 +1142,11 @@ func (m *OperationLogMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *OperationLogMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(operationlog.FieldContext) {
+		fields = append(fields, operationlog.FieldContext)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1175,6 +1159,11 @@ func (m *OperationLogMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *OperationLogMutation) ClearField(name string) error {
+	switch name {
+	case operationlog.FieldContext:
+		m.ClearContext()
+		return nil
+	}
 	return fmt.Errorf("unknown OperationLog nullable field %s", name)
 }
 
@@ -1185,11 +1174,11 @@ func (m *OperationLogMutation) ResetField(name string) error {
 	case operationlog.FieldName:
 		m.ResetName()
 		return nil
-	case operationlog.FieldContext:
-		m.ResetContext()
-		return nil
 	case operationlog.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case operationlog.FieldContext:
+		m.ResetContext()
 		return nil
 	case operationlog.FieldTime:
 		m.ResetTime()

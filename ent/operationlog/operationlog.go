@@ -16,10 +16,10 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldContext holds the string denoting the context field in the database.
-	FieldContext = "context"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldContext holds the string denoting the context field in the database.
+	FieldContext = "context"
 	// FieldTime holds the string denoting the time field in the database.
 	FieldTime = "time"
 	// EdgeOperator holds the string denoting the operator edge name in mutations.
@@ -39,8 +39,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldName,
-	FieldContext,
 	FieldStatus,
+	FieldContext,
 	FieldTime,
 }
 
@@ -83,14 +83,14 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByContext orders the results by the context field.
-func ByContext(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldContext, opts...).ToFunc()
-}
-
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByContext orders the results by the context field.
+func ByContext(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldContext, opts...).ToFunc()
 }
 
 // ByTime orders the results by the time field.

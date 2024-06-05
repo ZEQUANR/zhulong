@@ -49,5 +49,10 @@ func UploadReview(userId int, thesisID int, file model.File) (*ent.Reviews, erro
 		return nil, fmt.Errorf("func: UploadReview | index: 3 | err: %w", err)
 	}
 
+	_, err = RecordThesisReviewer(u, t)
+	if err != nil {
+		return nil, fmt.Errorf("func: UploadReview | index: 4 | err: %w", err)
+	}
+
 	return r, nil
 }

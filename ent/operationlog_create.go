@@ -27,15 +27,23 @@ func (olc *OperationLogCreate) SetName(s string) *OperationLogCreate {
 	return olc
 }
 
-// SetContext sets the "context" field.
-func (olc *OperationLogCreate) SetContext(i int) *OperationLogCreate {
-	olc.mutation.SetContext(i)
-	return olc
-}
-
 // SetStatus sets the "status" field.
 func (olc *OperationLogCreate) SetStatus(i int) *OperationLogCreate {
 	olc.mutation.SetStatus(i)
+	return olc
+}
+
+// SetContext sets the "context" field.
+func (olc *OperationLogCreate) SetContext(s string) *OperationLogCreate {
+	olc.mutation.SetContext(s)
+	return olc
+}
+
+// SetNillableContext sets the "context" field if the given value is not nil.
+func (olc *OperationLogCreate) SetNillableContext(s *string) *OperationLogCreate {
+	if s != nil {
+		olc.SetContext(*s)
+	}
 	return olc
 }
 
@@ -118,9 +126,6 @@ func (olc *OperationLogCreate) check() error {
 	if _, ok := olc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "OperationLog.name"`)}
 	}
-	if _, ok := olc.mutation.Context(); !ok {
-		return &ValidationError{Name: "context", err: errors.New(`ent: missing required field "OperationLog.context"`)}
-	}
 	if _, ok := olc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "OperationLog.status"`)}
 	}
@@ -157,13 +162,13 @@ func (olc *OperationLogCreate) createSpec() (*OperationLog, *sqlgraph.CreateSpec
 		_spec.SetField(operationlog.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := olc.mutation.Context(); ok {
-		_spec.SetField(operationlog.FieldContext, field.TypeInt, value)
-		_node.Context = value
-	}
 	if value, ok := olc.mutation.Status(); ok {
 		_spec.SetField(operationlog.FieldStatus, field.TypeInt, value)
 		_node.Status = value
+	}
+	if value, ok := olc.mutation.Context(); ok {
+		_spec.SetField(operationlog.FieldContext, field.TypeString, value)
+		_node.Context = value
 	}
 	if value, ok := olc.mutation.Time(); ok {
 		_spec.SetField(operationlog.FieldTime, field.TypeTime, value)

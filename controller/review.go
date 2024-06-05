@@ -40,7 +40,7 @@ func ReviewUpload(c *gin.Context) {
 		return
 	}
 
-	thesis, err := services.UploadReview(userId, data.ThesisId, file)
+	_, err = services.UploadReview(userId, data.ThesisId, file)
 	if err != nil {
 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionUpdate, logger.ErrorBodyUpdateThesis, err)
 		return
@@ -52,6 +52,6 @@ func ReviewUpload(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"reviewId": thesis.ID,
+		"message": "ok",
 	})
 }

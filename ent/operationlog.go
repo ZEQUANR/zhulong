@@ -20,10 +20,10 @@ type OperationLog struct {
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// Context holds the value of the "context" field.
-	Context int `json:"context,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int `json:"status,omitempty"`
+	// Context holds the value of the "context" field.
+	Context string `json:"context,omitempty"`
 	// Time holds the value of the "time" field.
 	Time time.Time `json:"time,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -58,9 +58,9 @@ func (*OperationLog) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case operationlog.FieldID, operationlog.FieldContext, operationlog.FieldStatus:
+		case operationlog.FieldID, operationlog.FieldStatus:
 			values[i] = new(sql.NullInt64)
-		case operationlog.FieldName:
+		case operationlog.FieldName, operationlog.FieldContext:
 			values[i] = new(sql.NullString)
 		case operationlog.FieldTime:
 			values[i] = new(sql.NullTime)
@@ -93,17 +93,17 @@ func (ol *OperationLog) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ol.Name = value.String
 			}
-		case operationlog.FieldContext:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field context", values[i])
-			} else if value.Valid {
-				ol.Context = int(value.Int64)
-			}
 		case operationlog.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				ol.Status = int(value.Int64)
+			}
+		case operationlog.FieldContext:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field context", values[i])
+			} else if value.Valid {
+				ol.Context = value.String
 			}
 		case operationlog.FieldTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -162,11 +162,11 @@ func (ol *OperationLog) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(ol.Name)
 	builder.WriteString(", ")
-	builder.WriteString("context=")
-	builder.WriteString(fmt.Sprintf("%v", ol.Context))
-	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", ol.Status))
+	builder.WriteString(", ")
+	builder.WriteString("context=")
+	builder.WriteString(ol.Context)
 	builder.WriteString(", ")
 	builder.WriteString("time=")
 	builder.WriteString(ol.Time.Format(time.ANSIC))

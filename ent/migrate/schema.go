@@ -36,8 +36,8 @@ var (
 	OperationLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "context", Type: field.TypeInt},
 		{Name: "status", Type: field.TypeInt},
+		{Name: "context", Type: field.TypeString, Nullable: true},
 		{Name: "time", Type: field.TypeTime},
 		{Name: "user_operating_record", Type: field.TypeInt, Nullable: true},
 	}

@@ -43,27 +43,6 @@ func (olu *OperationLogUpdate) SetNillableName(s *string) *OperationLogUpdate {
 	return olu
 }
 
-// SetContext sets the "context" field.
-func (olu *OperationLogUpdate) SetContext(i int) *OperationLogUpdate {
-	olu.mutation.ResetContext()
-	olu.mutation.SetContext(i)
-	return olu
-}
-
-// SetNillableContext sets the "context" field if the given value is not nil.
-func (olu *OperationLogUpdate) SetNillableContext(i *int) *OperationLogUpdate {
-	if i != nil {
-		olu.SetContext(*i)
-	}
-	return olu
-}
-
-// AddContext adds i to the "context" field.
-func (olu *OperationLogUpdate) AddContext(i int) *OperationLogUpdate {
-	olu.mutation.AddContext(i)
-	return olu
-}
-
 // SetStatus sets the "status" field.
 func (olu *OperationLogUpdate) SetStatus(i int) *OperationLogUpdate {
 	olu.mutation.ResetStatus()
@@ -82,6 +61,26 @@ func (olu *OperationLogUpdate) SetNillableStatus(i *int) *OperationLogUpdate {
 // AddStatus adds i to the "status" field.
 func (olu *OperationLogUpdate) AddStatus(i int) *OperationLogUpdate {
 	olu.mutation.AddStatus(i)
+	return olu
+}
+
+// SetContext sets the "context" field.
+func (olu *OperationLogUpdate) SetContext(s string) *OperationLogUpdate {
+	olu.mutation.SetContext(s)
+	return olu
+}
+
+// SetNillableContext sets the "context" field if the given value is not nil.
+func (olu *OperationLogUpdate) SetNillableContext(s *string) *OperationLogUpdate {
+	if s != nil {
+		olu.SetContext(*s)
+	}
+	return olu
+}
+
+// ClearContext clears the value of the "context" field.
+func (olu *OperationLogUpdate) ClearContext() *OperationLogUpdate {
+	olu.mutation.ClearContext()
 	return olu
 }
 
@@ -168,17 +167,17 @@ func (olu *OperationLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := olu.mutation.Name(); ok {
 		_spec.SetField(operationlog.FieldName, field.TypeString, value)
 	}
-	if value, ok := olu.mutation.Context(); ok {
-		_spec.SetField(operationlog.FieldContext, field.TypeInt, value)
-	}
-	if value, ok := olu.mutation.AddedContext(); ok {
-		_spec.AddField(operationlog.FieldContext, field.TypeInt, value)
-	}
 	if value, ok := olu.mutation.Status(); ok {
 		_spec.SetField(operationlog.FieldStatus, field.TypeInt, value)
 	}
 	if value, ok := olu.mutation.AddedStatus(); ok {
 		_spec.AddField(operationlog.FieldStatus, field.TypeInt, value)
+	}
+	if value, ok := olu.mutation.Context(); ok {
+		_spec.SetField(operationlog.FieldContext, field.TypeString, value)
+	}
+	if olu.mutation.ContextCleared() {
+		_spec.ClearField(operationlog.FieldContext, field.TypeString)
 	}
 	if value, ok := olu.mutation.Time(); ok {
 		_spec.SetField(operationlog.FieldTime, field.TypeTime, value)
@@ -246,27 +245,6 @@ func (oluo *OperationLogUpdateOne) SetNillableName(s *string) *OperationLogUpdat
 	return oluo
 }
 
-// SetContext sets the "context" field.
-func (oluo *OperationLogUpdateOne) SetContext(i int) *OperationLogUpdateOne {
-	oluo.mutation.ResetContext()
-	oluo.mutation.SetContext(i)
-	return oluo
-}
-
-// SetNillableContext sets the "context" field if the given value is not nil.
-func (oluo *OperationLogUpdateOne) SetNillableContext(i *int) *OperationLogUpdateOne {
-	if i != nil {
-		oluo.SetContext(*i)
-	}
-	return oluo
-}
-
-// AddContext adds i to the "context" field.
-func (oluo *OperationLogUpdateOne) AddContext(i int) *OperationLogUpdateOne {
-	oluo.mutation.AddContext(i)
-	return oluo
-}
-
 // SetStatus sets the "status" field.
 func (oluo *OperationLogUpdateOne) SetStatus(i int) *OperationLogUpdateOne {
 	oluo.mutation.ResetStatus()
@@ -285,6 +263,26 @@ func (oluo *OperationLogUpdateOne) SetNillableStatus(i *int) *OperationLogUpdate
 // AddStatus adds i to the "status" field.
 func (oluo *OperationLogUpdateOne) AddStatus(i int) *OperationLogUpdateOne {
 	oluo.mutation.AddStatus(i)
+	return oluo
+}
+
+// SetContext sets the "context" field.
+func (oluo *OperationLogUpdateOne) SetContext(s string) *OperationLogUpdateOne {
+	oluo.mutation.SetContext(s)
+	return oluo
+}
+
+// SetNillableContext sets the "context" field if the given value is not nil.
+func (oluo *OperationLogUpdateOne) SetNillableContext(s *string) *OperationLogUpdateOne {
+	if s != nil {
+		oluo.SetContext(*s)
+	}
+	return oluo
+}
+
+// ClearContext clears the value of the "context" field.
+func (oluo *OperationLogUpdateOne) ClearContext() *OperationLogUpdateOne {
+	oluo.mutation.ClearContext()
 	return oluo
 }
 
@@ -401,17 +399,17 @@ func (oluo *OperationLogUpdateOne) sqlSave(ctx context.Context) (_node *Operatio
 	if value, ok := oluo.mutation.Name(); ok {
 		_spec.SetField(operationlog.FieldName, field.TypeString, value)
 	}
-	if value, ok := oluo.mutation.Context(); ok {
-		_spec.SetField(operationlog.FieldContext, field.TypeInt, value)
-	}
-	if value, ok := oluo.mutation.AddedContext(); ok {
-		_spec.AddField(operationlog.FieldContext, field.TypeInt, value)
-	}
 	if value, ok := oluo.mutation.Status(); ok {
 		_spec.SetField(operationlog.FieldStatus, field.TypeInt, value)
 	}
 	if value, ok := oluo.mutation.AddedStatus(); ok {
 		_spec.AddField(operationlog.FieldStatus, field.TypeInt, value)
+	}
+	if value, ok := oluo.mutation.Context(); ok {
+		_spec.SetField(operationlog.FieldContext, field.TypeString, value)
+	}
+	if oluo.mutation.ContextCleared() {
+		_spec.ClearField(operationlog.FieldContext, field.TypeString)
 	}
 	if value, ok := oluo.mutation.Time(); ok {
 		_spec.SetField(operationlog.FieldTime, field.TypeTime, value)

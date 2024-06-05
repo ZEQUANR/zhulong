@@ -17,8 +17,9 @@ type OperationLog struct {
 func (OperationLog) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
-		field.Int("context"),
 		field.Int("status"),
+		field.String("context").
+			Optional(),
 		field.Time("time").
 			Default(time.Now),
 	}

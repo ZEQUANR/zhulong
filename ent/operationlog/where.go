@@ -60,14 +60,14 @@ func Name(v string) predicate.OperationLog {
 	return predicate.OperationLog(sql.FieldEQ(FieldName, v))
 }
 
-// Context applies equality check predicate on the "context" field. It's identical to ContextEQ.
-func Context(v int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldEQ(FieldContext, v))
-}
-
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v int) predicate.OperationLog {
 	return predicate.OperationLog(sql.FieldEQ(FieldStatus, v))
+}
+
+// Context applies equality check predicate on the "context" field. It's identical to ContextEQ.
+func Context(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldEQ(FieldContext, v))
 }
 
 // Time applies equality check predicate on the "time" field. It's identical to TimeEQ.
@@ -140,46 +140,6 @@ func NameContainsFold(v string) predicate.OperationLog {
 	return predicate.OperationLog(sql.FieldContainsFold(FieldName, v))
 }
 
-// ContextEQ applies the EQ predicate on the "context" field.
-func ContextEQ(v int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldEQ(FieldContext, v))
-}
-
-// ContextNEQ applies the NEQ predicate on the "context" field.
-func ContextNEQ(v int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldNEQ(FieldContext, v))
-}
-
-// ContextIn applies the In predicate on the "context" field.
-func ContextIn(vs ...int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldIn(FieldContext, vs...))
-}
-
-// ContextNotIn applies the NotIn predicate on the "context" field.
-func ContextNotIn(vs ...int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldNotIn(FieldContext, vs...))
-}
-
-// ContextGT applies the GT predicate on the "context" field.
-func ContextGT(v int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldGT(FieldContext, v))
-}
-
-// ContextGTE applies the GTE predicate on the "context" field.
-func ContextGTE(v int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldGTE(FieldContext, v))
-}
-
-// ContextLT applies the LT predicate on the "context" field.
-func ContextLT(v int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldLT(FieldContext, v))
-}
-
-// ContextLTE applies the LTE predicate on the "context" field.
-func ContextLTE(v int) predicate.OperationLog {
-	return predicate.OperationLog(sql.FieldLTE(FieldContext, v))
-}
-
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v int) predicate.OperationLog {
 	return predicate.OperationLog(sql.FieldEQ(FieldStatus, v))
@@ -218,6 +178,81 @@ func StatusLT(v int) predicate.OperationLog {
 // StatusLTE applies the LTE predicate on the "status" field.
 func StatusLTE(v int) predicate.OperationLog {
 	return predicate.OperationLog(sql.FieldLTE(FieldStatus, v))
+}
+
+// ContextEQ applies the EQ predicate on the "context" field.
+func ContextEQ(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldEQ(FieldContext, v))
+}
+
+// ContextNEQ applies the NEQ predicate on the "context" field.
+func ContextNEQ(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldNEQ(FieldContext, v))
+}
+
+// ContextIn applies the In predicate on the "context" field.
+func ContextIn(vs ...string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldIn(FieldContext, vs...))
+}
+
+// ContextNotIn applies the NotIn predicate on the "context" field.
+func ContextNotIn(vs ...string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldNotIn(FieldContext, vs...))
+}
+
+// ContextGT applies the GT predicate on the "context" field.
+func ContextGT(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldGT(FieldContext, v))
+}
+
+// ContextGTE applies the GTE predicate on the "context" field.
+func ContextGTE(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldGTE(FieldContext, v))
+}
+
+// ContextLT applies the LT predicate on the "context" field.
+func ContextLT(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldLT(FieldContext, v))
+}
+
+// ContextLTE applies the LTE predicate on the "context" field.
+func ContextLTE(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldLTE(FieldContext, v))
+}
+
+// ContextContains applies the Contains predicate on the "context" field.
+func ContextContains(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldContains(FieldContext, v))
+}
+
+// ContextHasPrefix applies the HasPrefix predicate on the "context" field.
+func ContextHasPrefix(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldHasPrefix(FieldContext, v))
+}
+
+// ContextHasSuffix applies the HasSuffix predicate on the "context" field.
+func ContextHasSuffix(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldHasSuffix(FieldContext, v))
+}
+
+// ContextIsNil applies the IsNil predicate on the "context" field.
+func ContextIsNil() predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldIsNull(FieldContext))
+}
+
+// ContextNotNil applies the NotNil predicate on the "context" field.
+func ContextNotNil() predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldNotNull(FieldContext))
+}
+
+// ContextEqualFold applies the EqualFold predicate on the "context" field.
+func ContextEqualFold(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldEqualFold(FieldContext, v))
+}
+
+// ContextContainsFold applies the ContainsFold predicate on the "context" field.
+func ContextContainsFold(v string) predicate.OperationLog {
+	return predicate.OperationLog(sql.FieldContainsFold(FieldContext, v))
 }
 
 // TimeEQ applies the EQ predicate on the "time" field.
