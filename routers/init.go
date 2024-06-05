@@ -34,6 +34,7 @@ func Init(router *gin.Engine) {
 		review := v1.Group("/review")
 		{
 			review.POST("upload", controller.ReviewUpload)
+			review.POST("sendBack", controller.ReviewSendBack)
 		}
 	}
 }

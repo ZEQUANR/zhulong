@@ -32,7 +32,10 @@ const (
 	ErrorBodyCreateThesis       ErrorBody = "Thesis Creation Failure"                            // 创建论文失败
 	ErrorBodyCreatePath         ErrorBody = "Failed To Create Token"                             // 创建 Path 失败
 	ErrorBodyUpdateThesis       ErrorBody = "Failed To Update The Thesis Information"            // 更新论文信息失败
+	ErrorBodyUpdateReview       ErrorBody = "Failed To Update The Review Information"            // 更新评阅书信息失败
 	ErrorBodySaveThesis         ErrorBody = "Failed To Save The Thesis File"                     // 保存论文文件失败
+	ErrorBodySaveReview         ErrorBody = "Failed To Save The Review File"                     // 保存评阅书文件失败
+	ErrorBodyReturnThesis       ErrorBody = "Failure To Return Thesis"                           // 退回论文失败
 	ErrorBodyPermissions        ErrorBody = "The Current User Has Insufficient Permissions"      // 当前用户权限不足
 	ErrorBodyAssignmentThesis   ErrorBody = "Assignment Thesis Failure"                          // 分配论文失败
 	ErrorBodyTeacherList        ErrorBody = "Failed To Get The Teacher List"                     // 获取教师列表失败

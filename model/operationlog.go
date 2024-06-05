@@ -6,10 +6,10 @@ var OperationLogStatus = struct {
 	OnReview        int // 评阅中
 	ReviewCompleted int // 评阅完成
 }{
-	SendBack:        0,
-	UnderReview:     1,
-	OnReview:        2,
-	ReviewCompleted: 3,
+	SendBack:        1,
+	UnderReview:     2,
+	OnReview:        3,
+	ReviewCompleted: 4,
 }
 
 var OperationLogContext = struct {
@@ -18,6 +18,6 @@ var OperationLogContext = struct {
 	UploadTheReview string // 上传评阅书
 }{
 	ThesisUpload:    "上传论文",
-	ThesisReviewer:  "进行评阅",
+	ThesisReviewer:  "分配论文",
 	UploadTheReview: "上传评阅书",
 }
