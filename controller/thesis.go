@@ -186,7 +186,14 @@ func ThesisRandomAllocation(c *gin.Context) {
 		return
 	}
 
-	services.UpdateThesisRandomAllocation(data)
+	if err := services.UpdateThesisRandomAllocation(data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyAssignmentThesis, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "ok",
+	})
 }
 
 func ThesisUnderReviewList(c *gin.Context) {

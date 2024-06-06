@@ -272,7 +272,7 @@ func UpdateAllocationThesis(data api.AllocationThesis) error {
 			SetOperator(upUser).
 			Save(ctx)
 		if err != nil {
-			return fmt.Errorf("func: RecordThesisUpload | index: 3 | err: %w", err)
+			return fmt.Errorf("func: UpdateAllocationThesis | index: 5 | err: %w", err)
 		}
 
 	}
@@ -379,19 +379,69 @@ func QueryThesisDownloadPath(data api.DownloadThesis) (*ent.Thesis, error) {
 	return t, nil
 }
 
-func UpdateThesisRandomAllocation(data api.RandomAllocationThesis) (*ent.Thesis, error) {
+func UpdateThesisRandomAllocation(data api.RandomAllocationThesis) error {
 	ctx := context.Background()
 
-	for _, v := range data.ThesisID {
-		t, err := client.Thesis.
+	for _, value := range data.ThesisID {
+		result, err := client.Thesis.
 			Query().
-			Select().
-			Where(thesis.ID(v)).
+			Where(thesis.ID(value)).
 			Only(ctx)
-		if err != nil || t.FileState != model.FileState.ToBeReviewed {
-			return nil, fmt.Errorf("func: UpdateThesisRandomAllocation | index: 0 | err: %w", err)
+		if err != nil || result.FileState != model.FileState.ToBeReviewed {
+			return fmt.Errorf("func: UpdateThesisRandomAllocation | index: 0 | err: %w", err)
 		}
 	}
 
-	return nil, nil
+	arrTeachers, err := client.User.
+		Query().
+		Where(user.Role(model.Teacher)).
+		All(ctx)
+	if err != nil {
+		return fmt.Errorf("func: UpdateThesisRandomAllocation | index: 1 | err: %w", err)
+	}
+
+	for i, value := range data.ThesisID {
+		_, err := client.Thesis.
+			Update().
+			Where(thesis.ID(value)).
+			SetFileState(model.FileState.UnderReview).
+			SetExamine(arrTeachers[i%len(arrTeachers)]).
+			Save(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateThesisRandomAllocation | index: 2 | err: %w", err)
+		}
+
+		r, err := client.Thesis.
+			Query().
+			Where(thesis.ID(value)).
+			Only(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateThesisRandomAllocation | index: 3 | err: %w", err)
+		}
+
+		upUser, err := r.QueryUploaders().Only(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateThesisRandomAllocation | index: 4 | err: %w", err)
+		}
+
+		upUserInfo, err := upUser.QueryStudents().Only(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateThesisRandomAllocation | index: 5 | err: %w", err)
+		}
+
+		_, err = client.OperationLog.
+			Create().
+			SetName(upUserInfo.Name).
+			SetContext(model.OperationLogContext.ThesisReviewer).
+			SetStatus(model.OperationLogStatus.OnReview).
+			SetTime(time.Now()).
+			SetOperator(upUser).
+			Save(ctx)
+		if err != nil {
+			return fmt.Errorf("func: UpdateThesisRandomAllocation | index: 6 | err: %w", err)
+		}
+
+	}
+
+	return nil
 }
