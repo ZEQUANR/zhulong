@@ -142,110 +142,109 @@ func UserTeacherList(c *gin.Context) {
 	})
 }
 
-func UserEditor(c *gin.Context) {
-	// userId, err := utils.ParseUserIDInToken(c)
-	// if err != nil {
-	// 	logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
-	// 	return
-	// }
+func UserRegisterAdmin(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
 
-	// user, err := services.QueryUserById(userId)
-	// if err != nil {
-	// 	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-	// 	return
-	// }
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
 
-	// if user.Role == model.Admin {
-	// 	data := api.Administrator{}
+	if user.Role != model.Admin {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyPermissions, fmt.Errorf(""))
+		return
+	}
 
-	// 	if err := c.BindJSON(&data); err != nil {
-	// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-	// 		return
-	// 	}
+	data := api.RegisterAdmin{}
+	if err := c.BindJSON(&data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+		return
+	}
 
-	// 	result, err := services.UpdateAdministratorsById(user.ID, data)
-	// 	if err != nil {
-	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-	// 		return
-	// 	}
+	if err = services.CreateAdministrators(data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionCreate, logger.ErrorBodyCreateAdmin, err)
+		return
+	}
 
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"user_id":  user.ID,
-	// 		"account":  user.Account,
-	// 		"role":     user.Role,
-	// 		"name":     result.Name,
-	// 		"identity": result.Identity,
-	// 		"college":  result.College,
-	// 		"phone":    result.Phone,
-	// 	})
-
-	// 	return
-	// }
-
-	// if user.Role == model.Teacher {
-	// 	data := api.Teacher{}
-
-	// 	if err := c.BindJSON(&data); err != nil {
-	// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-	// 		return
-	// 	}
-
-	// 	result, err := services.UpdateTeachersById(user.ID, data)
-	// 	if err != nil {
-	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-	// 		return
-	// 	}
-
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"user_id":  user.ID,
-	// 		"account":  user.Account,
-	// 		"role":     user.Role,
-	// 		"name":     result.Name,
-	// 		"identity": result.Identity,
-	// 		"college":  result.College,
-	// 		"phone":    result.Phone,
-	// 	})
-
-	// 	return
-	// }
-
-	// if user.Role == model.Student {
-	// 	data := api.Student{}
-
-	// 	if err := c.BindJSON(&data); err != nil {
-	// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
-	// 		return
-	// 	}
-
-	// 	result, err := services.UpdateStudentsById(user.ID, data)
-	// 	if err != nil {
-	// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-	// 		return
-	// 	}
-
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"user_id":  user.ID,
-	// 		"account":  user.Account,
-	// 		"role":     user.Role,
-	// 		"name":     result.Name,
-	// 		"college":  result.College,
-	// 		"phone":    result.Phone,
-	// 		"subject":  result.Subject,
-	// 		"class":    result.Class,
-	// 		"identity": result.Identity,
-	// 	})
-
-	// 	return
-	// }
-
-	// logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
-}
-
-func UserRegister(c *gin.Context) {
 	c.JSON(200, gin.H{
-		"message": "pong",
+		"message": "ok",
 	})
 }
+
+func UserRegisterTeacher(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	if user.Role != model.Admin {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyPermissions, fmt.Errorf(""))
+		return
+	}
+
+	data := api.RegisterTeacher{}
+	if err := c.BindJSON(&data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+		return
+	}
+
+	if err = services.CreateTeachers(data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionCreate, logger.ErrorBodyCreateTeacher, err)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "ok",
+	})
+}
+
+func UserRegisterStudent(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	if user.Role != model.Admin {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionQuery, logger.ErrorBodyPermissions, fmt.Errorf(""))
+		return
+	}
+
+	data := api.RegisterStudent{}
+	if err := c.BindJSON(&data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+		return
+	}
+
+	if err = services.CreateStudents(data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionCreate, logger.ErrorBodyCreateStudent, err)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "ok",
+	})
+}
+
+func UserEditor(c *gin.Context) {}
 
 func UserLogout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{

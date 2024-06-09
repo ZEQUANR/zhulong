@@ -42,6 +42,9 @@ const (
 	ErrorBodyToBeReviewedList   ErrorBody = "Failed To Obtain The List Of Thesis To Be Reviewed" // 获取待评阅论文列表失败
 	ErrorBodyUnderReviewList    ErrorBody = "Failed To Obtain A List Of Thesis Under Review"     // 获取评阅中论文列表失败
 	ErrorBodyThesisDownloadLink ErrorBody = "Failed To Obtain The Thesis Download Link"          // 获取论文下载链接失败
+	ErrorBodyCreateAdmin        ErrorBody = "Description Failed To Create An Administrator User" // 创建管理员用户失败
+	ErrorBodyCreateTeacher      ErrorBody = "Failed To Create A Teacher User Procedure"          // 创建老师用户失败
+	ErrorBodyCreateStudent      ErrorBody = "Failed To Create A Student User"                    // 创建学生用户失败
 )
 
 var ErrorCode = map[ErrorWho]int{

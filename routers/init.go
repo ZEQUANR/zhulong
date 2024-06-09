@@ -14,9 +14,15 @@ func Init(router *gin.Engine) {
 			user.POST("/login", controller.UserLogin)
 			user.POST("/info", controller.UserInfo)
 			user.POST("/editor", controller.UserEditor)
-			// user.POST("/register", controller.UserRegister)
 			user.POST("/logout", controller.UserLogout)
 			user.POST("/teacherList", controller.UserTeacherList)
+
+			register := user.Group("/register")
+			{
+				register.POST("admin", controller.UserRegisterAdmin)
+				register.POST("teacher", controller.UserRegisterTeacher)
+				register.POST("student", controller.UserRegisterStudent)
+			}
 		}
 
 		thesis := v1.Group("/thesis")

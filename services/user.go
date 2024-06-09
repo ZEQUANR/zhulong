@@ -9,6 +9,7 @@ import (
 	"github.com/ZEQUANR/zhulong/ent/user"
 	"github.com/ZEQUANR/zhulong/model"
 	"github.com/ZEQUANR/zhulong/model/api"
+	"github.com/ZEQUANR/zhulong/utils"
 )
 
 var client = driver.MysqlClient
@@ -139,6 +140,95 @@ func QueryTeacherList() ([]api.TeacherList, error) {
 	}
 
 	return arr, nil
+}
+
+func CreateAdministrators(data api.RegisterAdmin) error {
+	ctx := context.Background()
+
+	u, err := client.User.
+		Create().
+		SetAccount(data.Account).
+		SetPassword(utils.Md5Encode(data.Password)).
+		SetRole(model.Admin).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("func: createAdministrators: %w", err)
+	}
+
+	_, err = client.Administrators.
+		Create().
+		SetAvatar("").
+		SetName(data.Name).
+		SetCollege(data.College).
+		SetPhone(data.Phone).
+		SetNumber(data.Number).
+		SetUsers(u).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("func: createAdministrators: %w", err)
+	}
+
+	return nil
+}
+
+func CreateTeachers(data api.RegisterTeacher) error {
+	ctx := context.Background()
+
+	u, err := client.User.
+		Create().
+		SetAccount(data.Account).
+		SetPassword(utils.Md5Encode(data.Password)).
+		SetRole(model.Teacher).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("func: CreateTeachers: %w", err)
+	}
+
+	_, err = client.Teachers.
+		Create().
+		SetAvatar("").
+		SetName(data.Name).
+		SetCollege(data.College).
+		SetPhone(data.Phone).
+		SetNumber(data.Number).
+		SetUsers(u).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("func: CreateTeachers: %w", err)
+	}
+
+	return nil
+}
+
+func CreateStudents(data api.RegisterStudent) error {
+	ctx := context.Background()
+
+	u, err := client.User.
+		Create().
+		SetAccount(data.Account).
+		SetPassword(utils.Md5Encode(data.Password)).
+		SetRole(model.Student).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("func: CreateStudents: %w", err)
+	}
+
+	_, err = client.Students.
+		Create().
+		SetAvatar("").
+		SetName(data.Name).
+		SetCollege(data.College).
+		SetPhone(data.Phone).
+		SetMajor(data.Major).
+		SetClass(data.Class).
+		SetNumber(data.Number).
+		SetUsers(u).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("func: CreateStudents: %w", err)
+	}
+
+	return nil
 }
 
 // func UpdateAdministratorsById(id int, admin api.Administrator) (*ent.Administrators, error) {
