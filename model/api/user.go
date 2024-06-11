@@ -64,3 +64,8 @@ type RegisterStudent struct {
 	Class    string `json:"class" binding:"required"`    // 班级
 	Number   string `json:"number" binding:"required"`   // 学工号
 }
+
+type UserPassword struct {
+	OldPassword string `json:"oldPassword" binding:"required"` // 旧密码
+	NewPassword string `json:"newPassword" binding:"required"` // 新密码
+}

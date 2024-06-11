@@ -231,6 +231,24 @@ func CreateStudents(data api.RegisterStudent) error {
 	return nil
 }
 
+func UpdateUserPassword(u *ent.User, data api.UserPassword) error {
+	ctx := context.Background()
+
+	if u.Password != utils.Md5Encode(data.OldPassword) {
+		return fmt.Errorf("func: UpdateUserPassword: old password error")
+	}
+
+	_, err := u.
+		Update().
+		SetPassword(utils.Md5Encode(data.NewPassword)).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("func: UpdateUserPassword: %w", err)
+	}
+
+	return nil
+}
+
 // func UpdateAdministratorsById(id int, admin api.Administrator) (*ent.Administrators, error) {
 // 	ctx := context.Background()
 

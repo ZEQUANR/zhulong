@@ -45,6 +45,7 @@ const (
 	ErrorBodyCreateAdmin        ErrorBody = "Description Failed To Create An Administrator User" // 创建管理员用户失败
 	ErrorBodyCreateTeacher      ErrorBody = "Failed To Create A Teacher User Procedure"          // 创建老师用户失败
 	ErrorBodyCreateStudent      ErrorBody = "Failed To Create A Student User"                    // 创建学生用户失败
+	ErrorBodyUpdataPassword     ErrorBody = "Description Failed To Update The User Password"     // 更新用户密码失败
 )
 
 var ErrorCode = map[ErrorWho]int{

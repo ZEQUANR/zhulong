@@ -244,7 +244,36 @@ func UserRegisterStudent(c *gin.Context) {
 	})
 }
 
-func UserEditor(c *gin.Context) {}
+func UserEditorAdmin(c *gin.Context) {}
+
+func UserEditorTeacher(c *gin.Context) {}
+
+func UserEditorStudent(c *gin.Context) {}
+
+func UserEditorPassword(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	data := api.UserPassword{}
+	if err := c.BindJSON(&data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+		return
+	}
+
+	if err = services.UpdateUserPassword(user, data); err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionCreate, logger.ErrorBodyUpdataPassword, err)
+		return
+	}
+}
 
 func UserLogout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{

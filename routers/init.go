@@ -13,7 +13,6 @@ func Init(router *gin.Engine) {
 		{
 			user.POST("/login", controller.UserLogin)
 			user.POST("/info", controller.UserInfo)
-			user.POST("/editor", controller.UserEditor)
 			user.POST("/logout", controller.UserLogout)
 			user.POST("/teacherList", controller.UserTeacherList)
 
@@ -22,6 +21,14 @@ func Init(router *gin.Engine) {
 				register.POST("admin", controller.UserRegisterAdmin)
 				register.POST("teacher", controller.UserRegisterTeacher)
 				register.POST("student", controller.UserRegisterStudent)
+			}
+
+			editor := user.Group("editor")
+			{
+				editor.POST("admin", controller.UserEditorAdmin)
+				editor.POST("teacher", controller.UserEditorTeacher)
+				editor.POST("student", controller.UserEditorStudent)
+				editor.POST("password", controller.UserEditorPassword)
 			}
 		}
 
